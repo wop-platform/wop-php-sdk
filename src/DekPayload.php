@@ -45,8 +45,8 @@ final class DekPayload
      */
     public static function decode(string $payloadText): self
     {
-        $parts = explode('$', $payloadText);
-        if (count($parts) !== 3) {
+        $parts = \explode('$', $payloadText);
+        if (\count($parts) !== 3) {
             throw new WopException('DEK 载荷格式错误（应为 alg$key$iv）');
         }
         [$alg, $keyB64u, $ivB64u] = $parts;

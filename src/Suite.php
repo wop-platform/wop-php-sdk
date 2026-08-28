@@ -39,19 +39,19 @@ final class Suite
      */
     public static function parse(string $securityReq): self
     {
-        $trimmed = trim($securityReq);
+        $trimmed = \trim($securityReq);
         if ($trimmed === '') {
             throw new WopException('securityReq 格式错误: 空值');
         }
         if ($trimmed === self::SM_SUITE) {
             throw new WopException('SM2-SM3 套件暂未支持，见 README 路线图');
         }
-        $segments = explode('-', $trimmed);
-        if (count($segments) !== 3 || $segments[0] !== 'WOP') {
+        $segments = \explode('-', $trimmed);
+        if (\count($segments) !== 3 || $segments[0] !== 'WOP') {
             throw new WopException('securityReq 格式错误（应为 WOP-<密钥算法>-<摘要算法>）: ' . $trimmed);
         }
         [, $keyAlg, $digestAlg] = $segments;
-        if (!in_array($keyAlg, self::KNOWN_KEY_ALGS, true) || !in_array($digestAlg, self::KNOWN_DIGEST_ALGS, true)) {
+        if (!\in_array($keyAlg, self::KNOWN_KEY_ALGS, true) || !\in_array($digestAlg, self::KNOWN_DIGEST_ALGS, true)) {
             throw new WopException('不支持的算法组合: ' . $trimmed);
         }
         // 到这里标识均在支持列表：剩下的组合只可能是跨族（国际密钥+国密摘要或反之）

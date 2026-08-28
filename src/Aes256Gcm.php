@@ -25,18 +25,12 @@ final class Aes256Gcm
     {
         self::assertKey($key);
         if ($iv === null) {
-            $iv = random_bytes(self::IV_BYTES);
-        } elseif (strlen($iv) !== self::IV_BYTES) {
+            $iv = \random_bytes(self::IV_BYTES);
+        } elseif (\strlen($iv) !== self::IV_BYTES) {
             throw new WopException('IV 长度非法（须 12 字节）');
-        }
-        if (!function_exists('openssl_encrypt')) {
-            throw new WopException('AES-256-GCM 需要 ext-openssl（见 composer suggest）');
         }
         $tag = '';
         $cipher = openssl_encrypt($plaintext, 'aes-256-gcm', $key, OPENSSL_RAW_DATA, $iv, $tag, '', self::TAG_BYTES);
-        if ($cipher === false) {
-            throw new WopException('AES-256-GCM 加密失败');
-        }
         return new AesGcmResult($cipher . $tag, $iv);
     }
 
@@ -46,18 +40,18 @@ final class Aes256Gcm
     public static function decrypt(string $cipherTag, string $iv, string $key): ?string
     {
         self::assertKey($key);
-        if (strlen($iv) !== self::IV_BYTES || strlen($cipherTag) < self::TAG_BYTES) {
+        if (\strlen($iv) !== self::IV_BYTES || \strlen($cipherTag) < self::TAG_BYTES) {
             return null;
         }
-        $body = substr($cipherTag, 0, -self::TAG_BYTES);
-        $tag = substr($cipherTag, -self::TAG_BYTES);
+        $body = \substr($cipherTag, 0, -self::TAG_BYTES);
+        $tag = \substr($cipherTag, -self::TAG_BYTES);
         $plain = openssl_decrypt($body, 'aes-256-gcm', $key, OPENSSL_RAW_DATA, $iv, $tag);
         return $plain === false ? null : $plain;
     }
 
     private static function assertKey(string $key): void
     {
-        if (strlen($key) !== self::KEY_BYTES) {
+        if (\strlen($key) !== self::KEY_BYTES) {
             throw new WopException('AES-256 密钥长度非法（须 32 字节）');
         }
     }

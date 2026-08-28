@@ -58,4 +58,17 @@ final class RsaOaepTest extends VectorCase
         $wrapped = RsaOaep::wrap($vec['plaintext'], $keys['publicSpkiB64']);
         $this->assertSame($vec['plaintext'], RsaOaep::unwrap($wrapped, $keys['privatePkcs8B64']));
     }
+
+    /** 密钥解析失败：垃圾公钥包装抛明确错误；垃圾私钥解包返回 null（I7 模糊）。 */
+    public function testWrapWithGarbagePublicKeyThrows(): void
+    {
+        $this->expectException(\Wop\Sdk\WopException::class);
+        $this->expectExceptionMessage('RSA 公钥解析失败');
+        RsaOaep::wrap('x', 'not-a-key');
+    }
+
+    public function testUnwrapWithGarbagePrivateKeyReturnsNull(): void
+    {
+        $this->assertNull(RsaOaep::unwrap('AAAA', 'not-a-key'));
+    }
 }

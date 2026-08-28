@@ -48,4 +48,21 @@ final class EncryptHeaderTest extends TestCase
         $this->assertSame('L2;dek=xyz', EncryptHeader::build('L2', 'xyz'));
         $this->assertSame('L0', EncryptHeader::build('L0', null));
     }
+
+
+    public function testParseL2WithoutDek(): void
+    {
+        $parsed = EncryptHeader::parse('L2');
+        $this->assertTrue($parsed->isEncrypted());
+        $this->assertNull($parsed->dek);
+    }
+
+    public function testParseTolerantWhitespaceAroundParts(): void
+    {
+        $parsed = EncryptHeader::parse(' L2 ; dek=xyz ');
+        $this->assertSame('L2', $parsed->level);
+        $this->assertSame('xyz', $parsed->dek);
+        // 'dek ='（键名内空格）不识别 → 视为无 dek 指令
+        $this->assertNull(EncryptHeader::parse('L2; dek = xyz')->dek);
+    }
 }

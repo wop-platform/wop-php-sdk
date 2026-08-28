@@ -373,4 +373,76 @@ final class WopClientTest extends VectorCase
             $sm4['expected'], self::keys()['rsa3072']['publicSpkiB64']
         );
     }
+
+
+    /** F6-2b：digest 头整体缺失但有 body → 摘要不匹配（明确）。 */
+    public function testVerifyResponseMissingDigestHeaderRejected(): void
+    {
+        [$headers, $wireBody] = $this->platformResponse('{"a":1}', 'L0', 1774340000000, 'respnonce00000000000000000000a');
+        unset($headers['x-wop-content-digest']);
+        $this->reSignResponse($headers, $wireBody);
+        $result = $this->merchantClient->verifyResponse($headers, $wireBody, self::PATH);
+        $this->assertFalse($result->ok);
+        $this->assertSame('摘要不匹配', $result->reason);
+    }
+
+    /** L2 密文但 encrypt 头缺失：验签+digest 过后按 L0 原文返回（协议层无解密指令）。 */
+    public function testVerifyResponseCipherBodyWithoutEncryptHeaderTreatedAsL0(): void
+    {
+        [$headers, $wireBody] = $this->platformResponse('{"a":1}', 'L2', 1774340000000, 'respnonce00000000000000000000a');
+        unset($headers['x-wop-encrypt']);
+        $this->reSignResponse($headers, $wireBody);
+        $result = $this->merchantClient->verifyResponse($headers, $wireBody, self::PATH);
+        $this->assertTrue($result->ok);
+        $this->assertSame($wireBody, $result->plaintext);
+    }
+
+    /** GET + L2（body null）：不产信封、不产 digest，等同 L0 空体。 */
+    public function testBuildRequestGetL2WithoutBodyDegradesToPlain(): void
+    {
+        $draft = $this->merchantClient->buildRequest('GET', self::PATH, null, 'L2', 1774340000000, 'nonce0000000000000000000000000');
+        $this->assertNull($draft->header('x-wop-encrypt'));
+        $this->assertNull($draft->header('x-wop-content-digest'));
+    }
+
+    /** 回调 URL 无 path → canonical path 取 "/"。 */
+    public function testVerifyCallbackUrlWithoutPathUsesRoot(): void
+    {
+        [$headers, $wireBody] = $this->platformResponse('x', 'L0', 1774340000000, 'respnonce00000000000000000000a');
+        $this->buildSignedResponse($headers, $wireBody, null, 1774340000000, 'respnonce00000000000000000000a', '/');
+        $result = $this->merchantClient->verifyCallback($headers, $wireBody, 'https://merchant.example.com');
+        $this->assertTrue($result->ok);
+    }
+
+    /** WopConfig 可选 gatewayBaseUrl 字段。 */
+    public function testConfigOptionalBaseUrl(): void
+    {
+        $config = new WopConfig('app', 'WOP-RSA4096-SHA256', self::keys()['rsa4096']['privatePkcs8B64'], self::keys()['rsa4096']['publicSpkiB64'], 'https://gw.example.com');
+        $this->assertSame('https://gw.example.com', $config->gatewayBaseUrl);
+        $this->assertSame(4096, $config->suite->keyLength);
+    }
+
+
+    /** I7：L2 头无 dek 段（解包输入缺失）→ 解密失败（模糊）。 */
+    public function testVerifyResponseL2WithoutDekFailsObfuscated(): void
+    {
+        [$headers, $wireBody] = $this->platformResponse('{"a":1}', 'L2', 1774340000000, 'respnonce00000000000000000000a');
+        // 替换为无 dek 的 L2 指令并重签（wire/digest 不变）
+        $headers['x-wop-encrypt'] = 'L2';
+        $this->reSignResponse($headers, $wireBody);
+        $result = $this->merchantClient->verifyResponse($headers, $wireBody, self::PATH);
+        $this->assertFalse($result->ok);
+        $this->assertSame('解密失败', $result->reason);
+    }
+
+    /** I7：DEK 解包成功但载荷非 alg$key$iv → 解密失败（模糊）。 */
+    public function testVerifyResponseGarbageDekPayloadFailsObfuscated(): void
+    {
+        [$headers, $wireBody] = $this->platformResponse('{"a":1}', 'L2', 1774340000000, 'respnonce00000000000000000000a');
+        $headers['x-wop-encrypt'] = 'L2;dek=' . \Wop\Sdk\RsaOaep::wrap('garbage-not-a-dek', self::keys()['rsa3072']['publicSpkiB64']);
+        $this->reSignResponse($headers, $wireBody);
+        $result = $this->merchantClient->verifyResponse($headers, $wireBody, self::PATH);
+        $this->assertFalse($result->ok);
+        $this->assertSame('解密失败', $result->reason);
+    }
 }

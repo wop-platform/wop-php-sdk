@@ -13,19 +13,14 @@ final class CurlTransport implements TransportInterface
 {
     public function __construct()
     {
-        if (!function_exists('curl_init')) {
-            throw new WopException('CurlTransport 需要 ext-curl（见 composer suggest）');
-        }
+        // ext-curl 为 suggest 依赖（composer.json/README 注明），缺失时 curl_init 未定义会自然报错
     }
 
     public function send(string $method, string $url, array $headers, string $body): TransportResponse
     {
         $handle = curl_init($url);
-        if ($handle === false) {
-            throw new WopException('传输失败: curl 初始化失败');
-        }
         curl_setopt_array($handle, [
-            CURLOPT_CUSTOMREQUEST => strtoupper($method),
+            CURLOPT_CUSTOMREQUEST => \strtoupper($method),
             CURLOPT_HTTPHEADER => $headers,
             CURLOPT_POSTFIELDS => $body,
             CURLOPT_RETURNTRANSFER => true,
@@ -39,7 +34,7 @@ final class CurlTransport implements TransportInterface
         $statusCode = (int) curl_getinfo($handle, CURLINFO_RESPONSE_CODE);
         $headerSize = (int) curl_getinfo($handle, CURLINFO_HEADER_SIZE);
 
-        [$headerBlock, $responseBody] = [substr((string) $raw, 0, $headerSize), substr((string) $raw, $headerSize)];
+        [$headerBlock, $responseBody] = [\substr((string) $raw, 0, $headerSize), \substr((string) $raw, $headerSize)];
         return new TransportResponse($statusCode, self::parseHeaders($headerBlock), $responseBody);
     }
 
@@ -47,10 +42,10 @@ final class CurlTransport implements TransportInterface
     private static function parseHeaders(string $headerBlock): array
     {
         $headers = [];
-        foreach (preg_split('/\r?\n/', $headerBlock) ?: [] as $line) {
-            $pos = strpos($line, ':');
+        foreach (\preg_split('/\r?\n/', $headerBlock) ?: [] as $line) {
+            $pos = \strpos($line, ':');
             if ($pos !== false) {
-                $headers[trim(substr($line, 0, $pos))] = trim(substr($line, $pos + 1));
+                $headers[\trim(\substr($line, 0, $pos))] = \trim(\substr($line, $pos + 1));
             }
         }
         return $headers;

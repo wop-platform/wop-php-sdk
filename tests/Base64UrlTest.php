@@ -58,4 +58,13 @@ final class Base64UrlTest extends VectorCase
         $this->assertSame(384, strlen($sig));
         $this->assertSame($vec['expectedSigB64u'], Base64Url::encode($sig));
     }
+
+
+    public function testDecodeAcceptsUnpaddedTailLengths(): void
+    {
+        // 2/3 字符尾部为合法无填充形态（线上编码本身无填充）
+        $this->assertSame('i', Base64Url::decode('ab'));
+        $this->assertSame(2, strlen(Base64Url::decode('abc')));
+        $this->assertSame('aQ', Base64Url::encode('i'));
+    }
 }

@@ -26,8 +26,8 @@ final class CanonicalRequest
         // rawurlencode：RFC3986，保留 A-Za-z0-9-._~，输出大写 hex
         $encoded = rawurlencode($text);
         // 对齐 Java URLEncoder 字母表差异：~ 需编码，* 需保留
-        $encoded = str_replace('~', '%7E', $encoded);
-        $encoded = str_replace('%2A', '*', $encoded);
+        $encoded = \str_replace('~', '%7E', $encoded);
+        $encoded = \str_replace('%2A', '*', $encoded);
         return $encoded;
     }
 
@@ -39,7 +39,7 @@ final class CanonicalRequest
         if ($text === null || $text === '') {
             return '';
         }
-        return trim((string) preg_replace('/\s+/u', ' ', $text));
+        return \trim((string) \preg_replace('/\s+/u', ' ', $text));
     }
 
     /**
@@ -55,14 +55,14 @@ final class CanonicalRequest
         }
         $sorted = [];
         foreach ($headers as $name => $value) {
-            $sorted[strtolower(self::trimall((string) $name))] = self::trimall((string) ($value ?? ''));
+            $sorted[\strtolower(self::trimall((string) $name))] = self::trimall((string) ($value ?? ''));
         }
         uksort($sorted, strcmp(...));
         $lines = [];
         foreach ($sorted as $name => $value) {
             $lines[] = self::urlencode($name) . ':' . self::urlencode($value);
         }
-        return implode("\n", $lines);
+        return \implode("\n", $lines);
     }
 
     /**
@@ -77,7 +77,7 @@ final class CanonicalRequest
         ?string $canonicalHeaders
     ): string {
         return ($authString ?? '') . "\n"
-            . strtoupper(trim((string) $method)) . "\n"
+            . \strtoupper(\trim((string) $method)) . "\n"
             . ($canonicalUri ?? '') . "\n"
             . ($queryString ?? '') . "\n"
             . ($canonicalHeaders ?? '');

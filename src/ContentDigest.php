@@ -18,7 +18,7 @@ final class ContentDigest
 
     public static function sha256Hex(string $bytes): string
     {
-        return hash('sha256', $bytes);
+        return \hash('sha256', $bytes);
     }
 
     /**
@@ -34,17 +34,17 @@ final class ContentDigest
      */
     public static function validate(string $headerValue, ?Suite $suite = null): bool
     {
-        $parts = explode(' ', $headerValue);
-        if (count($parts) !== 2 || $parts[0] === '' || $parts[1] === '') {
+        $parts = \explode(' ', $headerValue);
+        if (\count($parts) !== 2 || $parts[0] === '' || $parts[1] === '') {
             throw new WopException('x-wop-content-digest 格式错误（应为 <alg> 恰一空格 <hex>）: ' . $headerValue);
         }
         [$label, $hex] = $parts;
         $expectedLabel = $suite?->digestLabel ?? self::LABEL_SHA256;
         $allowed = $suite === null ? [self::LABEL_SHA256] : [$expectedLabel];
-        if (!in_array($label, $allowed, true)) {
+        if (!\in_array($label, $allowed, true)) {
             throw new WopException('x-wop-content-digest 算法标签与套件族不符: ' . $label);
         }
-        if (!ctype_xdigit($hex) || strtolower($hex) !== $hex || strlen($hex) !== 64) {
+        if (!\ctype_xdigit($hex) || \strtolower($hex) !== $hex || \strlen($hex) !== 64) {
             throw new WopException('x-wop-content-digest 摘要格式错误（须 64 位小写 hex）: ' . $hex);
         }
         return true;
@@ -63,7 +63,7 @@ final class ContentDigest
         } catch (WopException) {
             return false;
         }
-        [, $hex] = explode(' ', $headerValue);
-        return hash_equals($hex, self::sha256Hex($wireBytes));
+        [, $hex] = \explode(' ', $headerValue);
+        return \hash_equals($hex, self::sha256Hex($wireBytes));
     }
 }

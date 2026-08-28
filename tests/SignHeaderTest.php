@@ -78,4 +78,19 @@ final class SignHeaderTest extends TestCase
         $this->assertNull(SignHeader::tryExtractSecurityReq(null));
         $this->assertNull(SignHeader::tryExtractSecurityReq('  '));
     }
+
+
+    public function testParseRejectsNonNumericExpiredSeconds(): void
+    {
+        $this->expectException(WopException::class);
+        $this->expectExceptionMessage('expiredSeconds');
+        SignHeader::parse('WOP-RSA3072-SHA256 v1/1800a/a/b');
+    }
+
+    public function testParseRejectsBlankSignatureOnly(): void
+    {
+        $this->expectException(WopException::class);
+        $this->expectExceptionMessage('signature');
+        SignHeader::parse('WOP-RSA3072-SHA256 v1/10/a/  ');
+    }
 }

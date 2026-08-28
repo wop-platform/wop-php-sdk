@@ -48,7 +48,7 @@ final class WopClient
         ?string $nonce = null
     ): RequestDraft {
         EncryptHeader::validateLevel($level);
-        $isL2 = strcasecmp($level, EncryptHeader::LEVEL_L2) === 0;
+        $isL2 = \strcasecmp($level, EncryptHeader::LEVEL_L2) === 0;
 
         $headers = [
             self::HEADER_APPKEY => $this->config->appKey,
@@ -58,7 +58,7 @@ final class WopClient
 
         // L2：信封加密（CSPRNG DEK + IV），wire body = base64url(ciphertext||tag)
         if ($isL2 && $body !== null) {
-            $dek = new DekPayload($this->config->suite->dekAlg, random_bytes(Aes256Gcm::KEY_BYTES), random_bytes(Aes256Gcm::IV_BYTES));
+            $dek = new DekPayload($this->config->suite->dekAlg, \random_bytes(Aes256Gcm::KEY_BYTES), \random_bytes(Aes256Gcm::IV_BYTES));
             $result = Aes256Gcm::encrypt($body, $dek->key, $dek->iv);
             $wireBody = Base64Url::encode($result->cipherTag);
             $headers[self::HEADER_ENCRYPT] = EncryptHeader::build(
@@ -85,10 +85,10 @@ final class WopClient
         $headers[self::HEADER_SIGN] = SignHeader::build(
             $this->config->suite->securityReq,
             self::DEFAULT_EXPIRED_SECONDS,
-            array_keys($headers),
+            \array_keys($headers),
             $signature
         );
-        return new RequestDraft(strtoupper($method), $path, $headers, $wireBody);
+        return new RequestDraft(\strtoupper($method), $path, $headers, $wireBody);
     }
 
     /**
@@ -108,7 +108,7 @@ final class WopClient
      */
     public function verifyCallback(array $headers, string $body, string $callbackUrl): VerifyResult
     {
-        $path = (string) parse_url($callbackUrl, PHP_URL_PATH);
+        $path = (string) \parse_url($callbackUrl, PHP_URL_PATH);
         return $this->verify($headers, $body, $path === '' ? '/' : $path, 'POST');
     }
 
@@ -180,7 +180,7 @@ final class WopClient
     private function header(array $headers, string $name): ?string
     {
         foreach ($headers as $key => $value) {
-            if (strcasecmp($key, $name) === 0) {
+            if (\strcasecmp($key, $name) === 0) {
                 return $value;
             }
         }
@@ -206,12 +206,12 @@ final class WopClient
     /** F9：13 位毫秒 Unix 时间戳。 */
     private function currentMillis(): int
     {
-        return (int) (microtime(true) * 1000);
+        return (int) (\microtime(true) * 1000);
     }
 
     /** F9：CSPRNG 32 位随机串。 */
     private function newNonce(): string
     {
-        return bin2hex(random_bytes(16));
+        return \bin2hex(\random_bytes(16));
     }
 }

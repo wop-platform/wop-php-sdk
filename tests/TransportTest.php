@@ -108,4 +108,12 @@ PHP
         $this->assertSame($body, $decoded['body'], 'wire body 字节原样送达');
         $this->assertSame($sign, $decoded['x_wop_sign'], 'x-wop-sign 头原样送达');
     }
+
+
+    public function testGuzzleTransportSkipsMalformedHeaderLines(): void
+    {
+        $transport = new GuzzleTransport();
+        $response = $transport->send('GET', 'http://' . self::$baseUrl . '/x', ['ok: 1', 'malformed-line'], '');
+        $this->assertTrue($response->isSuccess());
+    }
 }

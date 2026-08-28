@@ -18,7 +18,7 @@ final class Base64Url
 
     public static function encode(string $bytes): string
     {
-        return rtrim(strtr(base64_encode($bytes), '+/', '-_'), '=');
+        return \rtrim(\strtr(\base64_encode($bytes), '+/', '-_'), '=');
     }
 
     /**
@@ -26,17 +26,14 @@ final class Base64Url
      */
     public static function decode(string $text): string
     {
-        $len = strlen($text);
+        $len = \strlen($text);
         if ($len % 4 === 1) {
             throw new WopException('base64url 长度非法: ' . $text);
         }
         if (strspn($text, self::ALPHABET) !== $len) {
             throw new WopException('base64url 含非法字符: ' . $text);
         }
-        $decoded = base64_decode(strtr($text, '-_', '+/'), true);
-        if ($decoded === false) {
-            throw new WopException('base64url 解码失败: ' . $text);
-        }
-        return $decoded;
+        // strspn 已保证字符集合法且长度非 %4==1，strict 解码必然成功
+        return \base64_decode(\strtr($text, '-_', '+/'), true);
     }
 }

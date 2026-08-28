@@ -27,7 +27,7 @@ final class TransportResponse
     public function header(string $name): ?string
     {
         foreach ($this->headers as $key => $value) {
-            if (strcasecmp($key, $name) === 0) {
+            if (\strcasecmp($key, $name) === 0) {
                 return $value;
             }
         }

@@ -30,18 +30,18 @@ final class SignHeader
      */
     public static function parse(string $header): self
     {
-        $trimmed = trim($header);
+        $trimmed = \trim($header);
         if ($trimmed === '') {
             throw new WopException('缺少 x-wop-sign');
         }
-        $sp = strpos($trimmed, ' ');
+        $sp = \strpos($trimmed, ' ');
         if ($sp === false || $sp <= 0) {
             throw new WopException('x-wop-sign 格式错误：缺少 securityReq 与 authString 的空格分隔');
         }
-        $securityReq = substr($trimmed, 0, $sp);
+        $securityReq = \substr($trimmed, 0, $sp);
         // 签名为 base64url（无 '/'），按 4 段拆分安全
-        $seg = explode('/', trim(substr($trimmed, $sp + 1)), 4);
-        if (count($seg) !== 4) {
+        $seg = \explode('/', \trim(\substr($trimmed, $sp + 1)), 4);
+        if (\count($seg) !== 4) {
             throw new WopException('x-wop-sign 格式错误：应为 <protocolVersion>/<expiredSeconds>/<signedHeaders>/<signature>');
         }
         if ($seg[0] !== self::PROTOCOL_VERSION) {
@@ -49,7 +49,7 @@ final class SignHeader
         }
         $expiredSeconds = self::parseExpiredSeconds($seg[1]);
         $signedHeaders = self::parseSignedHeaders($seg[2]);
-        if (trim($seg[3]) === '') {
+        if (\trim($seg[3]) === '') {
             throw new WopException('signature 为空');
         }
         return new self($securityReq, $seg[0], $expiredSeconds, $signedHeaders, $seg[3]);
@@ -63,7 +63,7 @@ final class SignHeader
     public static function build(string $securityReq, int $expiredSeconds, array $signedHeaders, string $signature): string
     {
         return $securityReq . ' ' . self::PROTOCOL_VERSION . '/' . $expiredSeconds
-            . '/' . implode(';', $signedHeaders) . '/' . $signature;
+            . '/' . \implode(';', $signedHeaders) . '/' . $signature;
     }
 
     /**
@@ -71,17 +71,17 @@ final class SignHeader
      */
     public static function tryExtractSecurityReq(?string $header): ?string
     {
-        if ($header === null || trim($header) === '') {
+        if ($header === null || \trim($header) === '') {
             return null;
         }
-        $trimmed = trim($header);
-        $sp = strpos($trimmed, ' ');
-        return $sp === false ? $trimmed : substr($trimmed, 0, $sp);
+        $trimmed = \trim($header);
+        $sp = \strpos($trimmed, ' ');
+        return $sp === false ? $trimmed : \substr($trimmed, 0, $sp);
     }
 
     private static function parseExpiredSeconds(string $raw): int
     {
-        if (!ctype_digit($raw)) {
+        if (!\ctype_digit($raw)) {
             throw new WopException('expiredSeconds 非法: ' . $raw);
         }
         $value = (int) $raw;
@@ -95,8 +95,8 @@ final class SignHeader
     private static function parseSignedHeaders(string $raw): array
     {
         $names = [];
-        foreach (explode(';', $raw) as $piece) {
-            $name = strtolower(trim($piece));
+        foreach (\explode(';', $raw) as $piece) {
+            $name = \strtolower(\trim($piece));
             if ($name !== '') {
                 $names[] = $name;
             }

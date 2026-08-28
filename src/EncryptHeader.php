@@ -21,7 +21,7 @@ final class EncryptHeader
 
     public function isEncrypted(): bool
     {
-        return strcasecmp($this->level, self::LEVEL_L2) === 0;
+        return \strcasecmp($this->level, self::LEVEL_L2) === 0;
     }
 
     /**
@@ -29,24 +29,24 @@ final class EncryptHeader
      */
     public static function parse(?string $header): self
     {
-        if ($header === null || trim($header) === '') {
+        if ($header === null || \trim($header) === '') {
             return new self(self::LEVEL_L0, null);
         }
-        $parts = explode(';', $header);
-        $level = trim($parts[0]);
+        $parts = \explode(';', $header);
+        $level = \trim($parts[0]);
         self::validateLevel($level);
         $dek = null;
-        foreach (array_slice($parts, 1) as $part) {
-            if (strncasecmp(trim($part), 'dek=', 4) === 0) {
-                $dek = trim(substr(trim($part), 4));
+        foreach (\array_slice($parts, 1) as $part) {
+            if (\strncasecmp(\trim($part), 'dek=', 4) === 0) {
+                $dek = \trim(\substr(\trim($part), 4));
             }
         }
-        return new self(strtoupper($level), $dek);
+        return new self(\strtoupper($level), $dek);
     }
 
     public static function validateLevel(string $level): void
     {
-        if (strcasecmp($level, self::LEVEL_L0) === 0 || strcasecmp($level, self::LEVEL_L2) === 0) {
+        if (\strcasecmp($level, self::LEVEL_L0) === 0 || \strcasecmp($level, self::LEVEL_L2) === 0) {
             return;
         }
         throw new WopException('不支持的加密级别 level=' . $level . '，仅支持 L0/L2');

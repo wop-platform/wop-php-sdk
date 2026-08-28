@@ -74,4 +74,28 @@ final class ContentDigestTest extends VectorCase
         assert(is_array($decoded));
         return $decoded;
     }
+
+
+    public function testValidateRejectsEmptyLabelAndHex(): void
+    {
+        foreach ([
+            ' 4cf7ab3bcefc20c8d6116d4ce9a3fdfb0d60ba5391472d7bffcf159da9e033ca' => '空标签',
+            'sha-256 ' => '空 hex',
+            'sha-256' => '无分隔',
+            'sha-256 4cf7ab3bcefc20c8d6116d4ce9a3fdfb0d60ba5391472d7bffcf159da9e033ca extra' => '三段',
+        ] as $value => $note) {
+            try {
+                ContentDigest::validate($value);
+                $this->fail("应拒绝（$note）: " . $value);
+            } catch (WopException) {
+                $this->addToAssertionCount(1); // 期望拒绝路径
+            }
+        }
+    }
+
+    public function testMatchesRejectsMalformedHeaderWithoutThrowing(): void
+    {
+        $this->assertFalse(ContentDigest::matches('not-a-digest', 'x'));
+        $this->assertFalse(ContentDigest::matches('sha-256 NOTHEX', 'x'));
+    }
 }

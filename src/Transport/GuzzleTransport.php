@@ -14,19 +14,16 @@ use Wop\Sdk\WopException;
 final class GuzzleTransport implements TransportInterface
 {
     private readonly Client $client;
-
     public function __construct(?Client $client = null)
     {
-        if (!class_exists(Client::class)) {
-            throw new WopException('GuzzleTransport 需要 guzzlehttp/guzzle（见 composer suggest）');
-        }
+        // guzzlehttp/guzzle 为 suggest/peer 依赖，缺失时 autoload 自然报错（README 注明）
         $this->client = $client ?? new Client(['http_errors' => false, 'timeout' => 30]);
     }
 
     public function send(string $method, string $url, array $headers, string $body): TransportResponse
     {
         try {
-            $response = $this->client->request(strtoupper($method), $url, [
+            $response = $this->client->request(\strtoupper($method), $url, [
                 'headers' => self::toAssoc($headers),
                 'body' => $body,
             ]);
@@ -36,7 +33,7 @@ final class GuzzleTransport implements TransportInterface
 
         $responseHeaders = [];
         foreach ($response->getHeaders() as $name => $values) {
-            $responseHeaders[$name] = implode(', ', $values);
+            $responseHeaders[$name] = \implode(', ', $values);
         }
         return new TransportResponse($response->getStatusCode(), $responseHeaders, (string) $response->getBody());
     }
@@ -49,9 +46,9 @@ final class GuzzleTransport implements TransportInterface
     {
         $assoc = [];
         foreach ($headerLines as $line) {
-            $pos = strpos($line, ':');
+            $pos = \strpos($line, ':');
             if ($pos !== false) {
-                $assoc[trim(substr($line, 0, $pos))] = trim(substr($line, $pos + 1));
+                $assoc[\trim(\substr($line, 0, $pos))] = \trim(\substr($line, $pos + 1));
             }
         }
         return $assoc;

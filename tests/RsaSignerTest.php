@@ -82,4 +82,18 @@ final class RsaSignerTest extends VectorCase
         $pubPem = "-----BEGIN PUBLIC KEY-----\n" . implode("\n", str_split(self::keys()['rsa3072']['publicSpkiB64'], 64)) . "\n-----END PUBLIC KEY-----\n";
         $this->assertTrue(RsaSigner::verify($vec['message'], $vec['expectedSigB64u'], $pubPem));
     }
+
+    /** 密钥解析失败：垃圾私钥加签抛明确 WopException，垃圾公钥验签降级 false（I7）。 */
+    public function testKeyParseFailures(): void
+    {
+        $this->expectException(\Wop\Sdk\WopException::class);
+        $this->expectExceptionMessage('RSA 私钥解析失败');
+        RsaSigner::sign('x', 'not-a-key');
+    }
+
+    public function testVerifyWithGarbagePublicKeyReturnsFalse(): void
+    {
+        $vec = self::vector('signature', 'rsa3072-sign');
+        $this->assertFalse(RsaSigner::verify($vec['message'], $vec['expectedSigB64u'], 'not-a-key'));
+    }
 }

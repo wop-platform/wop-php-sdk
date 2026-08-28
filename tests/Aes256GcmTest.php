@@ -70,4 +70,22 @@ final class Aes256GcmTest extends VectorCase
         $this->expectExceptionMessage('密钥长度');
         Aes256Gcm::encrypt('x', str_repeat("\x01", 16));
     }
+
+
+    public function testDecryptRejectsBadIvLength(): void
+    {
+        $this->assertNull(Aes256Gcm::decrypt(str_repeat('A', 32), str_repeat("\x00", 11), str_repeat("\x01", 32)));
+    }
+
+    public function testDecryptRejectsShortCipherTag(): void
+    {
+        $this->assertNull(Aes256Gcm::decrypt('short', str_repeat("\x00", 12), str_repeat("\x01", 32)));
+    }
+
+    public function testEncryptRejectsBadIvLength(): void
+    {
+        $this->expectException(\Wop\Sdk\WopException::class);
+        $this->expectExceptionMessage('IV 长度非法');
+        Aes256Gcm::encrypt('x', str_repeat("\x01", 32), str_repeat("\x00", 11));
+    }
 }
