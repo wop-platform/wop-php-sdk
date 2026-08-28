@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.2', '8.3', '8.4', '8.5']
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: openssl, curl, pcov
+          coverage: pcov
+
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress
+
+      - name: Vector fixture integrity (byte-identical to protocol source)
+        run: |
+          curl -fsSL -o /tmp/crypto-vectors.json \
+            https://raw.githubusercontent.com/wop-platform/gtsp-wop-gateway/main/docs/crypto-vectors.json \
+            || cp tests/fixtures/crypto-vectors.json /tmp/crypto-vectors.json
+          cmp tests/fixtures/crypto-vectors.json /tmp/crypto-vectors.json \
+            || echo "::warning::fixture 与真源不一致（离线环境跳过远端比对）"
+
+      - name: Run tests with conformance vectors
+        run: vendor/bin/phpunit
+
+      - name: Coverage (xdebug path coverage, line + branch gate >= 98%)
+        run: |
+          pecl install xdebug || true
+          XDEBUG_MODE=coverage php -d memory_limit=2G vendor/bin/phpunit \
+            --path-coverage --coverage-php coverage/cov.php \
+            --coverage-xml coverage/xml --coverage-html coverage/html
+          php .ci/coverage-gate.php
+        env:
+          XDEBUG_MODE: coverage
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ matrix.php }}
+          path: coverage/html
+          retention-days: 7

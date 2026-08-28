@@ -3,7 +3,7 @@
     "description": "WOP merchant PHP SDK: protocol core (sign/digest/digital envelope) + pluggable HTTP transport adapters",
     "type": "library",
     "license": "MIT",
-    "keywords": ["wop", "gateway", "sdk", "rsa", "oaep", "aes-gcm"],
+    "version": "0.1.0",
     "require": {
         "php": "^8.1",
         "phpseclib/phpseclib": "^3.0"
