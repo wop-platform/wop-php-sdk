@@ -19,8 +19,8 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: openssl, curl, pcov
-          coverage: pcov
+          extensions: openssl, curl
+          coverage: xdebug # pcov 无 path coverage 支持；xdebug 由 setup-php 预编译安装（runner 的 pecl 无 php_dir 写权限，必失败）
 
       - name: Install dependencies
         run: composer install --no-interaction --no-progress
@@ -38,7 +38,6 @@ jobs:
 
       - name: Coverage (xdebug path coverage, line + branch gate >= 98%)
         run: |
-          pecl install xdebug || true
           XDEBUG_MODE=coverage php -d memory_limit=2G vendor/bin/phpunit \
             --path-coverage --coverage-php coverage/cov.php \
             --coverage-xml coverage/xml --coverage-html coverage/html
