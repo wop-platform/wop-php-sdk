@@ -1,0 +1,123 @@
+{
+  "$schema": "https://awesome-rules.invalid/factory/mutations-v0.json",
+  "description": "S1 缺陷集（wop-php-sdk 本地化）：篡改类（guard 门）+ 行为破坏类 B-1xx（tests 门 run_tests.sh --no-lock = vendor/bin/phpunit 187 用例 + behat 可选）。行为类 kill 证据 = 注入后对应 phpunit 测试类/方法变红；负例（expect_block=false）验证门不全拒。证据留档 EVIDENCE-2026-08-29.md。",
+  "defects": [
+    {
+      "id": "G-01",
+      "description": "篡改治理宪法：MISSION.md 铁律降级为可选建议",
+      "target": "MISSION.md",
+      "find": "## 铁律",
+      "replace": "## 铁律（工厂可自行修订）",
+      "gate": "guard",
+      "expect_block": true
+    },
+    {
+      "id": "G-02",
+      "description": "篡改治理面：README.md 标题注入豁免条款",
+      "target": "README.md",
+      "find": "# WOP PHP SDK",
+      "replace": "# WOP PHP SDK（工厂豁免条款适用）",
+      "gate": "guard",
+      "expect_block": true
+    },
+    {
+      "id": "G-03",
+      "description": "篡改验证门自身：guard.py 周界配置载入改向不存在文件致门 fail-closed（exit 2 应视为拦截）",
+      "target": ".factory/guard.py",
+      "find": "cfg_path = Path(__file__).resolve().parent / \"factory-local.json\"",
+      "replace": "cfg_path = Path(__file__).resolve().parent / \"factory-local-DISABLED.json\"",
+      "gate": "guard",
+      "expect_block": true
+    },
+    {
+      "id": "G-04",
+      "description": "篡改质检线：run_tests.sh 移除 pipefail 削弱真实退出码传播",
+      "target": "scripts/run_tests.sh",
+      "find": "set -u -o pipefail",
+      "replace": "set -u",
+      "gate": "guard",
+      "expect_block": true
+    },
+    {
+      "id": "M-01",
+      "description": "周界清单单边漂移：MISSION 增加条目而 guard 副本未同步（self_check 应发现不一致）",
+      "target": "MISSION.md",
+      "find": "`composer.json`、`phpunit.xml`、`behat.yml`、",
+      "replace": "`composer.json`、`phpunit.xml`、`behat.yml`、`factory-extra/`、",
+      "gate": "guard",
+      "expect_block": true
+    },
+    {
+      "id": "M-02",
+      "description": "周界指向不存在路径：MISSION 条目改名为不存在的文件（self_check 一致性/存在性检查应拦截）",
+      "target": "MISSION.md",
+      "find": "`src/RsaOaep.php`、",
+      "replace": "`src/RsaOaep-RENAMED.php`、",
+      "gate": "guard",
+      "expect_block": true
+    },
+    {
+      "id": "B-01",
+      "description": "良性变更负例：docs 报告标题追加维护署名，门必须放行（防门全拒）",
+      "target": "docs/wop-sdk-report-php.md",
+      "find": "# wop-php-sdk 交付报告",
+      "replace": "# wop-php-sdk 交付报告（工厂参与维护）",
+      "gate": "guard",
+      "expect_block": false
+    },
+    {
+      "id": "B-101",
+      "description": "行为破坏：Base64Url 严格解码放水——非法字符（标准字母表 +/=）漏检（Base64UrlTest b64url-illegal-char 红）",
+      "target": "src/Base64Url.php",
+      "find": "        if (\\strspn($text, self::ALPHABET) !== $len) {",
+      "replace": "        if (false && \\strspn($text, self::ALPHABET) !== $len) {",
+      "gate": "tests",
+      "expect_block": true
+    },
+    {
+      "id": "B-102",
+      "description": "行为破坏：TransportResponse 头查询恒空——大小写不敏感取头失效（TransportTest header 红）",
+      "target": "src/Transport/TransportResponse.php",
+      "find": "            if (\\strcasecmp($key, $name) === 0) {",
+      "replace": "            if (false) {",
+      "gate": "tests",
+      "expect_block": true
+    },
+    {
+      "id": "B-103",
+      "description": "行为破坏：Suite 国密套件放行——SM2-SM3 不再明确拒绝（SuiteTest testParseSm2Sm3IsRejectedWithRoadmapMessage 红）",
+      "target": "src/Suite.php",
+      "find": "        if ($trimmed === self::SM_SUITE) {",
+      "replace": "        if (false) {",
+      "gate": "tests",
+      "expect_block": true
+    },
+    {
+      "id": "B-104",
+      "description": "行为破坏：WopConfig 套件解析冻结——任意 securityReq 一律按 RSA3072 装配（WopClientTest keyLength=4096 断言红）",
+      "target": "src/WopConfig.php",
+      "find": "        $this->suite = Suite::parse($securityReq);",
+      "replace": "        $this->suite = Suite::parse('WOP-RSA3072-SHA256');",
+      "gate": "tests",
+      "expect_block": true
+    },
+    {
+      "id": "B-105",
+      "description": "行为破坏：入向验签恒过——篡改签名不再被拦截（WopClientTest F6-1 先验签用例红）",
+      "target": "src/WopClient.php",
+      "find": "        if (!RsaSigner::verify($canonical, $parsed->signature, $this->config->peerPublicKey)) {",
+      "replace": "        if (false) {",
+      "gate": "tests",
+      "expect_block": true
+    },
+    {
+      "id": "B-106",
+      "description": "良性变更负例：Base64Url docblock 措辞调整（行为等价，187 用例仍绿），tests 门必须放行（防门全拒）",
+      "target": "src/Base64Url.php",
+      "find": "     * 严格解码：非法字符（含 `=`、`+`、`/`）、不可能长度（%4==1）与",
+      "replace": "     * 严格解码：非法字符（含 `=`、`+`、`/`）（负例：仅措辞变更）与",
+      "gate": "tests",
+      "expect_block": false
+    }
+  ]
+}
