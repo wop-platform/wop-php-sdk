@@ -13,6 +13,11 @@ use Wop\Sdk\WopException;
  */
 final class GuzzleTransport implements TransportInterface
 {
+    /** 响应体读取上限（10MB 线上体上限 + 信封膨胀余量，防失控读；与 .NET/Go/curl 对齐）。 */
+    public const MAX_RESPONSE_BYTES = 11 << 20;
+
+    private const READ_CHUNK = 65536;
+
     private readonly Client $client;
     public function __construct(?Client $client = null)
     {
@@ -26,6 +31,7 @@ final class GuzzleTransport implements TransportInterface
             $response = $this->client->request(\strtoupper($method), $url, [
                 'headers' => self::toAssoc($headers),
                 'body' => $body,
+                'stream' => true, // 流式响应体：限额在读取过程中生效
             ]);
         } catch (GuzzleException $e) {
             throw new WopException('传输失败: ' . $e->getMessage(), 0, $e);
@@ -35,7 +41,23 @@ final class GuzzleTransport implements TransportInterface
         foreach ($response->getHeaders() as $name => $values) {
             $responseHeaders[$name] = \implode(', ', $values);
         }
-        return new TransportResponse($response->getStatusCode(), $responseHeaders, (string) $response->getBody());
+        return new TransportResponse($response->getStatusCode(), $responseHeaders, self::readBodyLimited($response->getBody()));
+    }
+
+    /** 流式读取并累计字节；超限立即中止（防失控读）。 */
+    private static function readBodyLimited(\Psr\Http\Message\StreamInterface $stream): string
+    {
+        $chunks = [];
+        $received = 0;
+        while (!$stream->eof()) {
+            $chunk = $stream->read(self::READ_CHUNK);
+            $received += \strlen($chunk);
+            if ($received > self::MAX_RESPONSE_BYTES) {
+                throw new WopException('响应体超过 ' . self::MAX_RESPONSE_BYTES . ' 字节上限');
+            }
+            $chunks[] = $chunk;
+        }
+        return \implode('', $chunks);
     }
 
     /**

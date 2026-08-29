@@ -23,6 +23,13 @@ final class TransportTest extends TestCase
         $router = sys_get_temp_dir() . '/wop-sdk-echo-router.php';
         file_put_contents($router, <<<'PHP'
 <?php
+if (str_starts_with($_SERVER['REQUEST_URI'], '/huge')) {
+    // 定长响应体端点：验证传输层响应体上限（流式计数中止）
+    $n = (int) ($_GET['n'] ?? 0);
+    header('Content-Type: application/octet-stream');
+    echo str_repeat('a', $n);
+    return;
+}
 $in = [
     'method' => $_SERVER['REQUEST_METHOD'],
     'path' => $_SERVER['REQUEST_URI'],
@@ -109,6 +116,40 @@ PHP
         $this->assertSame($sign, $decoded['x_wop_sign'], 'x-wop-sign 头原样送达');
     }
 
+
+    // ==================== 响应体上限（11MB 级，流式计数中止） ====================
+
+    public function testCurlTransportRejectsOversizedResponseBody(): void
+    {
+        $transport = new CurlTransport();
+        $this->expectException(\Wop\Sdk\WopException::class);
+        $this->expectExceptionMessage('响应体超过');
+        $transport->send('GET', 'http://' . self::$baseUrl . '/huge?n=' . (CurlTransport::MAX_RESPONSE_BYTES + 1), [], '');
+    }
+
+    public function testCurlTransportAcceptsExactLimitBody(): void
+    {
+        $transport = new CurlTransport();
+        $response = $transport->send('GET', 'http://' . self::$baseUrl . '/huge?n=' . CurlTransport::MAX_RESPONSE_BYTES, [], '');
+        $this->assertTrue($response->isSuccess());
+        $this->assertSame(CurlTransport::MAX_RESPONSE_BYTES, strlen($response->body), '恰在上限的响应体须完整送达');
+    }
+
+    public function testGuzzleTransportRejectsOversizedResponseBody(): void
+    {
+        $transport = new GuzzleTransport();
+        $this->expectException(\Wop\Sdk\WopException::class);
+        $this->expectExceptionMessage('响应体超过');
+        $transport->send('GET', 'http://' . self::$baseUrl . '/huge?n=' . (GuzzleTransport::MAX_RESPONSE_BYTES + 1), [], '');
+    }
+
+    public function testGuzzleTransportAcceptsExactLimitBody(): void
+    {
+        $transport = new GuzzleTransport();
+        $response = $transport->send('GET', 'http://' . self::$baseUrl . '/huge?n=' . GuzzleTransport::MAX_RESPONSE_BYTES, [], '');
+        $this->assertTrue($response->isSuccess());
+        $this->assertSame(GuzzleTransport::MAX_RESPONSE_BYTES, strlen($response->body), '恰在上限的响应体须完整送达');
+    }
 
     public function testGuzzleTransportSkipsMalformedHeaderLines(): void
     {
