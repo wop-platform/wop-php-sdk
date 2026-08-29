@@ -541,4 +541,68 @@ final class WopClientTest extends VectorCase
         $this->assertFalse($result->ok);
         $this->assertStringContainsString('L0/L2', (string) $result->reason, '解析类失败语义明确（10.2）');
     }
+
+    /**
+     * dek 段字符集合法但 b64url 长度非法（%4==1，parse 前置校验只查字符集）：
+     * verify 内解包前显式 decode → 协议类明确拒绝，不得进入 RSA 解包。
+     */
+    public function testVerifyResponseNonBase64UrlLengthDekRejected(): void
+    {
+        [$headers, $wireBody] = $this->platformResponse('{"a":1}', 'L2', 1774340000000, 'respnonce00000000000000000000a');
+        $headers['x-wop-encrypt'] = 'L2;dek=abcde';
+        $this->reSignResponse($headers, $wireBody);
+        $result = $this->merchantClient->verifyResponse($headers, $wireBody, self::PATH);
+
+        $this->assertFalse($result->ok);
+        $this->assertStringContainsString('长度非法', (string) $result->reason, 'b64url 长度非法为公开结构知识（明确）');
+    }
+
+    /** 协议类失败 reason 文案钉死（消费 interop 冻结样本，商户排错界面价值）。 */
+    public function testVerifyResponseProtocolReasonTexts(): void
+    {
+        $fixture = json_decode((string) file_get_contents(__DIR__ . '/fixtures/interop-cases.json'), true);
+        $cases = [];
+        foreach ($fixture['cases'] as $case) {
+            $cases[$case['id']] = $case;
+        }
+        foreach ([
+            'n10-digest-not-signed' => 'signedHeaders',
+            'n15-digest-without-body' => '无响应体不应携带',
+            'n14-missing-signed-header' => '在响应中缺失',
+        ] as $id => $fragment) {
+            $case = $cases[$id];
+            $result = $this->merchantClient->verifyResponse(
+                $case['response']['headers'],
+                self::b64uDecode((string) $case['response']['wireBodyB64']),
+                (string) ($case['verifyPath'] ?? $case['response']['path']),
+                (string) $case['response']['method'],
+            );
+            $this->assertFalse($result->ok, $id);
+            $this->assertStringContainsString($fragment, (string) $result->reason, $id);
+        }
+
+        // 签名长度失配（63 字节 ≠ 384/8）：长度检查先于密码学验签，无需有效签名
+        [$headers, $wireBody] = $this->platformResponse('{"a":1}', 'L0', 1774340000000, 'respnonce00000000000000000000a');
+        $sign = \Wop\Sdk\SignHeader::parse($headers['x-wop-sign']);
+        $headers['x-wop-sign'] = 'WOP-RSA3072-SHA256 v1/1800/' . implode(';', $sign->signedHeaders)
+            . '/' . \Wop\Sdk\Base64Url::encode(str_repeat('A', 63));
+        $result = $this->merchantClient->verifyResponse($headers, $wireBody, self::PATH);
+        $this->assertFalse($result->ok);
+        $this->assertStringContainsString('签名长度', (string) $result->reason);
+    }
+
+    /** 响应套件与客户端装配套件不一致：明确报"不符"（合法套件间失配，非暂未支持）。 */
+    public function testVerifyResponseSuiteMismatchReasonText(): void
+    {
+        $client4096 = new WopClient(new WopConfig(
+            appKey: 'app_10012481831',
+            securityReq: 'WOP-RSA4096-SHA256',
+            privateKey: self::keys()['rsa4096']['privatePkcs8B64'],
+            peerPublicKey: self::keys()['rsa3072']['publicSpkiB64'],
+        ));
+        [$headers, $wireBody] = $this->platformResponse('{"a":1}', 'L0', 1774340000000, 'respnonce00000000000000000000a');
+        $result = $client4096->verifyResponse($headers, $wireBody, self::PATH);
+        $this->assertFalse($result->ok);
+        $this->assertStringContainsString('不符', (string) $result->reason);
+    }
 }

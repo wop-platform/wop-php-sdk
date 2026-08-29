@@ -112,4 +112,15 @@ final class UtilityGuardTest extends TestCase
     {
         $this->assertSame('', CanonicalRequest::urlencode(null));
     }
+
+    /** L2 信封空对象：报"缺少 encrypted"而非"须为 JSON 对象"（区分 D3 两类协议错误）。 */
+    public function testEnvelopeEmptyObjectReportsMissingField(): void
+    {
+        try {
+            \Wop\Sdk\EncryptedEnvelope::extract('{}');
+            $this->fail('{} 应拒绝');
+        } catch (\Wop\Sdk\WopException $e) {
+            $this->assertStringContainsString('缺少 encrypted', $e->getMessage());
+        }
+    }
 }

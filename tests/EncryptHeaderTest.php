@@ -65,4 +65,23 @@ final class EncryptHeaderTest extends TestCase
         // 'dek ='（键名内空格）不识别 → 视为无 dek 指令
         $this->assertNull(EncryptHeader::parse('L2; dek = xyz')->dek);
     }
+
+    /** spec:A2 密文段字符集前置校验：非 base64url 字母表（含 `=`）→ 协议类明确拒绝。 */
+    public function testParseRejectsNonBase64UrlDekCharset(): void
+    {
+        $this->expectException(WopException::class);
+        $this->expectExceptionMessage('dek 段须为 base64url 无填充');
+        EncryptHeader::parse('L2;dek=ab=c');
+    }
+
+    /** level 错误完整文案钉死（前缀"不支持的加密级别"是商户排错锚点）。 */
+    public function testParseRejectsUnknownLevelMessage(): void
+    {
+        try {
+            EncryptHeader::parse('L9');
+            $this->fail('L9 应拒绝');
+        } catch (WopException $e) {
+            $this->assertSame('不支持的加密级别 level=L9，仅支持 L0/L2', $e->getMessage());
+        }
+    }
 }

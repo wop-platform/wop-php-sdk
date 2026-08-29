@@ -74,8 +74,7 @@ final class RsaOaepTest extends VectorCase
     /** seed 长度非 32 字节 → 明确拒绝（结构知识，不进密码学区）。 */
     public function testWrapRejectsShortSeed(): void
     {
-        $this->expectException(\Wop\Sdk\WopException::class);
-        $this->expectExceptionMessage('OAEP seed');
+        $this->expectExceptionMessage('OAEP seed 须为 32 字节');
         RsaOaep::wrap('x', self::keys()['rsa3072']['publicSpkiB64'], 'short');
     }
 
@@ -98,5 +97,17 @@ final class RsaOaepTest extends VectorCase
     public function testUnwrapWithGarbagePrivateKeyReturnsNull(): void
     {
         $this->assertNull(RsaOaep::unwrap('AAAA', 'not-a-key'));
+    }
+
+    /** OAEP 容量边界：3072 位 k=384 → 明文恰 k-2·hLen-2=318 字节合法且可解。 */
+    public function testWrapAcceptsMaxBoundaryPlaintext(): void
+    {
+        $keys = self::keys()['rsa3072'];
+        $plain = str_repeat('M', 318);
+        $this->assertSame(
+            $plain,
+            RsaOaep::unwrap(RsaOaep::wrap($plain, $keys['publicSpkiB64']), $keys['privatePkcs8B64']),
+            'k-2*32-2 恰边界明文必须可包装可解包',
+        );
     }
 }

@@ -96,4 +96,23 @@ final class ContentDigestTest extends VectorCase
         $this->assertFalse(ContentDigest::matches('not-a-digest', 'x'));
         $this->assertFalse(ContentDigest::matches('sha-256 NOTHEX', 'x'));
     }
+
+    /** 解析类负向量文案钉死（格式/族不符/摘要格式三分支）。 */
+    public function testValidateRejectMessageTexts(): void
+    {
+        $suite = Suite::parse('WOP-RSA3072-SHA256');
+        foreach ([
+            'sha-256' => '应为',
+            'sha-256  ' => '应为', // 双空格：三段 explode 走 count 分支（非空段分支）
+            'sm3 ' . str_repeat('a', 64) => '算法标签与套件族不符',
+            'sha-256 ' . strtoupper(str_repeat('a', 64)) => '摘要格式错误',
+        ] as $value => $fragment) {
+            try {
+                ContentDigest::validate($value, $suite);
+                $this->fail("应拒绝: {$value}");
+            } catch (WopException $e) {
+                $this->assertStringContainsString($fragment, $e->getMessage(), $value);
+            }
+        }
+    }
 }

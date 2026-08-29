@@ -150,4 +150,21 @@ final class Base64UrlTest extends VectorCase
             }
         }
     }
+
+    /**
+     * decodeIndex（私有纯函数）字母表映射表驱动：钉死各分支边界字符
+     * （A/Z/a/z/0/9/-/_）与算术偏移——D1 尾随位校验的正确性根基。
+     */
+    public function testDecodeIndexAlphabetMapping(): void
+    {
+        $method = new \ReflectionMethod(Base64Url::class, 'decodeIndex');
+        foreach ([
+            'A' => 0, 'B' => 1, 'Z' => 25,
+            'a' => 26, 'b' => 27, 'z' => 51,
+            '0' => 52, '1' => 53, '9' => 61,
+            '-' => 62, '_' => 63,
+        ] as $char => $index) {
+            $this->assertSame($index, $method->invoke(null, $char), "decodeIndex('{$char}')");
+        }
+    }
 }

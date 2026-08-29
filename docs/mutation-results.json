@@ -1,0 +1,4448 @@
+[
+    {
+        "file": "src/Aes256Gcm.php",
+        "line": 13,
+        "op": "int-plus1",
+        "original": "32",
+        "replacement": "33",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Aes256Gcm.php",
+        "line": 13,
+        "op": "int-zero",
+        "original": "32",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Aes256Gcm.php",
+        "line": 14,
+        "op": "int-plus1",
+        "original": "12",
+        "replacement": "13",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Aes256Gcm.php",
+        "line": 14,
+        "op": "int-zero",
+        "original": "12",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Aes256Gcm.php",
+        "line": 15,
+        "op": "int-plus1",
+        "original": "16",
+        "replacement": "17",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Aes256Gcm.php",
+        "line": 15,
+        "op": "int-zero",
+        "original": "16",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Aes256Gcm.php",
+        "line": 27,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Aes256Gcm.php",
+        "line": 29,
+        "op": "neq-neg",
+        "original": "!==",
+        "replacement": "===",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Aes256Gcm.php",
+        "line": 30,
+        "op": "str-empty",
+        "original": "'IV \u957f\u5ea6\u975e\u6cd5\uff08\u987b 12 \u5b57\u8282\uff09'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Aes256Gcm.php",
+        "line": 33,
+        "op": "str-empty",
+        "original": "'aes-256-gcm'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Aes256Gcm.php",
+        "line": 43,
+        "op": "neq-neg",
+        "original": "!==",
+        "replacement": "===",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Aes256Gcm.php",
+        "line": 43,
+        "op": "logic",
+        "original": "||",
+        "replacement": "&&",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/Aes256Gcm.php",
+        "line": 43,
+        "op": "rel-lt",
+        "original": "<",
+        "replacement": "<=",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/Aes256Gcm.php",
+        "line": 48,
+        "op": "str-empty",
+        "original": "'aes-256-gcm'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Aes256Gcm.php",
+        "line": 49,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Aes256Gcm.php",
+        "line": 49,
+        "op": "bool-flip",
+        "original": "false",
+        "replacement": "true",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Aes256Gcm.php",
+        "line": 54,
+        "op": "neq-neg",
+        "original": "!==",
+        "replacement": "===",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Aes256Gcm.php",
+        "line": 55,
+        "op": "str-empty",
+        "original": "'AES-256 \u5bc6\u94a5\u957f\u5ea6\u975e\u6cd5\uff08\u987b 32 \u5b57\u8282\uff09'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 13,
+        "op": "str-empty",
+        "original": "'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 21,
+        "op": "str-empty",
+        "original": "'+/'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 21,
+        "op": "str-empty",
+        "original": "'-_'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 21,
+        "op": "str-empty",
+        "original": "'='",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 32,
+        "op": "int-plus1",
+        "original": "4",
+        "replacement": "5",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 32,
+        "op": "int-zero",
+        "original": "4",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 32,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 32,
+        "op": "int-plus1",
+        "original": "1",
+        "replacement": "2",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 32,
+        "op": "int-zero",
+        "original": "1",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 33,
+        "op": "str-empty",
+        "original": "'base64url \u4e32\u957f\u5ea6\u975e\u6cd5\uff08%4==1\uff09'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 35,
+        "op": "neq-neg",
+        "original": "!==",
+        "replacement": "===",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 36,
+        "op": "str-empty",
+        "original": "'base64url \u4e32\u542b\u975e\u6cd5\u5b57\u7b26\uff08\u987b\u65e0\u586b\u5145\u3001URL \u5b57\u6bcd\u8868\uff09'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 41,
+        "op": "int-plus1",
+        "original": "4",
+        "replacement": "5",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 41,
+        "op": "int-zero",
+        "original": "4",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 42,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 42,
+        "op": "int-plus1",
+        "original": "2",
+        "replacement": "3",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 42,
+        "op": "int-zero",
+        "original": "2",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 42,
+        "op": "logic",
+        "original": "||",
+        "replacement": "&&",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 42,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 42,
+        "op": "int-plus1",
+        "original": "3",
+        "replacement": "4",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 42,
+        "op": "int-zero",
+        "original": "3",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 43,
+        "op": "arith-minus",
+        "original": "-",
+        "replacement": "+",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 43,
+        "op": "int-plus1",
+        "original": "1",
+        "replacement": "2",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 43,
+        "op": "int-zero",
+        "original": "1",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 44,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 44,
+        "op": "int-plus1",
+        "original": "2",
+        "replacement": "3",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 44,
+        "op": "int-zero",
+        "original": "2",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 44,
+        "op": "int-plus1",
+        "original": "0xF",
+        "replacement": "1",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 44,
+        "op": "int-zero",
+        "original": "0xF",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 44,
+        "op": "int-plus1",
+        "original": "0x3",
+        "replacement": "1",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 44,
+        "op": "int-zero",
+        "original": "0x3",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 45,
+        "op": "neq-neg",
+        "original": "!==",
+        "replacement": "===",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 46,
+        "op": "str-empty",
+        "original": "'base64url \u4e32\u542b\u975e\u89c4\u8303\u5c3e\u968f\u4f4d'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 50,
+        "op": "str-empty",
+        "original": "'-_'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 50,
+        "op": "str-empty",
+        "original": "'+/'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 50,
+        "op": "bool-flip",
+        "original": "true",
+        "replacement": "false",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 56,
+        "op": "rel-gte",
+        "original": ">=",
+        "replacement": ">",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 56,
+        "op": "int-plus1",
+        "original": "65",
+        "replacement": "66",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 56,
+        "op": "int-zero",
+        "original": "65",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 56,
+        "op": "logic",
+        "original": "&&",
+        "replacement": "||",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 56,
+        "op": "rel-lte",
+        "original": "<=",
+        "replacement": "<",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 56,
+        "op": "int-plus1",
+        "original": "90",
+        "replacement": "91",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 56,
+        "op": "int-zero",
+        "original": "90",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 57,
+        "op": "arith-minus",
+        "original": "-",
+        "replacement": "+",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 57,
+        "op": "int-plus1",
+        "original": "65",
+        "replacement": "66",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 57,
+        "op": "int-zero",
+        "original": "65",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 59,
+        "op": "rel-gte",
+        "original": ">=",
+        "replacement": ">",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 59,
+        "op": "int-plus1",
+        "original": "97",
+        "replacement": "98",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 59,
+        "op": "int-zero",
+        "original": "97",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 59,
+        "op": "logic",
+        "original": "&&",
+        "replacement": "||",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 59,
+        "op": "rel-lte",
+        "original": "<=",
+        "replacement": "<",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 59,
+        "op": "int-plus1",
+        "original": "122",
+        "replacement": "123",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 59,
+        "op": "int-zero",
+        "original": "122",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 60,
+        "op": "arith-minus",
+        "original": "-",
+        "replacement": "+",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 60,
+        "op": "int-plus1",
+        "original": "97",
+        "replacement": "98",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 60,
+        "op": "int-zero",
+        "original": "97",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 60,
+        "op": "arith-plus",
+        "original": "+",
+        "replacement": "-",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 60,
+        "op": "int-plus1",
+        "original": "26",
+        "replacement": "27",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 60,
+        "op": "int-zero",
+        "original": "26",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 62,
+        "op": "rel-gte",
+        "original": ">=",
+        "replacement": ">",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 62,
+        "op": "int-plus1",
+        "original": "48",
+        "replacement": "49",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 62,
+        "op": "int-zero",
+        "original": "48",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 62,
+        "op": "logic",
+        "original": "&&",
+        "replacement": "||",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 62,
+        "op": "rel-lte",
+        "original": "<=",
+        "replacement": "<",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 62,
+        "op": "int-plus1",
+        "original": "57",
+        "replacement": "58",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 62,
+        "op": "int-zero",
+        "original": "57",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 63,
+        "op": "arith-minus",
+        "original": "-",
+        "replacement": "+",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 63,
+        "op": "int-plus1",
+        "original": "48",
+        "replacement": "49",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 63,
+        "op": "int-zero",
+        "original": "48",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 63,
+        "op": "arith-plus",
+        "original": "+",
+        "replacement": "-",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 63,
+        "op": "int-plus1",
+        "original": "52",
+        "replacement": "53",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 63,
+        "op": "int-zero",
+        "original": "52",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 65,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 65,
+        "op": "int-plus1",
+        "original": "45",
+        "replacement": "46",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 65,
+        "op": "int-zero",
+        "original": "45",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 65,
+        "op": "int-plus1",
+        "original": "62",
+        "replacement": "63",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 65,
+        "op": "int-zero",
+        "original": "62",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 65,
+        "op": "int-plus1",
+        "original": "63",
+        "replacement": "64",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Base64Url.php",
+        "line": 65,
+        "op": "int-zero",
+        "original": "63",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/CanonicalRequest.php",
+        "line": 23,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/CanonicalRequest.php",
+        "line": 23,
+        "op": "logic",
+        "original": "||",
+        "replacement": "&&",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/CanonicalRequest.php",
+        "line": 23,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/CanonicalRequest.php",
+        "line": 29,
+        "op": "str-empty",
+        "original": "'~'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/CanonicalRequest.php",
+        "line": 29,
+        "op": "str-empty",
+        "original": "'%7E'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/CanonicalRequest.php",
+        "line": 30,
+        "op": "str-empty",
+        "original": "'%2A'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/CanonicalRequest.php",
+        "line": 30,
+        "op": "str-empty",
+        "original": "'*'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/CanonicalRequest.php",
+        "line": 39,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/CanonicalRequest.php",
+        "line": 39,
+        "op": "logic",
+        "original": "||",
+        "replacement": "&&",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/CanonicalRequest.php",
+        "line": 39,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/CanonicalRequest.php",
+        "line": 42,
+        "op": "str-empty",
+        "original": "'/\\s+/u'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/CanonicalRequest.php",
+        "line": 42,
+        "op": "str-empty",
+        "original": "' '",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/CanonicalRequest.php",
+        "line": 53,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/CanonicalRequest.php",
+        "line": 63,
+        "op": "str-empty",
+        "original": "':'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/ContentDigest.php",
+        "line": 13,
+        "op": "str-empty",
+        "original": "'sha-256'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/ContentDigest.php",
+        "line": 21,
+        "op": "str-empty",
+        "original": "'sha256'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/ContentDigest.php",
+        "line": 29,
+        "op": "str-empty",
+        "original": "' '",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/ContentDigest.php",
+        "line": 37,
+        "op": "str-empty",
+        "original": "' '",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/ContentDigest.php",
+        "line": 38,
+        "op": "neq-neg",
+        "original": "!==",
+        "replacement": "===",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/ContentDigest.php",
+        "line": 38,
+        "op": "int-plus1",
+        "original": "2",
+        "replacement": "3",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/ContentDigest.php",
+        "line": 38,
+        "op": "int-zero",
+        "original": "2",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/ContentDigest.php",
+        "line": 38,
+        "op": "logic",
+        "original": "||",
+        "replacement": "&&",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/ContentDigest.php",
+        "line": 38,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/ContentDigest.php",
+        "line": 38,
+        "op": "logic",
+        "original": "||",
+        "replacement": "&&",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/ContentDigest.php",
+        "line": 38,
+        "op": "int-plus1",
+        "original": "1",
+        "replacement": "2",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/ContentDigest.php",
+        "line": 38,
+        "op": "int-zero",
+        "original": "1",
+        "replacement": "0",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/ContentDigest.php",
+        "line": 38,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/ContentDigest.php",
+        "line": 39,
+        "op": "str-empty",
+        "original": "'x-wop-content-digest \u683c\u5f0f\u9519\u8bef\uff08\u5e94\u4e3a <alg> \u6070\u4e00\u7a7a\u683c <hex>\uff09: '",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/ContentDigest.php",
+        "line": 43,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/ContentDigest.php",
+        "line": 44,
+        "op": "not-del",
+        "original": "!",
+        "replacement": "",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/ContentDigest.php",
+        "line": 44,
+        "op": "bool-flip",
+        "original": "true",
+        "replacement": "false",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/ContentDigest.php",
+        "line": 45,
+        "op": "str-empty",
+        "original": "'x-wop-content-digest \u7b97\u6cd5\u6807\u7b7e\u4e0e\u5957\u4ef6\u65cf\u4e0d\u7b26: '",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/ContentDigest.php",
+        "line": 47,
+        "op": "not-del",
+        "original": "!",
+        "replacement": "",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/ContentDigest.php",
+        "line": 47,
+        "op": "logic",
+        "original": "||",
+        "replacement": "&&",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/ContentDigest.php",
+        "line": 47,
+        "op": "neq-neg",
+        "original": "!==",
+        "replacement": "===",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/ContentDigest.php",
+        "line": 47,
+        "op": "logic",
+        "original": "||",
+        "replacement": "&&",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/ContentDigest.php",
+        "line": 47,
+        "op": "neq-neg",
+        "original": "!==",
+        "replacement": "===",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/ContentDigest.php",
+        "line": 47,
+        "op": "int-plus1",
+        "original": "64",
+        "replacement": "65",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/ContentDigest.php",
+        "line": 47,
+        "op": "int-zero",
+        "original": "64",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/ContentDigest.php",
+        "line": 48,
+        "op": "str-empty",
+        "original": "'x-wop-content-digest \u6458\u8981\u683c\u5f0f\u9519\u8bef\uff08\u987b 64 \u4f4d\u5c0f\u5199 hex\uff09: '",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/ContentDigest.php",
+        "line": 50,
+        "op": "bool-flip",
+        "original": "true",
+        "replacement": "false",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/ContentDigest.php",
+        "line": 58,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/ContentDigest.php",
+        "line": 59,
+        "op": "bool-flip",
+        "original": "false",
+        "replacement": "true",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/ContentDigest.php",
+        "line": 64,
+        "op": "bool-flip",
+        "original": "false",
+        "replacement": "true",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/ContentDigest.php",
+        "line": 66,
+        "op": "str-empty",
+        "original": "' '",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/DekPayload.php",
+        "line": 13,
+        "op": "str-empty",
+        "original": "'AES-256-GCM'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/DekPayload.php",
+        "line": 14,
+        "op": "str-empty",
+        "original": "'SM4-GCM'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/DekPayload.php",
+        "line": 20,
+        "op": "str-empty",
+        "original": "'WOP-SM2-SM3'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/DekPayload.php",
+        "line": 25,
+        "op": "int-plus1",
+        "original": "32",
+        "replacement": "33",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/DekPayload.php",
+        "line": 25,
+        "op": "int-zero",
+        "original": "32",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/DekPayload.php",
+        "line": 26,
+        "op": "int-plus1",
+        "original": "16",
+        "replacement": "17",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/DekPayload.php",
+        "line": 26,
+        "op": "int-zero",
+        "original": "16",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/DekPayload.php",
+        "line": 29,
+        "op": "int-plus1",
+        "original": "12",
+        "replacement": "13",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/DekPayload.php",
+        "line": 29,
+        "op": "int-zero",
+        "original": "12",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/DekPayload.php",
+        "line": 40,
+        "op": "str-empty",
+        "original": "'$'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/DekPayload.php",
+        "line": 40,
+        "op": "str-empty",
+        "original": "'$'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/DekPayload.php",
+        "line": 48,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/DekPayload.php",
+        "line": 60,
+        "op": "str-empty",
+        "original": "'$'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/DekPayload.php",
+        "line": 61,
+        "op": "neq-neg",
+        "original": "!==",
+        "replacement": "===",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/DekPayload.php",
+        "line": 61,
+        "op": "int-plus1",
+        "original": "3",
+        "replacement": "4",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/DekPayload.php",
+        "line": 61,
+        "op": "int-zero",
+        "original": "3",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/DekPayload.php",
+        "line": 62,
+        "op": "str-empty",
+        "original": "'DEK \u8f7d\u8377\u683c\u5f0f\u9519\u8bef\uff08\u5e94\u4e3a alg$key$iv\uff09'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/DekPayload.php",
+        "line": 65,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/DekPayload.php",
+        "line": 65,
+        "op": "logic",
+        "original": "||",
+        "replacement": "&&",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/DekPayload.php",
+        "line": 65,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/DekPayload.php",
+        "line": 65,
+        "op": "logic",
+        "original": "||",
+        "replacement": "&&",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/DekPayload.php",
+        "line": 65,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/DekPayload.php",
+        "line": 66,
+        "op": "str-empty",
+        "original": "'DEK \u8f7d\u8377\u683c\u5f0f\u9519\u8bef\uff08\u5b58\u5728\u7a7a\u6bb5\uff09'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/DekPayload.php",
+        "line": 69,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/DekPayload.php",
+        "line": 70,
+        "op": "str-empty",
+        "original": "'DEK \u8f7d\u8377 alg \u4e0d\u5728\u652f\u6301\u5217\u8868\uff08AES-256-GCM/SM4-GCM\uff09: '",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/DekPayload.php",
+        "line": 74,
+        "op": "neq-neg",
+        "original": "!==",
+        "replacement": "===",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/DekPayload.php",
+        "line": 75,
+        "op": "str-empty",
+        "original": "'DEK \u8f7d\u8377 alg '",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/DekPayload.php",
+        "line": 75,
+        "op": "str-empty",
+        "original": "' \u5bc6\u94a5\u987b '",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/DekPayload.php",
+        "line": 75,
+        "op": "str-empty",
+        "original": "' \u5b57\u8282\uff0c\u5b9e\u9645 '",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/DekPayload.php",
+        "line": 77,
+        "op": "neq-neg",
+        "original": "!==",
+        "replacement": "===",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/DekPayload.php",
+        "line": 78,
+        "op": "str-empty",
+        "original": "'DEK \u8f7d\u8377 iv \u987b '",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/DekPayload.php",
+        "line": 78,
+        "op": "str-empty",
+        "original": "' \u5b57\u8282\uff0c\u5b9e\u9645 '",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/EncryptHeader.php",
+        "line": 13,
+        "op": "str-empty",
+        "original": "'L0'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/EncryptHeader.php",
+        "line": 14,
+        "op": "str-empty",
+        "original": "'L2'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/EncryptHeader.php",
+        "line": 16,
+        "op": "str-empty",
+        "original": "'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/EncryptHeader.php",
+        "line": 26,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/EncryptHeader.php",
+        "line": 34,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/EncryptHeader.php",
+        "line": 34,
+        "op": "logic",
+        "original": "||",
+        "replacement": "&&",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/EncryptHeader.php",
+        "line": 34,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/EncryptHeader.php",
+        "line": 37,
+        "op": "str-empty",
+        "original": "';'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/EncryptHeader.php",
+        "line": 41,
+        "op": "int-plus1",
+        "original": "1",
+        "replacement": "2",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/EncryptHeader.php",
+        "line": 41,
+        "op": "int-zero",
+        "original": "1",
+        "replacement": "0",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/EncryptHeader.php",
+        "line": 42,
+        "op": "str-empty",
+        "original": "'dek='",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/EncryptHeader.php",
+        "line": 42,
+        "op": "int-plus1",
+        "original": "4",
+        "replacement": "5",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/EncryptHeader.php",
+        "line": 42,
+        "op": "int-zero",
+        "original": "4",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/EncryptHeader.php",
+        "line": 42,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/EncryptHeader.php",
+        "line": 43,
+        "op": "int-plus1",
+        "original": "4",
+        "replacement": "5",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/EncryptHeader.php",
+        "line": 43,
+        "op": "int-zero",
+        "original": "4",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/EncryptHeader.php",
+        "line": 47,
+        "op": "neq-neg",
+        "original": "!==",
+        "replacement": "===",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/EncryptHeader.php",
+        "line": 47,
+        "op": "logic",
+        "original": "&&",
+        "replacement": "||",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/EncryptHeader.php",
+        "line": 47,
+        "op": "neq-neg",
+        "original": "!==",
+        "replacement": "===",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/EncryptHeader.php",
+        "line": 48,
+        "op": "str-empty",
+        "original": "'x-wop-encrypt dek \u6bb5\u987b\u4e3a base64url \u65e0\u586b\u5145'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/EncryptHeader.php",
+        "line": 55,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/EncryptHeader.php",
+        "line": 55,
+        "op": "logic",
+        "original": "||",
+        "replacement": "&&",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/EncryptHeader.php",
+        "line": 55,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/EncryptHeader.php",
+        "line": 58,
+        "op": "str-empty",
+        "original": "'\u4e0d\u652f\u6301\u7684\u52a0\u5bc6\u7ea7\u522b level='",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/EncryptHeader.php",
+        "line": 58,
+        "op": "str-empty",
+        "original": "'\uff0c\u4ec5\u652f\u6301 L0/L2'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/EncryptHeader.php",
+        "line": 63,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/EncryptHeader.php",
+        "line": 63,
+        "op": "str-empty",
+        "original": "';dek='",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/EncryptedEnvelope.php",
+        "line": 20,
+        "op": "str-empty",
+        "original": "'{\"encrypted\":\"'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/EncryptedEnvelope.php",
+        "line": 20,
+        "op": "str-empty",
+        "original": "'\"}'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/EncryptedEnvelope.php",
+        "line": 30,
+        "op": "bool-flip",
+        "original": "true",
+        "replacement": "false",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/EncryptedEnvelope.php",
+        "line": 30,
+        "op": "int-plus1",
+        "original": "512",
+        "replacement": "513",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/EncryptedEnvelope.php",
+        "line": 30,
+        "op": "int-zero",
+        "original": "512",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/EncryptedEnvelope.php",
+        "line": 32,
+        "op": "str-empty",
+        "original": "'L2 \u4fe1\u5c01\u987b\u4e3a JSON \u5bf9\u8c61'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/EncryptedEnvelope.php",
+        "line": 34,
+        "op": "not-del",
+        "original": "!",
+        "replacement": "",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/EncryptedEnvelope.php",
+        "line": 35,
+        "op": "str-empty",
+        "original": "'L2 \u4fe1\u5c01\u987b\u4e3a JSON \u5bf9\u8c61'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/EncryptedEnvelope.php",
+        "line": 38,
+        "op": "neq-neg",
+        "original": "!==",
+        "replacement": "===",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/EncryptedEnvelope.php",
+        "line": 38,
+        "op": "logic",
+        "original": "&&",
+        "replacement": "||",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/EncryptedEnvelope.php",
+        "line": 39,
+        "op": "str-empty",
+        "original": "'L2 \u4fe1\u5c01\u987b\u4e3a JSON \u5bf9\u8c61'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/EncryptedEnvelope.php",
+        "line": 41,
+        "op": "not-del",
+        "original": "!",
+        "replacement": "",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/EncryptedEnvelope.php",
+        "line": 41,
+        "op": "str-empty",
+        "original": "'encrypted'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/EncryptedEnvelope.php",
+        "line": 42,
+        "op": "str-empty",
+        "original": "'L2 \u4fe1\u5c01\u7f3a\u5c11 encrypted \u5b57\u6bb5'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/EncryptedEnvelope.php",
+        "line": 44,
+        "op": "str-empty",
+        "original": "'encrypted'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/EncryptedEnvelope.php",
+        "line": 45,
+        "op": "not-del",
+        "original": "!",
+        "replacement": "",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/EncryptedEnvelope.php",
+        "line": 45,
+        "op": "logic",
+        "original": "||",
+        "replacement": "&&",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/EncryptedEnvelope.php",
+        "line": 45,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/EncryptedEnvelope.php",
+        "line": 46,
+        "op": "str-empty",
+        "original": "'L2 \u4fe1\u5c01 encrypted \u5b57\u6bb5\u987b\u4e3a\u975e\u7a7a\u5b57\u7b26\u4e32'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/RequestDraft.php",
+        "line": 30,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/RsaOaep.php",
+        "line": 20,
+        "op": "str-empty",
+        "original": "'sha256'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/RsaOaep.php",
+        "line": 21,
+        "op": "int-plus1",
+        "original": "32",
+        "replacement": "33",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/RsaOaep.php",
+        "line": 21,
+        "op": "int-zero",
+        "original": "32",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/RsaOaep.php",
+        "line": 42,
+        "op": "arith-plus",
+        "original": "+",
+        "replacement": "-",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/RsaOaep.php",
+        "line": 42,
+        "op": "int-plus1",
+        "original": "7",
+        "replacement": "8",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/RsaOaep.php",
+        "line": 42,
+        "op": "int-zero",
+        "original": "7",
+        "replacement": "0",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/RsaOaep.php",
+        "line": 42,
+        "op": "int-plus1",
+        "original": "8",
+        "replacement": "9",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/RsaOaep.php",
+        "line": 42,
+        "op": "int-zero",
+        "original": "8",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/RsaOaep.php",
+        "line": 63,
+        "op": "neq-neg",
+        "original": "!==",
+        "replacement": "===",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/RsaOaep.php",
+        "line": 64,
+        "op": "str-empty",
+        "original": "'OAEP seed \u987b\u4e3a '",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/RsaOaep.php",
+        "line": 64,
+        "op": "str-empty",
+        "original": "' \u5b57\u8282'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/RsaOaep.php",
+        "line": 67,
+        "op": "rel-gt",
+        "original": ">",
+        "replacement": ">=",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/RsaOaep.php",
+        "line": 67,
+        "op": "arith-minus",
+        "original": "-",
+        "replacement": "+",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/RsaOaep.php",
+        "line": 67,
+        "op": "int-plus1",
+        "original": "2",
+        "replacement": "3",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/RsaOaep.php",
+        "line": 67,
+        "op": "int-zero",
+        "original": "2",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/RsaOaep.php",
+        "line": 67,
+        "op": "arith-minus",
+        "original": "-",
+        "replacement": "+",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/RsaOaep.php",
+        "line": 67,
+        "op": "int-plus1",
+        "original": "2",
+        "replacement": "3",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/RsaOaep.php",
+        "line": 67,
+        "op": "int-zero",
+        "original": "2",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/RsaOaep.php",
+        "line": 68,
+        "op": "str-empty",
+        "original": "'RSA-OAEP \u660e\u6587\u8d85\u957f'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/RsaOaep.php",
+        "line": 70,
+        "op": "bool-flip",
+        "original": "true",
+        "replacement": "false",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/RsaOaep.php",
+        "line": 71,
+        "op": "arith-minus",
+        "original": "-",
+        "replacement": "+",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/RsaOaep.php",
+        "line": 71,
+        "op": "arith-minus",
+        "original": "-",
+        "replacement": "+",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/RsaOaep.php",
+        "line": 71,
+        "op": "int-plus1",
+        "original": "2",
+        "replacement": "3",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/RsaOaep.php",
+        "line": 71,
+        "op": "int-zero",
+        "original": "2",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/RsaOaep.php",
+        "line": 71,
+        "op": "arith-minus",
+        "original": "-",
+        "replacement": "+",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/RsaOaep.php",
+        "line": 71,
+        "op": "int-plus1",
+        "original": "2",
+        "replacement": "3",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/RsaOaep.php",
+        "line": 71,
+        "op": "int-zero",
+        "original": "2",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/RsaOaep.php",
+        "line": 73,
+        "op": "bit-xor",
+        "original": "^",
+        "replacement": "|",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/RsaOaep.php",
+        "line": 73,
+        "op": "arith-minus",
+        "original": "-",
+        "replacement": "+",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/RsaOaep.php",
+        "line": 73,
+        "op": "arith-minus",
+        "original": "-",
+        "replacement": "+",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/RsaOaep.php",
+        "line": 73,
+        "op": "int-plus1",
+        "original": "1",
+        "replacement": "2",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/RsaOaep.php",
+        "line": 73,
+        "op": "int-zero",
+        "original": "1",
+        "replacement": "0",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/RsaOaep.php",
+        "line": 74,
+        "op": "bit-xor",
+        "original": "^",
+        "replacement": "|",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/RsaOaep.php",
+        "line": 82,
+        "op": "rel-lt",
+        "original": "<",
+        "replacement": "<=",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/RsaOaep.php",
+        "line": 83,
+        "op": "str-empty",
+        "original": "'N'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/RsaOaep.php",
+        "line": 83,
+        "op": "bool-flip",
+        "original": "true",
+        "replacement": "false",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/RsaOaep.php",
+        "line": 91,
+        "op": "neq-neg",
+        "original": "!==",
+        "replacement": "===",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/RsaOaep.php",
+        "line": 100,
+        "op": "str-empty",
+        "original": "'RSA \u79c1\u94a5\u89e3\u6790\u5931\u8d25: '",
+        "replacement": "''",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/RsaOaep.php",
+        "line": 108,
+        "op": "neq-neg",
+        "original": "!==",
+        "replacement": "===",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/RsaOaep.php",
+        "line": 114,
+        "op": "str-empty",
+        "original": "'RSA \u516c\u94a5\u89e3\u6790\u5931\u8d25: '",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/RsaSigner.php",
+        "line": 43,
+        "op": "bool-flip",
+        "original": "false",
+        "replacement": "true",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/RsaSigner.php",
+        "line": 50,
+        "op": "neq-neg",
+        "original": "!==",
+        "replacement": "===",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/RsaSigner.php",
+        "line": 56,
+        "op": "str-empty",
+        "original": "'RSA \u79c1\u94a5\u89e3\u6790\u5931\u8d25\uff08\u5e94\u4e3a PKCS8 PEM \u6216 Base64\uff09: '",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/RsaSigner.php",
+        "line": 64,
+        "op": "neq-neg",
+        "original": "!==",
+        "replacement": "===",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/RsaSigner.php",
+        "line": 70,
+        "op": "str-empty",
+        "original": "'RSA \u516c\u94a5\u89e3\u6790\u5931\u8d25\uff08\u5e94\u4e3a SPKI PEM \u6216 Base64\uff09: '",
+        "replacement": "''",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 13,
+        "op": "str-empty",
+        "original": "'v1'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 14,
+        "op": "int-plus1",
+        "original": "86400",
+        "replacement": "86401",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 14,
+        "op": "int-zero",
+        "original": "86400",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 34,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 35,
+        "op": "str-empty",
+        "original": "'\u7f3a\u5c11 x-wop-sign'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 37,
+        "op": "str-empty",
+        "original": "' '",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 38,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 38,
+        "op": "bool-flip",
+        "original": "false",
+        "replacement": "true",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 38,
+        "op": "logic",
+        "original": "||",
+        "replacement": "&&",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 38,
+        "op": "rel-lte",
+        "original": "<=",
+        "replacement": "<",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 39,
+        "op": "str-empty",
+        "original": "'x-wop-sign \u683c\u5f0f\u9519\u8bef\uff1a\u7f3a\u5c11 securityReq \u4e0e authString \u7684\u7a7a\u683c\u5206\u9694'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 43,
+        "op": "str-empty",
+        "original": "'/'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 43,
+        "op": "arith-plus",
+        "original": "+",
+        "replacement": "-",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 43,
+        "op": "int-plus1",
+        "original": "1",
+        "replacement": "2",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 43,
+        "op": "int-zero",
+        "original": "1",
+        "replacement": "0",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 43,
+        "op": "int-plus1",
+        "original": "4",
+        "replacement": "5",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 43,
+        "op": "int-zero",
+        "original": "4",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 44,
+        "op": "neq-neg",
+        "original": "!==",
+        "replacement": "===",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 44,
+        "op": "int-plus1",
+        "original": "4",
+        "replacement": "5",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 44,
+        "op": "int-zero",
+        "original": "4",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 45,
+        "op": "str-empty",
+        "original": "'x-wop-sign \u683c\u5f0f\u9519\u8bef\uff1a\u5e94\u4e3a <protocolVersion>/<expiredSeconds>/<signedHeaders>/<signature>'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 47,
+        "op": "neq-neg",
+        "original": "!==",
+        "replacement": "===",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 48,
+        "op": "str-empty",
+        "original": "'\u4e0d\u652f\u6301\u7684\u7b7e\u540d\u534f\u8bae\u7248\u672c: '",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 50,
+        "op": "int-plus1",
+        "original": "1",
+        "replacement": "2",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 50,
+        "op": "int-zero",
+        "original": "1",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 51,
+        "op": "int-plus1",
+        "original": "2",
+        "replacement": "3",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 51,
+        "op": "int-zero",
+        "original": "2",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 52,
+        "op": "int-plus1",
+        "original": "3",
+        "replacement": "4",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 52,
+        "op": "int-zero",
+        "original": "3",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 52,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 53,
+        "op": "str-empty",
+        "original": "'signature \u4e3a\u7a7a'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 55,
+        "op": "int-plus1",
+        "original": "3",
+        "replacement": "4",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 55,
+        "op": "int-zero",
+        "original": "3",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 65,
+        "op": "str-empty",
+        "original": "' '",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 65,
+        "op": "str-empty",
+        "original": "'/'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 66,
+        "op": "str-empty",
+        "original": "'/'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 66,
+        "op": "str-empty",
+        "original": "';'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 66,
+        "op": "str-empty",
+        "original": "'/'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 74,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 74,
+        "op": "logic",
+        "original": "||",
+        "replacement": "&&",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 74,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 78,
+        "op": "str-empty",
+        "original": "' '",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 79,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 79,
+        "op": "bool-flip",
+        "original": "false",
+        "replacement": "true",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 84,
+        "op": "not-del",
+        "original": "!",
+        "replacement": "",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 85,
+        "op": "str-empty",
+        "original": "'expiredSeconds \u975e\u6cd5: '",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 88,
+        "op": "rel-lte",
+        "original": "<=",
+        "replacement": "<",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 88,
+        "op": "logic",
+        "original": "||",
+        "replacement": "&&",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 88,
+        "op": "rel-gt",
+        "original": ">",
+        "replacement": ">=",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 89,
+        "op": "str-empty",
+        "original": "'expiredSeconds \u8d85\u51fa\u5141\u8bb8\u8303\u56f4 (0, '",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 89,
+        "op": "str-empty",
+        "original": "']'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 98,
+        "op": "str-empty",
+        "original": "';'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 100,
+        "op": "neq-neg",
+        "original": "!==",
+        "replacement": "===",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 104,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/SignHeader.php",
+        "line": 105,
+        "op": "str-empty",
+        "original": "'signedHeaders \u4e3a\u7a7a'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 13,
+        "op": "str-empty",
+        "original": "'WOP-RSA3072-SHA256'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 14,
+        "op": "str-empty",
+        "original": "'WOP-RSA4096-SHA256'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 16,
+        "op": "str-empty",
+        "original": "'WOP-SM2-SM3'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 20,
+        "op": "str-empty",
+        "original": "'WOP-RSA3072-SHA256'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 20,
+        "op": "str-empty",
+        "original": "'keyAlgorithm'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 20,
+        "op": "str-empty",
+        "original": "'RSA'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 20,
+        "op": "str-empty",
+        "original": "'keyLength'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 20,
+        "op": "int-plus1",
+        "original": "3072",
+        "replacement": "3073",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 20,
+        "op": "int-zero",
+        "original": "3072",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 20,
+        "op": "str-empty",
+        "original": "'digestLabel'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 20,
+        "op": "str-empty",
+        "original": "'sha-256'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 20,
+        "op": "str-empty",
+        "original": "'dekAlg'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 20,
+        "op": "str-empty",
+        "original": "'AES-256-GCM'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 21,
+        "op": "str-empty",
+        "original": "'WOP-RSA4096-SHA256'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 21,
+        "op": "str-empty",
+        "original": "'keyAlgorithm'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 21,
+        "op": "str-empty",
+        "original": "'RSA'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 21,
+        "op": "str-empty",
+        "original": "'keyLength'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 21,
+        "op": "int-plus1",
+        "original": "4096",
+        "replacement": "4097",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 21,
+        "op": "int-zero",
+        "original": "4096",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 21,
+        "op": "str-empty",
+        "original": "'digestLabel'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 21,
+        "op": "str-empty",
+        "original": "'sha-256'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 21,
+        "op": "str-empty",
+        "original": "'dekAlg'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 21,
+        "op": "str-empty",
+        "original": "'AES-256-GCM'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 25,
+        "op": "str-empty",
+        "original": "'RSA3072'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 25,
+        "op": "str-empty",
+        "original": "'RSA4096'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 25,
+        "op": "str-empty",
+        "original": "'SM2'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 26,
+        "op": "str-empty",
+        "original": "'SHA256'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 26,
+        "op": "str-empty",
+        "original": "'SM3'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 43,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 44,
+        "op": "str-empty",
+        "original": "'securityReq \u683c\u5f0f\u9519\u8bef: \u7a7a\u503c'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 46,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 47,
+        "op": "str-empty",
+        "original": "'SM2-SM3 \u5957\u4ef6\u6682\u672a\u652f\u6301\uff0c\u89c1 README \u8def\u7ebf\u56fe'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 49,
+        "op": "str-empty",
+        "original": "'-'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 50,
+        "op": "neq-neg",
+        "original": "!==",
+        "replacement": "===",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 50,
+        "op": "int-plus1",
+        "original": "3",
+        "replacement": "4",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 50,
+        "op": "int-zero",
+        "original": "3",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 50,
+        "op": "logic",
+        "original": "||",
+        "replacement": "&&",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 50,
+        "op": "neq-neg",
+        "original": "!==",
+        "replacement": "===",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 50,
+        "op": "str-empty",
+        "original": "'WOP'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 51,
+        "op": "str-empty",
+        "original": "'securityReq \u683c\u5f0f\u9519\u8bef\uff08\u5e94\u4e3a WOP-<\u5bc6\u94a5\u7b97\u6cd5>-<\u6458\u8981\u7b97\u6cd5>\uff09: '",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 54,
+        "op": "not-del",
+        "original": "!",
+        "replacement": "",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 54,
+        "op": "bool-flip",
+        "original": "true",
+        "replacement": "false",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 54,
+        "op": "logic",
+        "original": "||",
+        "replacement": "&&",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 54,
+        "op": "not-del",
+        "original": "!",
+        "replacement": "",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 54,
+        "op": "bool-flip",
+        "original": "true",
+        "replacement": "false",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 55,
+        "op": "str-empty",
+        "original": "'\u4e0d\u652f\u6301\u7684\u7b97\u6cd5\u7ec4\u5408: '",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 59,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 60,
+        "op": "str-empty",
+        "original": "'\u4e0d\u652f\u6301\u7684\u7b97\u6cd5\u7ec4\u5408\uff08\u56fd\u9645/\u56fd\u5bc6\u8de8\u65cf\u7981\u6b62\uff09: '",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 64,
+        "op": "str-empty",
+        "original": "'keyAlgorithm'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 65,
+        "op": "str-empty",
+        "original": "'keyLength'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 66,
+        "op": "str-empty",
+        "original": "'digestLabel'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Suite.php",
+        "line": 67,
+        "op": "str-empty",
+        "original": "'dekAlg'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Transport/CurlTransport.php",
+        "line": 15,
+        "op": "int-plus1",
+        "original": "11",
+        "replacement": "12",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Transport/CurlTransport.php",
+        "line": 15,
+        "op": "int-zero",
+        "original": "11",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Transport/CurlTransport.php",
+        "line": 15,
+        "op": "int-plus1",
+        "original": "20",
+        "replacement": "21",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Transport/CurlTransport.php",
+        "line": 15,
+        "op": "int-zero",
+        "original": "20",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Transport/CurlTransport.php",
+        "line": 17,
+        "op": "int-plus1",
+        "original": "65536",
+        "replacement": "65537",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/Transport/CurlTransport.php",
+        "line": 17,
+        "op": "int-zero",
+        "original": "65536",
+        "replacement": "0",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/Transport/CurlTransport.php",
+        "line": 32,
+        "op": "bool-flip",
+        "original": "false",
+        "replacement": "true",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Transport/CurlTransport.php",
+        "line": 37,
+        "op": "int-plus1",
+        "original": "30",
+        "replacement": "31",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/Transport/CurlTransport.php",
+        "line": 37,
+        "op": "int-zero",
+        "original": "30",
+        "replacement": "0",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/Transport/CurlTransport.php",
+        "line": 45,
+        "op": "rel-gt",
+        "original": ">",
+        "replacement": ">=",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Transport/CurlTransport.php",
+        "line": 46,
+        "op": "bool-flip",
+        "original": "true",
+        "replacement": "false",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Transport/CurlTransport.php",
+        "line": 47,
+        "op": "int-plus1",
+        "original": "1",
+        "replacement": "2",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/Transport/CurlTransport.php",
+        "line": 47,
+        "op": "int-zero",
+        "original": "1",
+        "replacement": "0",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/Transport/CurlTransport.php",
+        "line": 59,
+        "op": "str-empty",
+        "original": "'\u54cd\u5e94\u4f53\u8d85\u8fc7 '",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Transport/CurlTransport.php",
+        "line": 59,
+        "op": "str-empty",
+        "original": "' \u5b57\u8282\u4e0a\u9650'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Transport/CurlTransport.php",
+        "line": 61,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Transport/CurlTransport.php",
+        "line": 61,
+        "op": "bool-flip",
+        "original": "false",
+        "replacement": "true",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Transport/CurlTransport.php",
+        "line": 62,
+        "op": "str-empty",
+        "original": "'\u4f20\u8f93\u5931\u8d25: '",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Transport/CurlTransport.php",
+        "line": 72,
+        "op": "str-empty",
+        "original": "'/\\r?\\n/'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Transport/CurlTransport.php",
+        "line": 73,
+        "op": "str-empty",
+        "original": "':'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Transport/CurlTransport.php",
+        "line": 74,
+        "op": "neq-neg",
+        "original": "!==",
+        "replacement": "===",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Transport/CurlTransport.php",
+        "line": 74,
+        "op": "bool-flip",
+        "original": "false",
+        "replacement": "true",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Transport/CurlTransport.php",
+        "line": 75,
+        "op": "arith-plus",
+        "original": "+",
+        "replacement": "-",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Transport/CurlTransport.php",
+        "line": 75,
+        "op": "int-plus1",
+        "original": "1",
+        "replacement": "2",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/Transport/CurlTransport.php",
+        "line": 75,
+        "op": "int-zero",
+        "original": "1",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Transport/GuzzleTransport.php",
+        "line": 17,
+        "op": "int-plus1",
+        "original": "11",
+        "replacement": "12",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Transport/GuzzleTransport.php",
+        "line": 17,
+        "op": "int-zero",
+        "original": "11",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Transport/GuzzleTransport.php",
+        "line": 17,
+        "op": "int-plus1",
+        "original": "20",
+        "replacement": "21",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Transport/GuzzleTransport.php",
+        "line": 17,
+        "op": "int-zero",
+        "original": "20",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Transport/GuzzleTransport.php",
+        "line": 19,
+        "op": "int-plus1",
+        "original": "65536",
+        "replacement": "65537",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/Transport/GuzzleTransport.php",
+        "line": 19,
+        "op": "int-zero",
+        "original": "65536",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Transport/GuzzleTransport.php",
+        "line": 25,
+        "op": "str-empty",
+        "original": "'http_errors'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Transport/GuzzleTransport.php",
+        "line": 25,
+        "op": "bool-flip",
+        "original": "false",
+        "replacement": "true",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Transport/GuzzleTransport.php",
+        "line": 25,
+        "op": "str-empty",
+        "original": "'timeout'",
+        "replacement": "''",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/Transport/GuzzleTransport.php",
+        "line": 25,
+        "op": "int-plus1",
+        "original": "30",
+        "replacement": "31",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/Transport/GuzzleTransport.php",
+        "line": 25,
+        "op": "int-zero",
+        "original": "30",
+        "replacement": "0",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/Transport/GuzzleTransport.php",
+        "line": 32,
+        "op": "str-empty",
+        "original": "'headers'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Transport/GuzzleTransport.php",
+        "line": 33,
+        "op": "str-empty",
+        "original": "'body'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Transport/GuzzleTransport.php",
+        "line": 34,
+        "op": "str-empty",
+        "original": "'stream'",
+        "replacement": "''",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/Transport/GuzzleTransport.php",
+        "line": 34,
+        "op": "bool-flip",
+        "original": "true",
+        "replacement": "false",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/Transport/GuzzleTransport.php",
+        "line": 37,
+        "op": "str-empty",
+        "original": "'\u4f20\u8f93\u5931\u8d25: '",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Transport/GuzzleTransport.php",
+        "line": 42,
+        "op": "str-empty",
+        "original": "', '",
+        "replacement": "''",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/Transport/GuzzleTransport.php",
+        "line": 52,
+        "op": "not-del",
+        "original": "!",
+        "replacement": "",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Transport/GuzzleTransport.php",
+        "line": 55,
+        "op": "rel-gt",
+        "original": ">",
+        "replacement": ">=",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Transport/GuzzleTransport.php",
+        "line": 56,
+        "op": "str-empty",
+        "original": "'\u54cd\u5e94\u4f53\u8d85\u8fc7 '",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Transport/GuzzleTransport.php",
+        "line": 56,
+        "op": "str-empty",
+        "original": "' \u5b57\u8282\u4e0a\u9650'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Transport/GuzzleTransport.php",
+        "line": 71,
+        "op": "str-empty",
+        "original": "':'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Transport/GuzzleTransport.php",
+        "line": 72,
+        "op": "neq-neg",
+        "original": "!==",
+        "replacement": "===",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Transport/GuzzleTransport.php",
+        "line": 72,
+        "op": "bool-flip",
+        "original": "false",
+        "replacement": "true",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/Transport/GuzzleTransport.php",
+        "line": 73,
+        "op": "arith-plus",
+        "original": "+",
+        "replacement": "-",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Transport/GuzzleTransport.php",
+        "line": 73,
+        "op": "int-plus1",
+        "original": "1",
+        "replacement": "2",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/Transport/GuzzleTransport.php",
+        "line": 73,
+        "op": "int-zero",
+        "original": "1",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Transport/TransportResponse.php",
+        "line": 24,
+        "op": "rel-gte",
+        "original": ">=",
+        "replacement": ">",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Transport/TransportResponse.php",
+        "line": 24,
+        "op": "int-plus1",
+        "original": "200",
+        "replacement": "201",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Transport/TransportResponse.php",
+        "line": 24,
+        "op": "int-zero",
+        "original": "200",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Transport/TransportResponse.php",
+        "line": 24,
+        "op": "logic",
+        "original": "&&",
+        "replacement": "||",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Transport/TransportResponse.php",
+        "line": 24,
+        "op": "rel-lt",
+        "original": "<",
+        "replacement": "<=",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Transport/TransportResponse.php",
+        "line": 24,
+        "op": "int-plus1",
+        "original": "300",
+        "replacement": "301",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Transport/TransportResponse.php",
+        "line": 24,
+        "op": "int-zero",
+        "original": "300",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/Transport/TransportResponse.php",
+        "line": 30,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/VerifyResult.php",
+        "line": 22,
+        "op": "bool-flip",
+        "original": "true",
+        "replacement": "false",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/VerifyResult.php",
+        "line": 27,
+        "op": "bool-flip",
+        "original": "false",
+        "replacement": "true",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 17,
+        "op": "int-plus1",
+        "original": "1800",
+        "replacement": "1801",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 17,
+        "op": "int-zero",
+        "original": "1800",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 18,
+        "op": "str-empty",
+        "original": "'x-wop-appkey'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 19,
+        "op": "str-empty",
+        "original": "'x-wop-timestamp'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 20,
+        "op": "str-empty",
+        "original": "'x-wop-nonce'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 21,
+        "op": "str-empty",
+        "original": "'x-wop-sign'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 22,
+        "op": "str-empty",
+        "original": "'x-wop-encrypt'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 23,
+        "op": "str-empty",
+        "original": "'x-wop-content-digest'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 26,
+        "op": "str-empty",
+        "original": "'\u7b7e\u540d\u9a8c\u8bc1\u5931\u8d25'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 27,
+        "op": "str-empty",
+        "original": "'\u6458\u8981\u4e0d\u5339\u914d'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 28,
+        "op": "str-empty",
+        "original": "'\u89e3\u5bc6\u5931\u8d25'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 29,
+        "op": "str-empty",
+        "original": "'DEK \u62a5\u6587\u7b97\u6cd5\u4e0e\u5957\u4ef6\u4e0d\u7b26'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 31,
+        "op": "int-plus1",
+        "original": "32",
+        "replacement": "33",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 31,
+        "op": "int-zero",
+        "original": "32",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 58,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 64,
+        "op": "int-plus1",
+        "original": "16",
+        "replacement": "17",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 64,
+        "op": "int-zero",
+        "original": "16",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 69,
+        "op": "logic",
+        "original": "&&",
+        "replacement": "||",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 69,
+        "op": "neq-neg",
+        "original": "!==",
+        "replacement": "===",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 86,
+        "op": "neq-neg",
+        "original": "!==",
+        "replacement": "===",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 91,
+        "op": "str-empty",
+        "original": "'v1/'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 114,
+        "op": "str-empty",
+        "original": "'POST'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 127,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 127,
+        "op": "str-empty",
+        "original": "'/'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 127,
+        "op": "str-empty",
+        "original": "'POST'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 147,
+        "op": "neq-neg",
+        "original": "!==",
+        "replacement": "===",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 149,
+        "op": "str-empty",
+        "original": "'\u54cd\u5e94\u5957\u4ef6 '",
+        "replacement": "''",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 149,
+        "op": "str-empty",
+        "original": "' \u4e0e\u5ba2\u6237\u7aef\u914d\u7f6e '",
+        "replacement": "''",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 149,
+        "op": "str-empty",
+        "original": "' \u4e0d\u7b26'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 155,
+        "op": "neq-neg",
+        "original": "!==",
+        "replacement": "===",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 158,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 161,
+        "op": "not-del",
+        "original": "!",
+        "replacement": "",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 161,
+        "op": "bool-flip",
+        "original": "true",
+        "replacement": "false",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 162,
+        "op": "str-empty",
+        "original": "'x-wop-content-digest \u672a\u5217\u5165 signedHeaders\uff08I1\uff09'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 164,
+        "op": "neq-neg",
+        "original": "!==",
+        "replacement": "===",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 165,
+        "op": "str-empty",
+        "original": "'\u65e0\u54cd\u5e94\u4f53\u4e0d\u5e94\u643a\u5e26 x-wop-content-digest'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 181,
+        "op": "neq-neg",
+        "original": "!==",
+        "replacement": "===",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 181,
+        "op": "int-plus1",
+        "original": "8",
+        "replacement": "9",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 181,
+        "op": "int-zero",
+        "original": "8",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=2"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 183,
+        "op": "str-empty",
+        "original": "'\u7b7e\u540d\u957f\u5ea6 '",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 183,
+        "op": "str-empty",
+        "original": "' \u5b57\u8282\u4e0e\u5957\u4ef6 '",
+        "replacement": "''",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 183,
+        "op": "str-empty",
+        "original": "' \u5b9a\u957f\u4e0d\u7b26'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 187,
+        "op": "str-empty",
+        "original": "'/'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 193,
+        "op": "not-del",
+        "original": "!",
+        "replacement": "",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 205,
+        "op": "not-del",
+        "original": "!",
+        "replacement": "",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 215,
+        "op": "not-del",
+        "original": "!",
+        "replacement": "",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 215,
+        "op": "logic",
+        "original": "||",
+        "replacement": "&&",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 215,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 221,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 230,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 240,
+        "op": "not-del",
+        "original": "!",
+        "replacement": "",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 251,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 260,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 279,
+        "op": "eq-neg",
+        "original": "===",
+        "replacement": "!==",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 280,
+        "op": "str-empty",
+        "original": "'\u5df2\u7b7e\u540d\u5934 '",
+        "replacement": "''",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 280,
+        "op": "str-empty",
+        "original": "' \u5728\u54cd\u5e94\u4e2d\u7f3a\u5931'",
+        "replacement": "''",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 290,
+        "op": "bool-flip",
+        "original": "true",
+        "replacement": "false",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 290,
+        "op": "int-plus1",
+        "original": "1000",
+        "replacement": "1001",
+        "verdict": "SURVIVED",
+        "note": ""
+    },
+    {
+        "file": "src/WopClient.php",
+        "line": 290,
+        "op": "int-zero",
+        "original": "1000",
+        "replacement": "0",
+        "verdict": "KILLED",
+        "note": "exit=1"
+    }
+]
