@@ -59,6 +59,33 @@ final class RsaOaepTest extends VectorCase
         $this->assertSame($vec['plaintext'], RsaOaep::unwrap($wrapped, $keys['privatePkcs8B64']));
     }
 
+    /** interop 随机流合同：显式 seed 下 wrap 确定性（同 seed 同密文），且可被规格参数解包。 */
+    public function testWrapWithExplicitSeedIsDeterministic(): void
+    {
+        $keys = self::keys()['rsa3072'];
+        $seed = \random_bytes(32);
+        $a = RsaOaep::wrap('deterministic-payload', $keys['publicSpkiB64'], $seed);
+        $b = RsaOaep::wrap('deterministic-payload', $keys['publicSpkiB64'], $seed);
+        $this->assertSame($a, $b, '同 seed 必产同密文（OAEP-from-stream）');
+        $this->assertNotSame($a, RsaOaep::wrap('deterministic-payload', $keys['publicSpkiB64'], \strrev($seed)));
+        $this->assertSame('deterministic-payload', RsaOaep::unwrap($a, $keys['privatePkcs8B64']));
+    }
+
+    /** seed 长度非 32 字节 → 明确拒绝（结构知识，不进密码学区）。 */
+    public function testWrapRejectsShortSeed(): void
+    {
+        $this->expectExceptionMessage('OAEP seed 须为 32 字节');
+        RsaOaep::wrap('x', self::keys()['rsa3072']['publicSpkiB64'], 'short');
+    }
+
+    /** 明文超出 OAEP 容量（k - 2·hLen - 2）→ 明确拒绝。 */
+    public function testWrapRejectsOversizedPlaintext(): void
+    {
+        $this->expectException(\Wop\Sdk\WopException::class);
+        $this->expectExceptionMessage('明文超长');
+        RsaOaep::wrap(\str_repeat('x', 384 - 64 - 2 + 1), self::keys()['rsa3072']['publicSpkiB64']);
+    }
+
     /** 密钥解析失败：垃圾公钥包装抛明确错误；垃圾私钥解包返回 null（I7 模糊）。 */
     public function testWrapWithGarbagePublicKeyThrows(): void
     {
@@ -70,5 +97,17 @@ final class RsaOaepTest extends VectorCase
     public function testUnwrapWithGarbagePrivateKeyReturnsNull(): void
     {
         $this->assertNull(RsaOaep::unwrap('AAAA', 'not-a-key'));
+    }
+
+    /** OAEP 容量边界：3072 位 k=384 → 明文恰 k-2·hLen-2=318 字节合法且可解。 */
+    public function testWrapAcceptsMaxBoundaryPlaintext(): void
+    {
+        $keys = self::keys()['rsa3072'];
+        $plain = str_repeat('M', 318);
+        $this->assertSame(
+            $plain,
+            RsaOaep::unwrap(RsaOaep::wrap($plain, $keys['publicSpkiB64']), $keys['privatePkcs8B64']),
+            'k-2*32-2 恰边界明文必须可包装可解包',
+        );
     }
 }

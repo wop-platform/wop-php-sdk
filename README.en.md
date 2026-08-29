@@ -69,6 +69,10 @@ generates a CSPRNG 32B DEK + 12B IV, encrypts the body with AES-256-GCM
 (ciphertext = `ciphertext||tag` tail-concatenated), wraps the DEK payload
 `AES-256-GCM$b64url(key)$b64url(iv)` with RSA-OAEP (**explicit dual SHA-256 + empty label**)
 into `x-wop-encrypt: L2;dek=<b64url>`; the digest is computed over the **ciphertext carrier** bytes (D2).
+The L2 wire body is always the JSON envelope `{"encrypted":"<base64url ciphertext>"}`
+(matching the gateway CryptoFilter wire contract); on the inbound path the `encrypted`
+field is extracted (unknown fields tolerated) and malformed structures / missing fields
+are rejected as explicit protocol errors.
 
 **Callback verification**: `verifyCallback($headers, $body, $callbackUrl)` — the canonical URI
 is the path of the callback URL.

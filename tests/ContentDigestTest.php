@@ -6,6 +6,7 @@ namespace Wop\Sdk\Tests;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Wop\Sdk\ContentDigest;
 use Wop\Sdk\Suite;
 use Wop\Sdk\WopException;
@@ -45,16 +46,22 @@ final class ContentDigestTest extends VectorCase
     public static function formatRulesProvider(): array
     {
         $cases = [];
-        foreach (self::staticVectors()['formatRules'] as $rule) {
-            if (!str_starts_with($rule['id'], 'header-')) {
+        $skippedSm2 = 0;
+        foreach (self::formatRulesAll() as $rule) {
+            if (!str_starts_with((string) $rule['id'], 'header-')) {
                 continue; // b64url 规则由 Base64UrlTest 消费
             }
             // Q7：PHP 首版 SM 套件不可装配（Suite::parse 拒绝），header-sm2-ok 的
-            // 正消费留待 SM 支持版本；跨族 header-crossfamily 负向量正常消费
+            // 正消费留待 SM 支持版本；跨族 header-crossfamily 负向量正常消费。
+            // 跳过必须恰好是这一条（skippedSm2 哨兵），SM 支持落地后此豁免即失效须更新
             if (($rule['suite'] ?? null) === 'WOP-SM2-SM3' && $rule['expect'] === 'accept') {
+                $skippedSm2++;
                 continue;
             }
             $cases[] = [$rule['id'], $rule['value'], $rule['expect'], $rule['suite'] ?? null];
+        }
+        if ($skippedSm2 !== 1) {
+            throw new RuntimeException('header-sm2-ok Q7 豁免数量异常（须恰好 1 条）: ' . $skippedSm2);
         }
         return $cases;
     }
@@ -66,15 +73,6 @@ final class ContentDigestTest extends VectorCase
         $this->assertFalse(ContentDigest::matches($vec['expectedHeader'], $vec['input'] . 'x'));
         $this->assertFalse(ContentDigest::matches('', 'any'));
     }
-
-    /** @return array<string, mixed> */
-    private static function staticVectors(): array
-    {
-        $decoded = json_decode((string) file_get_contents(__DIR__ . '/fixtures/crypto-vectors.json'), true);
-        assert(is_array($decoded));
-        return $decoded;
-    }
-
 
     public function testValidateRejectsEmptyLabelAndHex(): void
     {
@@ -97,5 +95,24 @@ final class ContentDigestTest extends VectorCase
     {
         $this->assertFalse(ContentDigest::matches('not-a-digest', 'x'));
         $this->assertFalse(ContentDigest::matches('sha-256 NOTHEX', 'x'));
+    }
+
+    /** 解析类负向量文案钉死（格式/族不符/摘要格式三分支）。 */
+    public function testValidateRejectMessageTexts(): void
+    {
+        $suite = Suite::parse('WOP-RSA3072-SHA256');
+        foreach ([
+            'sha-256' => '应为',
+            'sha-256  ' => '应为', // 双空格：三段 explode 走 count 分支（非空段分支）
+            'sm3 ' . str_repeat('a', 64) => '算法标签与套件族不符',
+            'sha-256 ' . strtoupper(str_repeat('a', 64)) => '摘要格式错误',
+        ] as $value => $fragment) {
+            try {
+                ContentDigest::validate($value, $suite);
+                $this->fail("应拒绝: {$value}");
+            } catch (WopException $e) {
+                $this->assertStringContainsString($fragment, $e->getMessage(), $value);
+            }
+        }
     }
 }

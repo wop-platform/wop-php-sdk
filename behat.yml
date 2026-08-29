@@ -1,0 +1,7 @@
+default:
+    suites:
+        default:
+            paths:
+                - features
+            contexts:
+                - FeatureContext

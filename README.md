@@ -65,6 +65,8 @@ digest 与 `x-wop-appkey/x-wop-nonce/x-wop-timestamp` 一并进入 signedHeaders
 CSPRNG 生成 32B DEK + 12B IV，AES-256-GCM 加密 body（密文 = `ciphertext||tag` 尾拼），
 DEK 载荷 `AES-256-GCM$b64url(key)$b64url(iv)` 经 RSA-OAEP（**显式双 SHA-256 + 空 label**）包装后
 置于 `x-wop-encrypt: L2;dek=<b64url>`；digest 改为对**密文载体**字节计算（D2）。
+L2 wire body 恒为 JSON 信封 `{"encrypted":"<base64url 密文>"}`（与网关 CryptoFilter 线上契约一致）；
+入向解密时提取 `encrypted` 字段（容忍未知字段），非法结构/缺字段按协议类错误明确拒绝。
 
 **回调验证**：`verifyCallback($headers, $body, $callbackUrl)` —— canonical URI 取回调 URL 的 path。
 

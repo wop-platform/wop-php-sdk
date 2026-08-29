@@ -93,4 +93,20 @@ final class SignHeaderTest extends TestCase
         $this->expectExceptionMessage('signature');
         SignHeader::parse('WOP-RSA3072-SHA256 v1/10/a/  ');
     }
+
+    /** expiredSeconds 上界恰含：86400 过、86401 拒（EXPIRED_SECONDS_MAX 语义）。 */
+    public function testParseExpiredSecondsUpperBoundary(): void
+    {
+        $this->assertSame(86400, SignHeader::parse('WOP-RSA3072-SHA256 v1/86400/a/sig')->expiredSeconds);
+        $this->expectException(WopException::class);
+        $this->expectExceptionMessage('expiredSeconds 超出允许范围 (0, 86400]');
+        SignHeader::parse('WOP-RSA3072-SHA256 v1/86401/a/sig');
+    }
+
+    /** limit=4 拆分语义：第 4 段（signature）聚合余下斜杠，不产生第 5 段。 */
+    public function testParseFourthSegmentAggregatesSlashes(): void
+    {
+        $parsed = SignHeader::parse('WOP-RSA3072-SHA256 v1/10/a/b/c');
+        $this->assertSame('b/c', $parsed->signature);
+    }
 }

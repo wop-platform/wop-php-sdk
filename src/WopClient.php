@@ -9,7 +9,7 @@ namespace Wop\Sdk;
  *
  * 出向：buildRequest（L0 明文 / L2 数字信封）→ RequestDraft
  * 入向：verifyResponse / verifyCallback — F6 顺序固定：
- *   验签 → digest 复核 → DEK 解包 → alg 族比对 → bulk 解密；
+ *   结构前置校验 → 验签 → digest 复核 → DEK 解包 → alg 族比对 → bulk 解密；
  *   验签/解密失败对外模糊（I7），解析/格式/一致性类失败语义明确（10.2）。
  */
 final class WopClient
@@ -22,10 +22,13 @@ final class WopClient
     private const HEADER_ENCRYPT = 'x-wop-encrypt';
     private const HEADER_CONTENT_DIGEST = 'x-wop-content-digest';
 
-    private const REASON_SIGN_FAIL = '签名验证失败';
-    private const REASON_DIGEST_MISMATCH = '摘要不匹配';
-    private const REASON_DECRYPT_FAIL = '解密失败';
-    private const REASON_DEK_ALG_MISMATCH = 'DEK 报文算法与套件不符';
+    /** 稳定对外文案（interop canonical class 映射锚点，I7 模糊类）。 */
+    public const REASON_SIGN_FAIL = '签名验证失败';
+    public const REASON_DIGEST_MISMATCH = '摘要不匹配';
+    public const REASON_DECRYPT_FAIL = '解密失败';
+    public const REASON_DEK_ALG_MISMATCH = 'DEK 报文算法与套件不符';
+
+    private const OAEP_SEED_BYTES = 32;
 
     public function __construct(private readonly WopConfig $config)
     {
@@ -38,6 +41,9 @@ final class WopClient
      * @param string      $level       L0 | L2
      * @param int|null    $timestampMs 13 位毫秒时间戳（缺省当前时间，F9）
      * @param string|null $nonce       32 位随机串（缺省 CSPRNG 生成，F9）
+     * @param \Closure(int): string|null $random 确定性随机源（联调用；生产禁用——IV 复用即 I4 违规）。
+     *        消费顺序合同（wop-specs/interop/v1）：[16B nonce 池（nonce 已注入时跳过）]
+     *        [32B CEK][12B IV][32B OAEP seed]——跨仓 build 字节级复现依赖此序
      */
     public function buildRequest(
         string $method,
@@ -45,25 +51,32 @@ final class WopClient
         ?string $body = null,
         string $level = EncryptHeader::LEVEL_L0,
         ?int $timestampMs = null,
-        ?string $nonce = null
+        ?string $nonce = null,
+        ?\Closure $random = null,
     ): RequestDraft {
         EncryptHeader::validateLevel($level);
         $isL2 = \strcasecmp($level, EncryptHeader::LEVEL_L2) === 0;
+        $random ??= static fn (int $length): string => \random_bytes($length);
 
         $headers = [
             self::HEADER_APPKEY => $this->config->appKey,
             self::HEADER_TIMESTAMP => (string) ($timestampMs ?? $this->currentMillis()),
-            self::HEADER_NONCE => $nonce ?? $this->newNonce(),
+            self::HEADER_NONCE => $nonce ?? \bin2hex($random(16)),
         ];
 
-        // L2：信封加密（CSPRNG DEK + IV），wire body = base64url(ciphertext||tag)
+        // L2：信封加密（CSPRNG DEK + IV），wire body = {"encrypted":"<base64url(ciphertext||tag)>"}
+        // （线上信封契约与网关 CryptoFilter 一致，L2 线上体恒为 JSON）
         if ($isL2 && $body !== null) {
-            $dek = new DekPayload($this->config->suite->dekAlg, \random_bytes(Aes256Gcm::KEY_BYTES), \random_bytes(Aes256Gcm::IV_BYTES));
+            $dek = new DekPayload(
+                $this->config->suite->dekAlg,
+                $random(Aes256Gcm::KEY_BYTES),
+                $random(Aes256Gcm::IV_BYTES),
+            );
             $result = Aes256Gcm::encrypt($body, $dek->key, $dek->iv);
-            $wireBody = Base64Url::encode($result->cipherTag);
+            $wireBody = EncryptedEnvelope::wrap(Base64Url::encode($result->cipherTag));
             $headers[self::HEADER_ENCRYPT] = EncryptHeader::build(
                 EncryptHeader::LEVEL_L2,
-                RsaOaep::wrap($dek->encode(), $this->config->peerPublicKey)
+                RsaOaep::wrap($dek->encode(), $this->config->peerPublicKey, $random(self::OAEP_SEED_BYTES))
             );
         } else {
             $wireBody = $body ?? '';
@@ -82,10 +95,12 @@ final class WopClient
             CanonicalRequest::canonicalHeaders($headers)
         );
         $signature = RsaSigner::sign($canonical, $this->config->privateKey);
+        $signedNames = \array_keys($headers);
+        \sort($signedNames, SORT_STRING); // signedHeaders 段按名称排序（跨仓字节级一致）
         $headers[self::HEADER_SIGN] = SignHeader::build(
             $this->config->suite->securityReq,
             self::DEFAULT_EXPIRED_SECONDS,
-            \array_keys($headers),
+            $signedNames,
             $signature
         );
         return new RequestDraft(\strtoupper($method), $path, $headers, $wireBody);
@@ -113,13 +128,14 @@ final class WopClient
     }
 
     /**
-     * F6：验签 → digest 复核 → DEK 解包 → alg 族比对（解包后、bulk 解密前）→ bulk 解密。
+     * F6：结构前置校验 → 验签 → digest 复核 → DEK 解包 → alg 族比对（解包后、bulk 解密前）
+     * → 信封提取 → bulk 解密。
      *
      * @param array<string, string> $headers
      */
     private function verify(array $headers, string $body, string $canonicalPath, string $method): VerifyResult
     {
-        // 头解析与套件装配（解析类/支持类失败语义明确）
+        // 0. 头解析与套件装配（解析类/支持类失败语义明确）
         try {
             $signHeader = $this->header($headers, self::HEADER_SIGN) ?? '';
             $parsed = SignHeader::parse($signHeader);
@@ -127,34 +143,90 @@ final class WopClient
         } catch (WopException $e) {
             return VerifyResult::fail($e->getMessage());
         }
+        // 响应套件与客户端装配套件一致性（公开结构知识，明确）
+        if ($suite->securityReq !== $this->config->suite->securityReq) {
+            return VerifyResult::fail(
+                '响应套件 ' . $suite->securityReq . ' 与客户端配置 ' . $this->config->suite->securityReq . ' 不符'
+            );
+        }
 
-        // ① 验签（先验签后解密，I2；失败模糊，I7）
+        // 1. 结构前置校验（公开协议知识，明确拒绝；均不依赖密钥，先于验签）：
+        //    D2 有 body 必传 digest、I1 digest 必入 signedHeaders、D2 反向无 body 不携带
+        $hasBody = $body !== '';
+        $digestHeader = $this->header($headers, self::HEADER_CONTENT_DIGEST);
+        if ($hasBody) {
+            if ($digestHeader === null) {
+                return VerifyResult::fail(self::REASON_DIGEST_MISMATCH);
+            }
+            if (!\in_array(self::HEADER_CONTENT_DIGEST, $parsed->signedHeaders, true)) {
+                return VerifyResult::fail('x-wop-content-digest 未列入 signedHeaders（I1）');
+            }
+        } elseif ($digestHeader !== null) {
+            return VerifyResult::fail('无响应体不应携带 x-wop-content-digest');
+        }
+
+        // 2. 验签（I2：先验签后解密）：按 signedHeaders 从真实响应头重建 canonical；
+        //    已签名头缺席为协议类明确错误，签名段 b64url/定长为公开结构知识（明确），
+        //    密码学验签失败模糊（I7）
+        try {
+            $signed = $this->collectSigned($headers, $parsed->signedHeaders);
+        } catch (WopException $e) {
+            return VerifyResult::fail($e->getMessage());
+        }
+        try {
+            $signature = Base64Url::decode($parsed->signature);
+        } catch (WopException $e) {
+            return VerifyResult::fail($e->getMessage());
+        }
+        if (\strlen($signature) !== \intdiv($suite->keyLength, 8)) {
+            return VerifyResult::fail(
+                '签名长度 ' . \strlen($signature) . ' 字节与套件 ' . $suite->securityReq . ' 定长不符'
+            );
+        }
         $canonical = CanonicalRequest::build(
             $parsed->protocolVersion . '/' . $parsed->expiredSeconds,
             $method,
             $canonicalPath,
             '',
-            CanonicalRequest::canonicalHeaders($this->collectSigned($headers, $parsed->signedHeaders))
+            CanonicalRequest::canonicalHeaders($signed)
         );
         if (!RsaSigner::verify($canonical, $parsed->signature, $this->config->peerPublicKey)) {
             return VerifyResult::fail(self::REASON_SIGN_FAIL);
         }
 
-        // ② digest 复核（明确；摘要对象 = wire 字节）
-        $digestHeader = $this->header($headers, self::HEADER_CONTENT_DIGEST);
-        if ($body !== '') {
-            if ($digestHeader === null || !ContentDigest::matches($digestHeader, $body)) {
+        // 3. digest 复核（明确；摘要对象 = wire 字节）：格式/族耦合非法 → 协议类；
+        //    值不匹配 → 完整性类（n02/n03 分类分界）
+        if ($hasBody) {
+            try {
+                ContentDigest::validate($digestHeader, $suite);
+            } catch (WopException $e) {
+                return VerifyResult::fail($e->getMessage());
+            }
+            if (!ContentDigest::matches($digestHeader, $body)) {
                 return VerifyResult::fail(self::REASON_DIGEST_MISMATCH);
             }
         }
 
-        $encryptHeader = EncryptHeader::parse($this->header($headers, self::HEADER_ENCRYPT));
+        try {
+            $encryptHeader = EncryptHeader::parse($this->header($headers, self::HEADER_ENCRYPT));
+        } catch (WopException $e) {
+            return VerifyResult::fail($e->getMessage());
+        }
         if (!$encryptHeader->isEncrypted() || $body === '') {
             return VerifyResult::ok($body);
         }
 
-        // ③ DEK 解包（失败模糊，I7）
-        $dekPlain = $encryptHeader->dek === null ? null : RsaOaep::unwrap($encryptHeader->dek, $this->config->privateKey);
+        // 4. DEK 解包：密文段 b64url 结构非法为协议类明确错误（密文带 '=' 等公开结构知识）；
+        //    解包失败与载荷结构畸形为解密类模糊（I7 保守默认，除 alg 跨族 D8 外）
+        if ($encryptHeader->dek === null) {
+            return VerifyResult::fail(self::REASON_DECRYPT_FAIL);
+        }
+        try {
+            Base64Url::decode($encryptHeader->dek);
+        } catch (WopException $e) {
+            return VerifyResult::fail($e->getMessage());
+        }
+        $dekPlain = RsaOaep::unwrap($encryptHeader->dek, $this->config->privateKey);
         if ($dekPlain === null) {
             return VerifyResult::fail(self::REASON_DECRYPT_FAIL);
         }
@@ -164,13 +236,18 @@ final class WopClient
             return VerifyResult::fail(self::REASON_DECRYPT_FAIL);
         }
 
-        // ④ alg 族比对（bulk 解密前，D8/I3；明确）
+        // 5. alg 族比对（bulk 解密前，D8/I3；明确）
         if (!$dek->algMatches($suite->securityReq)) {
             return VerifyResult::fail(self::REASON_DEK_ALG_MISMATCH);
         }
 
-        // ⑤ bulk 解密（失败模糊，I7）
-        $plaintext = Aes256Gcm::decrypt(Base64Url::decode($body), $dek->iv, $dek->key);
+        // 6. 信封提取 + bulk 解密（提取/编码为协议类明确错误；GCM 解密失败模糊，I7）
+        try {
+            $cipherB64Url = EncryptedEnvelope::extract($body);
+            $plaintext = Aes256Gcm::decrypt(Base64Url::decode($cipherB64Url), $dek->iv, $dek->key);
+        } catch (WopException $e) {
+            return VerifyResult::fail($e->getMessage());
+        }
         return $plaintext === null
             ? VerifyResult::fail(self::REASON_DECRYPT_FAIL)
             : VerifyResult::ok($plaintext);
@@ -188,7 +265,10 @@ final class WopClient
     }
 
     /**
+     * 按 signedHeaders 收集真实响应头；已签名头缺席抛 WopException（协议类明确）。
+     *
      * @param array<string, string> $headers
+     * @param list<string> $signedNames
      * @return array<string, string>
      */
     private function collectSigned(array $headers, array $signedNames): array
@@ -196,9 +276,10 @@ final class WopClient
         $collected = [];
         foreach ($signedNames as $name) {
             $value = $this->header($headers, $name);
-            if ($value !== null) {
-                $collected[$name] = $value;
+            if ($value === null) {
+                throw new WopException('已签名头 ' . $name . ' 在响应中缺失');
             }
+            $collected[$name] = $value;
         }
         return $collected;
     }
@@ -207,11 +288,5 @@ final class WopClient
     private function currentMillis(): int
     {
         return (int) (\microtime(true) * 1000);
-    }
-
-    /** F9：CSPRNG 32 位随机串。 */
-    private function newNonce(): string
-    {
-        return \bin2hex(\random_bytes(16));
     }
 }

@@ -96,4 +96,24 @@ final class SuiteTest extends TestCase
             ['WOP-DSA-SHA256'],
         ];
     }
+
+    /** F1 两类支持性失败的文案分界：未知算法 vs 国际/国密跨族。 */
+    public function testUnknownAlgorithmAndCrossFamilyMessageDistinction(): void
+    {
+        foreach (['WOP-RSA3072-SM3', 'WOP-SM2-SHA256'] as $crossFamily) {
+            try {
+                Suite::parse($crossFamily);
+                $this->fail("跨族应拒绝: {$crossFamily}");
+            } catch (WopException $e) {
+                $this->assertStringContainsString('跨族禁止', $e->getMessage(), $crossFamily);
+            }
+        }
+        try {
+            Suite::parse('WOP-RSA2048-SHA256');
+            $this->fail('未知算法应拒绝');
+        } catch (WopException $e) {
+            $this->assertStringContainsString('不支持的算法组合: ', $e->getMessage());
+            $this->assertStringNotContainsString('跨族', $e->getMessage(), '未知算法不得误报跨族');
+        }
+    }
 }

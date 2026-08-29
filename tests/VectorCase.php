@@ -57,6 +57,29 @@ abstract class VectorCase extends TestCase
         return $list;
     }
 
+    /**
+     * formatRules 全量契约入口（三件套之"未知类别哨兵"）：
+     * 出现未归类 id（既非 header- 也非 b64url-）时抛出——真源新增类别时防静默漏消费。
+     * 静态方法：DataProvider 直接调用（provider 无实例上下文）。
+     *
+     * @return list<array<string, mixed>>
+     */
+    public static function formatRulesAll(): array
+    {
+        $decoded = json_decode((string) file_get_contents(__DIR__ . '/fixtures/crypto-vectors.json'), true);
+        if (!is_array($decoded)) {
+            throw new RuntimeException('fixture 解析失败');
+        }
+        $rules = $decoded['formatRules'] ?? [];
+        foreach ($rules as $rule) {
+            $id = (string) $rule['id'];
+            if (!\str_starts_with($id, 'header-') && !\str_starts_with($id, 'b64url-')) {
+                throw new RuntimeException('未知 formatRules 类别，须同步消费: ' . $id);
+            }
+        }
+        return $rules;
+    }
+
     protected static function vector(string $section, string $id): array
     {
         foreach (self::vectorList($section) as $item) {
