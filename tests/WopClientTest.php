@@ -85,13 +85,18 @@ final class WopClientTest extends VectorCase
     {
         $body = '{"secret":"数据"}';
         $draft = $this->merchantClient->buildRequest('POST', self::PATH, $body, 'L2', 1774340000000, '0123456789abcdef0123456789abcdef');
-
         $this->assertNotSame($body, $draft->wireBody, 'L2 wire body 必为密文');
+        // 线上信封契约：wire body = {"encrypted":"<base64url>"} JSON（网关 CryptoFilter 同构）
+        $this->assertMatchesRegularExpression(
+            '/^\\{"encrypted":"[A-Za-z0-9_-]+"\\}$/',
+            $draft->wireBody,
+            'L2 wire body 须为信封 JSON，密文为 base64url 无填充'
+        );
         $encrypt = \Wop\Sdk\EncryptHeader::parse($draft->header('x-wop-encrypt'));
         $this->assertTrue($encrypt->isEncrypted());
         $this->assertNotNull($encrypt->dek);
 
-        // digest 对象 = wire 字节（密文载体，D2）
+        // digest 对象 = wire 字节（信封 JSON 载体，D2）
         $this->assertSame('sha-256 ' . hash('sha256', $draft->wireBody), $draft->header('x-wop-content-digest'));
 
         // I1：x-wop-encrypt 必入 signedHeaders
@@ -99,11 +104,11 @@ final class WopClientTest extends VectorCase
         $this->assertContains('x-wop-encrypt', $sign->signedHeaders);
         $this->assertContains('x-wop-content-digest', $sign->signedHeaders);
 
-        // 平台视角解开：DEK 解包（平台私钥即向量私钥，测试内同钥）→ alg 比对 → bulk 解密
+        // 平台视角解开：信封提取 → DEK 解包（平台私钥即向量私钥，测试内同钥）→ alg 比对 → bulk 解密
         $dek = \Wop\Sdk\DekPayload::decode(\Wop\Sdk\RsaOaep::unwrap($encrypt->dek, self::keys()['rsa3072']['privatePkcs8B64']));
         $this->assertSame('AES-256-GCM', $dek->alg);
         $this->assertSame($body, \Wop\Sdk\Aes256Gcm::decrypt(
-            \Wop\Sdk\Base64Url::decode($draft->wireBody), $dek->iv, $dek->key
+            \Wop\Sdk\Base64Url::decode(\Wop\Sdk\EncryptedEnvelope::extract($draft->wireBody)), $dek->iv, $dek->key
         ));
 
         $this->assertTrue($this->verifyDraftCanonical($draft), 'L2 签名同样覆盖密文载体摘要与加密头');
@@ -219,11 +224,12 @@ final class WopClientTest extends VectorCase
         $this->reSignResponse($headers, $wireBody);
         $dekFailure = $this->merchantClient->verifyResponse($headers, $wireBody, self::PATH);
 
-        // 场景 B：GCM tag 失败（密文尾部篡改，digest 已随 reSign 重算所以走到解密）
+        // 场景 B：GCM tag 失败（信封内密文尾部篡改，digest 已随 reSign 重算所以走到解密）
         [$headers2, $wireBody2] = $this->platformResponse('{"a":1}', 'L2', 1774340000001, 'respnonce00000000000000000000b');
-        $bytes = \Wop\Sdk\Base64Url::decode($wireBody2);
+        $cipher = \Wop\Sdk\EncryptedEnvelope::extract($wireBody2);
+        $bytes = \Wop\Sdk\Base64Url::decode($cipher);
         $bytes[strlen($bytes) - 1] = $bytes[strlen($bytes) - 1] ^ "\x01";
-        $tamperedWire = \Wop\Sdk\Base64Url::encode($bytes);
+        $tamperedWire = \Wop\Sdk\EncryptedEnvelope::wrap(\Wop\Sdk\Base64Url::encode($bytes));
         $this->reSignResponse($headers2, $tamperedWire);
         $tagFailure = $this->merchantClient->verifyResponse($headers2, $tamperedWire, self::PATH);
 
@@ -291,7 +297,8 @@ final class WopClientTest extends VectorCase
         if ($level === 'L2') {
             $dek = new \Wop\Sdk\DekPayload('AES-256-GCM', random_bytes(32), random_bytes(12));
             $result = \Wop\Sdk\Aes256Gcm::encrypt($plainBody, $dek->key, $dek->iv);
-            $wireBody = \Wop\Sdk\Base64Url::encode($result->cipherTag);
+            // 真实网关线上契约：L2 wire body = {"encrypted":"<base64url>"} JSON 信封
+            $wireBody = \Wop\Sdk\EncryptedEnvelope::wrap(\Wop\Sdk\Base64Url::encode($result->cipherTag));
             $encryptHeader = 'L2;dek=' . \Wop\Sdk\RsaOaep::wrap(
                 $dek->encode(), self::keys()['rsa3072']['publicSpkiB64']
             );
@@ -444,5 +451,76 @@ final class WopClientTest extends VectorCase
         $result = $this->merchantClient->verifyResponse($headers, $wireBody, self::PATH);
         $this->assertFalse($result->ok);
         $this->assertSame('解密失败', $result->reason);
+    }
+
+    // ==================== L2 线上信封契约 ====================
+
+    /** L2 指令 + 裸密文（非信封 JSON）→ 协议类明确失败，而非解密类模糊。 */
+    public function testVerifyResponseL2RejectsNonEnvelopeBody(): void
+    {
+        [$headers, $wireBody] = $this->platformResponse('{"a":1}', 'L2', 1774340000000, 'respnonce00000000000000000000a');
+        // 旧线上形态：裸 base64url 密文直作 wire body（信封契约修复前的自产自验形态）
+        $rawCipher = \Wop\Sdk\EncryptedEnvelope::extract($wireBody);
+        $this->reSignResponse($headers, $rawCipher);
+        $result = $this->merchantClient->verifyResponse($headers, $rawCipher, self::PATH);
+
+        $this->assertFalse($result->ok);
+        $this->assertStringContainsString('信封', (string) $result->reason, '非信封 wire body 须按协议类明确报错');
+    }
+
+    /** 信封缺 encrypted 字段 → 协议类明确失败。 */
+    public function testVerifyResponseL2RejectsEnvelopeWithoutEncryptedField(): void
+    {
+        [$headers] = $this->platformResponse('{"a":1}', 'L2', 1774340000000, 'respnonce00000000000000000000a');
+        $missing = '{"other":"x"}';
+        $this->reSignResponse($headers, $missing);
+        $result = $this->merchantClient->verifyResponse($headers, $missing, self::PATH);
+
+        $this->assertFalse($result->ok);
+        $this->assertStringContainsString('缺少 encrypted', (string) $result->reason);
+    }
+
+    /** 信封 encrypted 非字符串 / 非 JSON / 非 JSON 对象 → 协议类明确失败。 */
+    public function testVerifyResponseL2RejectsMalformedEnvelopes(): void
+    {
+        foreach ([
+            'not-json-at-all' => '非 JSON',
+            '12345' => 'JSON 标量',
+            '["encrypted","x"]' => 'JSON 数组',
+            '{}' => '空对象',
+            '{"encrypted":123}' => '非字符串值',
+            '{"encrypted":""}' => '空串',
+        ] as $bad => $note) {
+            [$headers] = $this->platformResponse('{"a":1}', 'L2', 1774340000000, 'respnonce00000000000000000000a');
+            $this->reSignResponse($headers, (string) $bad); // 数字串键会被 PHP 转 int，此处还原为 wire 字符串
+            $result = $this->merchantClient->verifyResponse($headers, (string) $bad, self::PATH);
+            $this->assertFalse($result->ok, "应拒绝（{$note}）");
+            $this->assertStringContainsString('信封', (string) $result->reason, "协议类明确报错（{$note}）");
+        }
+    }
+
+    /** 信封容忍未知字段（前向兼容）：附加字段不影响提取与解密。 */
+    public function testVerifyResponseL2EnvelopeToleratesUnknownFields(): void
+    {
+        [$headers, $wireBody] = $this->platformResponse('{"a":1}', 'L2', 1774340000000, 'respnonce00000000000000000000a');
+        $cipher = \Wop\Sdk\EncryptedEnvelope::extract($wireBody);
+        $extended = json_encode(['encrypted' => $cipher, 'ext' => ['ts' => 1], 'v' => 'future'], JSON_UNESCAPED_SLASHES);
+        $this->reSignResponse($headers, (string) $extended);
+        $result = $this->merchantClient->verifyResponse($headers, (string) $extended, self::PATH);
+
+        $this->assertTrue($result->ok);
+        $this->assertSame('{"a":1}', $result->plaintext);
+    }
+
+    /** encrypt 头 level 非法 → 结构化 fail（解析类明确），不再逃逸为未捕获异常。 */
+    public function testVerifyResponseInvalidEncryptHeaderFailsStructured(): void
+    {
+        [$headers, $wireBody] = $this->platformResponse('{"a":1}', 'L0', 1774340000000, 'respnonce00000000000000000000a');
+        $headers['x-wop-encrypt'] = 'L1';
+        $this->reSignResponse($headers, $wireBody);
+        $result = $this->merchantClient->verifyResponse($headers, $wireBody, self::PATH);
+
+        $this->assertFalse($result->ok);
+        $this->assertStringContainsString('L0/L2', (string) $result->reason, '解析类失败语义明确（10.2）');
     }
 }

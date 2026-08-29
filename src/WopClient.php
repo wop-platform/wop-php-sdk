@@ -56,11 +56,12 @@ final class WopClient
             self::HEADER_NONCE => $nonce ?? $this->newNonce(),
         ];
 
-        // L2：信封加密（CSPRNG DEK + IV），wire body = base64url(ciphertext||tag)
+        // L2：信封加密（CSPRNG DEK + IV），wire body = {"encrypted":"<base64url(ciphertext||tag)>"}
+        // （线上信封契约与网关 CryptoFilter 一致，L2 线上体恒为 JSON）
         if ($isL2 && $body !== null) {
             $dek = new DekPayload($this->config->suite->dekAlg, \random_bytes(Aes256Gcm::KEY_BYTES), \random_bytes(Aes256Gcm::IV_BYTES));
             $result = Aes256Gcm::encrypt($body, $dek->key, $dek->iv);
-            $wireBody = Base64Url::encode($result->cipherTag);
+            $wireBody = EncryptedEnvelope::wrap(Base64Url::encode($result->cipherTag));
             $headers[self::HEADER_ENCRYPT] = EncryptHeader::build(
                 EncryptHeader::LEVEL_L2,
                 RsaOaep::wrap($dek->encode(), $this->config->peerPublicKey)
@@ -113,7 +114,7 @@ final class WopClient
     }
 
     /**
-     * F6：验签 → digest 复核 → DEK 解包 → alg 族比对（解包后、bulk 解密前）→ bulk 解密。
+     * F6：验签 → digest 复核 → DEK 解包 → alg 族比对（解包后、bulk 解密前）→ 信封提取 → bulk 解密。
      *
      * @param array<string, string> $headers
      */
@@ -148,7 +149,11 @@ final class WopClient
             }
         }
 
-        $encryptHeader = EncryptHeader::parse($this->header($headers, self::HEADER_ENCRYPT));
+        try {
+            $encryptHeader = EncryptHeader::parse($this->header($headers, self::HEADER_ENCRYPT));
+        } catch (WopException $e) {
+            return VerifyResult::fail($e->getMessage());
+        }
         if (!$encryptHeader->isEncrypted() || $body === '') {
             return VerifyResult::ok($body);
         }
@@ -169,8 +174,13 @@ final class WopClient
             return VerifyResult::fail(self::REASON_DEK_ALG_MISMATCH);
         }
 
-        // ⑤ bulk 解密（失败模糊，I7）
-        $plaintext = Aes256Gcm::decrypt(Base64Url::decode($body), $dek->iv, $dek->key);
+        // ⑤ 信封提取 + bulk 解密（提取/编码为协议类明确错误；GCM 解密失败模糊，I7）
+        try {
+            $cipherB64Url = EncryptedEnvelope::extract($body);
+            $plaintext = Aes256Gcm::decrypt(Base64Url::decode($cipherB64Url), $dek->iv, $dek->key);
+        } catch (WopException $e) {
+            return VerifyResult::fail($e->getMessage());
+        }
         return $plaintext === null
             ? VerifyResult::fail(self::REASON_DECRYPT_FAIL)
             : VerifyResult::ok($plaintext);
