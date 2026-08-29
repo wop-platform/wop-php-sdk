@@ -27,11 +27,12 @@ jobs:
 
       - name: Vector fixture integrity (byte-identical to protocol source)
         run: |
-          curl -fsSL -o /tmp/crypto-vectors.json \
-            https://raw.githubusercontent.com/wop-platform/gtsp-wop-gateway/main/docs/crypto-vectors.json \
-            || cp tests/fixtures/crypto-vectors.json /tmp/crypto-vectors.json
-          cmp tests/fixtures/crypto-vectors.json /tmp/crypto-vectors.json \
-            || echo "::warning::fixture 与真源不一致（离线环境跳过远端比对）"
+          if curl -fsSL --max-time 30 -o /tmp/crypto-vectors.json \
+            https://raw.githubusercontent.com/wop-platform/gtsp-wop-gateway/main/docs/crypto-vectors.json; then
+            cmp tests/fixtures/crypto-vectors.json /tmp/crypto-vectors.json
+          else
+            echo "::warning::真源不可达，跳过远端比对"
+          fi
 
       - name: Run tests with conformance vectors
         run: vendor/bin/phpunit
