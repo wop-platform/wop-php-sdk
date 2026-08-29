@@ -256,6 +256,21 @@ final class WopClientTest extends VectorCase
         $this->assertStringContainsString('格式错误', (string) $b->reason, '解析类失败语义明确（10.2）');
     }
 
+    /**
+     * interop 合同（n07/n08 同构）：签名段 b64url 合法但长度与套件定长不符——
+     * 公开结构知识 → 协议类明确拒绝，非验签模糊（跨仓拉齐基线）。
+     */
+    public function testVerifyResponseWrongSignatureLengthIsProtocolError(): void
+    {
+        [$headers, $wireBody] = $this->platformResponse('{"a":1}', 'L0', 1774340000000, 'respnonce00000000000000000000a');
+        $sign = \Wop\Sdk\SignHeader::parse($headers['x-wop-sign']);
+        $short = \Wop\Sdk\Base64Url::encode(\substr(\Wop\Sdk\Base64Url::decode($sign->signature), 0, 383));
+        $headers['x-wop-sign'] = 'WOP-RSA3072-SHA256 v1/1800/' . implode(';', $sign->signedHeaders) . '/' . $short;
+        $result = $this->merchantClient->verifyResponse($headers, $wireBody, self::PATH);
+        $this->assertFalse($result->ok);
+        $this->assertStringContainsString('定长不符', (string) $result->reason, '协议类明确（非验签模糊）');
+    }
+
     /** verifyCallback — canonical URI 取回调 path。 */
     public function testVerifyCallbackUsesCallbackPath(): void
     {
@@ -393,15 +408,18 @@ final class WopClientTest extends VectorCase
         $this->assertSame('摘要不匹配', $result->reason);
     }
 
-    /** L2 密文但 encrypt 头缺失：验签+digest 过后按 L0 原文返回（协议层无解密指令）。 */
-    public function testVerifyResponseCipherBodyWithoutEncryptHeaderTreatedAsL0(): void
+    /**
+     * 已签名头被剥离（x-wop-encrypt 列入 signedHeaders 但响应中缺席）：
+     * 协议类明确拒绝而非静默降级 L0——interop 合同 n14 同构（防剥离降级攻击）。
+     */
+    public function testVerifyResponseSignedHeaderStrippedFromResponseRejected(): void
     {
         [$headers, $wireBody] = $this->platformResponse('{"a":1}', 'L2', 1774340000000, 'respnonce00000000000000000000a');
         unset($headers['x-wop-encrypt']);
         $this->reSignResponse($headers, $wireBody);
         $result = $this->merchantClient->verifyResponse($headers, $wireBody, self::PATH);
-        $this->assertTrue($result->ok);
-        $this->assertSame($wireBody, $result->plaintext);
+        $this->assertFalse($result->ok);
+        $this->assertStringContainsString('在响应中缺失', (string) $result->reason, '协议类明确拒绝（10.2）');
     }
 
     /** GET + L2（body null）：不产信封、不产 digest，等同 L0 空体。 */

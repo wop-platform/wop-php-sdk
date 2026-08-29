@@ -59,6 +59,34 @@ final class RsaOaepTest extends VectorCase
         $this->assertSame($vec['plaintext'], RsaOaep::unwrap($wrapped, $keys['privatePkcs8B64']));
     }
 
+    /** interop 随机流合同：显式 seed 下 wrap 确定性（同 seed 同密文），且可被规格参数解包。 */
+    public function testWrapWithExplicitSeedIsDeterministic(): void
+    {
+        $keys = self::keys()['rsa3072'];
+        $seed = \random_bytes(32);
+        $a = RsaOaep::wrap('deterministic-payload', $keys['publicSpkiB64'], $seed);
+        $b = RsaOaep::wrap('deterministic-payload', $keys['publicSpkiB64'], $seed);
+        $this->assertSame($a, $b, '同 seed 必产同密文（OAEP-from-stream）');
+        $this->assertNotSame($a, RsaOaep::wrap('deterministic-payload', $keys['publicSpkiB64'], \strrev($seed)));
+        $this->assertSame('deterministic-payload', RsaOaep::unwrap($a, $keys['privatePkcs8B64']));
+    }
+
+    /** seed 长度非 32 字节 → 明确拒绝（结构知识，不进密码学区）。 */
+    public function testWrapRejectsShortSeed(): void
+    {
+        $this->expectException(\Wop\Sdk\WopException::class);
+        $this->expectExceptionMessage('OAEP seed');
+        RsaOaep::wrap('x', self::keys()['rsa3072']['publicSpkiB64'], 'short');
+    }
+
+    /** 明文超出 OAEP 容量（k - 2·hLen - 2）→ 明确拒绝。 */
+    public function testWrapRejectsOversizedPlaintext(): void
+    {
+        $this->expectException(\Wop\Sdk\WopException::class);
+        $this->expectExceptionMessage('明文超长');
+        RsaOaep::wrap(\str_repeat('x', 384 - 64 - 2 + 1), self::keys()['rsa3072']['publicSpkiB64']);
+    }
+
     /** 密钥解析失败：垃圾公钥包装抛明确错误；垃圾私钥解包返回 null（I7 模糊）。 */
     public function testWrapWithGarbagePublicKeyThrows(): void
     {
