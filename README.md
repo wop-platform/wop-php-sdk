@@ -3,8 +3,8 @@
 WOP 网关商户侧官方 PHP 客户端库：封装协议核心（结构化签名 / 内容摘要 / L2 数字信封 / 验签解密），
 商户无需理解 canonicalRequest、套件推导与线上字节格式即可安全对接。
 
-- 协议真源：`crypto-strategy-spec.md v0.3-reviewed`（D1–D13 冻结）
-- 向量真源：`crypto-vectors.json`（本仓 `tests/fixtures/` 全量副本，禁改）
+- 协议真源：[crypto-strategy-spec.md](https://github.com/wop-platform/wop-specs/blob/main/crypto/crypto-strategy-spec.md)（v0.3-reviewed）+ [wop-sdk-spec.md](https://github.com/wop-platform/wop-specs/blob/main/sdk/wop-sdk-spec.md)（v1.0-ratified）
+- 向量真源：[crypto-vectors.json](https://github.com/wop-platform/wop-specs/blob/main/crypto/crypto-vectors.json)（本仓 fixture 为字节级副本，禁手改）
 - 正确性锚：黄金向量**字节级**断言 + 负向量（tamper/跨族/带 `=` base64url）必须拒绝
 
 ## 快速开始
