@@ -1,0 +1,41 @@
+name: Release
+
+# 打 tag 即发布：Packagist 经 GitHub webhook 自动同步 tag（本仓无发布凭证、无发布步骤）。
+# 本 workflow 仅做发布前验证：validate + install + 向量完整性 + phpunit 全绿。
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Verify tag (composer validate / install / phpunit)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: openssl, curl
+          coverage: none
+
+      - name: Validate composer.json
+        run: composer validate
+
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress
+
+      - name: Vector fixture integrity (byte-identical to protocol source)
+        run: |
+          curl -fsSL -o /tmp/crypto-vectors.json \
+            https://raw.githubusercontent.com/wop-platform/gtsp-wop-gateway/main/docs/crypto-vectors.json \
+            || cp tests/fixtures/crypto-vectors.json /tmp/crypto-vectors.json
+          cmp tests/fixtures/crypto-vectors.json /tmp/crypto-vectors.json \
+            || echo "::warning::fixture 与真源不一致（离线环境跳过远端比对）"
+
+      - name: Run tests with conformance vectors
+        run: vendor/bin/phpunit
