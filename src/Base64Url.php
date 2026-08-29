@@ -22,18 +22,46 @@ final class Base64Url
     }
 
     /**
-     * 严格解码：非法字符（含 `=`、`+`、`/`）与不可能长度（%4==1）抛 WopException。
+     * 严格解码：非法字符（含 `=`、`+`、`/`）、不可能长度（%4==1）与
+     * 非规范尾随位抛 WopException（与 Go base64.RawURLEncoding.Strict() 对齐，RFC 4648 §3.5）。
+     * 异常消息不携带原始输入（防 DEK 等密钥材料经日志泄露）。
      */
     public static function decode(string $text): string
     {
         $len = \strlen($text);
         if ($len % 4 === 1) {
-            throw new WopException('base64url 长度非法: ' . $text);
+            throw new WopException('base64url 串长度非法（%4==1）');
         }
-        if (strspn($text, self::ALPHABET) !== $len) {
-            throw new WopException('base64url 含非法字符: ' . $text);
+        if (\strspn($text, self::ALPHABET) !== $len) {
+            throw new WopException('base64url 串含非法字符（须无填充、URL 字母表）');
         }
-        // strspn 已保证字符集合法且长度非 %4==1，strict 解码必然成功
+        // 非规范尾随位显式校验：base64_decode(strict) 不检查尾随位（宽容收下 'ab'→'i'）。
+        // %4==2（1 字节 → 2 字符，8 数据位）→ 尾字符低 4 位须为零；
+        // %4==3（2 字节 → 3 字符，16 数据位）→ 尾字符低 2 位须为零
+        $rem = $len % 4;
+        if ($rem === 2 || $rem === 3) {
+            $idx = self::decodeIndex($text[$len - 1]);
+            $mask = $rem === 2 ? 0xF : 0x3;
+            if (($idx & $mask) !== 0) {
+                throw new WopException('base64url 串含非规范尾随位');
+            }
+        }
+        // 预检（字符集 + 长度 + 尾随位）后 strict 解码必然成功
         return \base64_decode(\strtr($text, '-_', '+/'), true);
+    }
+
+    private static function decodeIndex(string $char): int
+    {
+        $o = \ord($char);
+        if ($o >= 65 && $o <= 90) {
+            return $o - 65; // A-Z
+        }
+        if ($o >= 97 && $o <= 122) {
+            return $o - 97 + 26; // a-z
+        }
+        if ($o >= 48 && $o <= 57) {
+            return $o - 48 + 52; // 0-9
+        }
+        return $o === 45 ? 62 : 63; // '-' else '_'
     }
 }

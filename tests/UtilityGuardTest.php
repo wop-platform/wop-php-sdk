@@ -10,6 +10,7 @@ use Wop\Sdk\Base64Url;
 use Wop\Sdk\CanonicalRequest;
 use Wop\Sdk\ContentDigest;
 use Wop\Sdk\DekPayload;
+use Wop\Sdk\EncryptedEnvelope;
 use Wop\Sdk\EncryptHeader;
 use Wop\Sdk\RsaOaep;
 use Wop\Sdk\RsaSigner;
@@ -28,6 +29,7 @@ final class UtilityGuardTest extends TestCase
             Base64Url::class,
             CanonicalRequest::class,
             ContentDigest::class,
+            EncryptedEnvelope::class,
             RsaOaep::class,
             RsaSigner::class,
             Aes256Gcm::class,
