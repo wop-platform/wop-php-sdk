@@ -13,6 +13,8 @@ final class EncryptHeader
     public const LEVEL_L0 = 'L0';
     public const LEVEL_L2 = 'L2';
 
+    private const B64URL_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+
     public function __construct(
         public readonly string $level,
         public readonly ?string $dek,
@@ -40,6 +42,10 @@ final class EncryptHeader
             if (\strncasecmp(\trim($part), 'dek=', 4) === 0) {
                 $dek = \trim(\substr(\trim($part), 4));
             }
+        }
+        // 密文段字符集前置校验（b64url 无填充，公开结构知识 → 协议类明确；与 Go 基线一致）
+        if ($dek !== null && \strspn($dek, self::B64URL_CHARS) !== \strlen($dek)) {
+            throw new WopException('x-wop-encrypt dek 段须为 base64url 无填充');
         }
         return new self(\strtoupper($level), $dek);
     }

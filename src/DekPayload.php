@@ -20,6 +20,14 @@ final class DekPayload
         'WOP-SM2-SM3' => self::ALG_SM4_GCM,
     ];
 
+    /** @var array<string, int> 报文对称算法 → 密钥字节数（公开协议知识，D13 注册表） */
+    private const ALG_KEY_BYTES = [
+        self::ALG_AES_256_GCM => 32,
+        self::ALG_SM4_GCM => 16,
+    ];
+
+    private const IV_BYTES = 12;
+
     public function __construct(
         public readonly string $alg,
         public readonly string $key,
@@ -41,7 +49,11 @@ final class DekPayload
     }
 
     /**
-     * @throws WopException 空段/段数/非法 base64url
+     * 严格解析：恰三段、alg 已知、key/iv 长度匹配、b64url 严格。
+     * 长度/段数属"解包后载荷结构"，由调用方（WopClient）按 I7 模糊化为 decrypt-failed；
+     * alg 跨族仍走 algMatches（D8 明确）。
+     *
+     * @throws WopException 空段/段数/alg 未知/长度不符/非法 base64url
      */
     public static function decode(string $payloadText): self
     {
@@ -53,6 +65,18 @@ final class DekPayload
         if ($alg === '' || $keyB64u === '' || $ivB64u === '') {
             throw new WopException('DEK 载荷格式错误（存在空段）');
         }
-        return new self($alg, Base64Url::decode($keyB64u), Base64Url::decode($ivB64u));
+        $keyBytes = self::ALG_KEY_BYTES[$alg] ?? null;
+        if ($keyBytes === null) {
+            throw new WopException('DEK 载荷 alg 不在支持列表（AES-256-GCM/SM4-GCM）: ' . $alg);
+        }
+        $key = Base64Url::decode($keyB64u);
+        $iv = Base64Url::decode($ivB64u);
+        if (\strlen($key) !== $keyBytes) {
+            throw new WopException('DEK 载荷 alg ' . $alg . ' 密钥须 ' . $keyBytes . ' 字节，实际 ' . \strlen($key));
+        }
+        if (\strlen($iv) !== self::IV_BYTES) {
+            throw new WopException('DEK 载荷 iv 须 ' . self::IV_BYTES . ' 字节，实际 ' . \strlen($iv));
+        }
+        return new self($alg, $key, $iv);
     }
 }
