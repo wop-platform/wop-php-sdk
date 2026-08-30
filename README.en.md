@@ -1,4 +1,5 @@
 # WOP PHP SDK
+![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/wop-platform/wop-php-sdk?utm_source=oss&utm_medium=github&utm_campaign=wop-platform%2Fwop-php-sdk&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
 
 Official merchant-side PHP client library for the WOP gateway: wraps the protocol core
 (structured signing / content digest / L2 digital envelope / verify-and-decrypt) so merchants
