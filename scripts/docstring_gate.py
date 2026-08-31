@@ -63,9 +63,7 @@ def _has_docblock(lines: list[str], decl_idx: int) -> bool:
     i = decl_idx - 1
     while i >= 0 and lines[i].strip() == "":
         i -= 1
-    if i < 0:
-        return False
-    return lines[i].strip().startswith("/**")
+    return False if i < 0 else lines[i].strip().startswith("/**")
 
 
 def scan_lines(rel_path: str, text: str) -> list[Symbol]:
@@ -73,19 +71,20 @@ def scan_lines(rel_path: str, text: str) -> list[Symbol]:
     lines = text.splitlines()
     symbols: list[Symbol] = []
     for idx, line in enumerate(lines):
-        m = METHOD_RE.match(line)
-        if m:
+        if m := METHOD_RE.match(line):
             modifiers, name = m.group(1), m.group(2)
-            visibility = "public"
-            for mod in modifiers.split():
-                if mod in ("public", "protected", "private"):
-                    visibility = mod
-                    break
+            visibility = next(
+                (
+                    mod
+                    for mod in modifiers.split()
+                    if mod in ("public", "protected", "private")
+                ),
+                "public",
+            )
             kind = "internal" if visibility in ("protected", "private") else "external"
             symbols.append(Symbol(rel_path, idx + 1, name, kind, _has_docblock(lines, idx)))
             continue
-        c = CLASS_RE.match(line)
-        if c:
+        if c := CLASS_RE.match(line):
             kind, name = "external", c.group(2)
             symbols.append(Symbol(rel_path, idx + 1, name, kind, _has_docblock(lines, idx)))
     return symbols

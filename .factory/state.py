@@ -59,9 +59,10 @@ def _labels(obj):
 
 
 def _needs_fix_rounds(events):
-    return sum(1 for e in events or []
-               if e.get("op") == "add"
-               and e.get("label") == "factory:needs-fix")
+    return sum(
+        e.get("op") == "add" and e.get("label") == "factory:needs-fix"
+        for e in events or []
+    )
 
 
 def _linked_issue(pr):
@@ -160,9 +161,7 @@ def main():
     args = sys.argv[1:]
 
     def load(flag):
-        if flag in args:
-            return json.load(open(args[args.index(flag) + 1]))
-        return None
+        return json.load(open(args[args.index(flag) + 1])) if flag in args else None
 
     issue = load("--issue")
     if issue is None and not sys.stdin.isatty():

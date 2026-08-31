@@ -407,7 +407,7 @@ def test_main_self_test_flag(monkeypatch, capsys):
     monkeypatch.setattr(gate, "collect_symbols", lambda: called.append(1) or [])
     assert gate.main(["--self-test"]) == 0
     assert "self-test PASS" in capsys.readouterr().out
-    assert called == []  # self-test 不触发真实扫描
+    assert not called
 
 
 def test_main_clean_repo_exit_zero(monkeypatch, capsys):

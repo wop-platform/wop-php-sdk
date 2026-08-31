@@ -164,9 +164,14 @@ def adapt_manifest(pending_text, conflicted_shas):
     items = []
     for line in pending_text.splitlines():
         sha, subject = line.split("\t", 1)
-        items.append({"sha": sha, "subject": subject,
-                      "status": "conflicted" if sha in conflicted else "clean",
-                      "patch": "patches/%s.patch" % sha[:9]})
+        items.append(
+            {
+                "sha": sha,
+                "subject": subject,
+                "status": "conflicted" if sha in conflicted else "clean",
+                "patch": f"patches/{sha[:9]}.patch",
+            }
+        )
     return items
 
 def load_ledger(path):
@@ -224,11 +229,11 @@ def classify_drift(diff_rq_output, upstream_path):
         if "Only in" in line:
             if any(x in line for x in DRIFT_EXCLUDES):
                 continue
-            if line.startswith("Only in %s" % upstream_path):
+            if line.startswith(f"Only in {upstream_path}"):
                 upstream_only.append(line)
             else:
                 local_only.append(line)
-        elif "differ" in line and not any(x in line for x in DRIFT_EXCLUDES):
+        elif "differ" in line and all(x not in line for x in DRIFT_EXCLUDES):
             differing.append(line)
     return {"upstream_only": upstream_only, "local_only": local_only,
             "differing": differing}
@@ -237,15 +242,12 @@ def classify_drift(diff_rq_output, upstream_path):
 def render_report(pending, drift):
     """dry-run / PR 描述共用的报告文本。"""
     lines = ["—— 待反哺候选（%d 个，cherry-pick 顺序）——" % len(pending)]
-    for c in pending:
-        lines.append("  %s  %s" % (c["sha"][:9], c["subject"]))
-    lines.append("")
-    lines.append("—— 上游漂移（仅报告，不自动吸收）——")
+    lines.extend(f'  {c["sha"][:9]}  {c["subject"]}' for c in pending)
+    lines.extend(("", "—— 上游漂移（仅报告，不自动吸收）——"))
     for kind, label in (("upstream_only", "上游独有"), ("differing", "两侧分歧")):
         items = drift.get(kind, [])
         lines.append("  [%s] %d 项" % (label, len(items)))
-        for item in items:
-            lines.append("    " + item)
+        lines.extend(f"    {item}" for item in items)
     if not drift.get("upstream_only") and not drift.get("differing"):
         lines.append("  （无）")
     return "\n".join(lines)
@@ -260,9 +262,18 @@ def status_line(pending_count):
 
 def _git_log_commits():
     out = subprocess.run(
-        ["git", "log", "--format=%H%x00%s%x00%b%x1e",
-         "%s..HEAD" % PORT_POINT, "--", ".factory"],
-        capture_output=True, text=True, check=True).stdout
+        [
+            "git",
+            "log",
+            "--format=%H%x00%s%x00%b%x1e",
+            f"{PORT_POINT}..HEAD",
+            "--",
+            ".factory",
+        ],
+        capture_output=True,
+        text=True,
+        check=True,
+    ).stdout
     return parse_git_log(out)
 
 
@@ -273,9 +284,19 @@ def _files_by_sha():
     若分隔符放段尾会把上一条的文件错配给下一条）；线性历史假设与
     cherry-pick 顺序契约一致。"""
     out = subprocess.run(
-        ["git", "log", "--format=%x1e%H", "--name-only",
-         "%s..HEAD" % PORT_POINT, "--", ".factory"],
-        capture_output=True, text=True, check=True).stdout
+        [
+            "git",
+            "log",
+            "--format=%x1e%H",
+            "--name-only",
+            f"{PORT_POINT}..HEAD",
+            "--",
+            ".factory",
+        ],
+        capture_output=True,
+        text=True,
+        check=True,
+    ).stdout
     files_by_sha = {}
     for record in out.split("\x1e"):
         lines = [ln for ln in record.strip("\n").split("\n") if ln.strip()]
@@ -342,8 +363,7 @@ def main():
                 ["git", "show", "--name-only", "--format=", c["sha"]],
                 capture_output=True, text=True, check=True).stdout.split()
             cands.append(dict(c, patch=patch, files=files))
-        missing = closure_missing(cands, ups)
-        if missing:
+        if missing := closure_missing(cands, ups):
             print("依赖闭包缺失（樱桃前 fail-closed）:")
             for ref, shas in sorted(missing.items()):
                 print("  %s  ← %s" % (ref, ", ".join(shas)))

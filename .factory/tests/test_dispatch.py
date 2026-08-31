@@ -67,9 +67,10 @@ class TestChainPool:
         for n in range(1, 6):
             lines = _lines(f, n)
             assert len(lines) == 2 and lines[0].startswith("start") \
-                and lines[1].startswith("end"), f"issue-{n} 链未完整跑完: {lines}"
-            marks.append((float(lines[0].split()[2]), 1))   # 区间开
-            marks.append((float(lines[1].split()[2]), -1))  # 区间闭
+                    and lines[1].startswith("end"), f"issue-{n} 链未完整跑完: {lines}"
+            marks.extend(
+                ((float(lines[0].split()[2]), 1), (float(lines[1].split()[2]), -1))
+            )
         marks.sort()
         running = peak = 0
         for _, delta in marks:

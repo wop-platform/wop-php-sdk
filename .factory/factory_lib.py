@@ -66,12 +66,10 @@ def evidence_suites(changed_files: list[str]) -> list[str]:
     """
     suites = set()
     for f in changed_files:
-        m = re.match(r"(backend|frontend)/", f)
-        if m:
+        if m := re.match(r"(backend|frontend)/", f):
             suites.add(m.group(1))
             continue
-        m = re.match(r"(skills/[^/]+)/", f)
-        if m:
+        if m := re.match(r"(skills/[^/]+)/", f):
             suites.add(f"{m.group(1)}/scripts")
     return sorted(suites)
 
@@ -81,7 +79,10 @@ def breaker_check(floor: dict, entries: list[dict], today: str) -> None:
 
     streak 跨全部历史条目（不只当日）：连续失败是状态不是流量。
     """
-    runs = sum(1 for e in entries if str(e.get("ts", ""))[:10] == today)
+    runs = sum(
+        str(e.get("ts", ""))[:10] == today
+        for e in entries
+    )
     streak = 0
     for e in entries:
         streak = streak + 1 if e.get("exit") != 0 else 0
@@ -98,8 +99,7 @@ def _load_ledger(path: str) -> list[dict]:
     ledger = Path(path)
     if ledger.exists():
         for line in ledger.read_text(encoding="utf-8").splitlines():
-            line = line.strip()
-            if line:
+            if line := line.strip():
                 entries.append(json.loads(line))
     return entries
 
@@ -126,8 +126,8 @@ def node_metric_line(node: str, t0: int, now: int, status: str) -> str:
     node_timeout 同款）；渲染契约与消费端（report）同模块，drift 即测试红。
     """
     return json.dumps(
-        {"node": node, "secs": int(now) - int(t0), "status": status},
-        ensure_ascii=False)
+        {"node": node, "secs": now - t0, "status": status}, ensure_ascii=False
+    )
 
 
 def node_timeout(name: str, env: dict | None = None) -> str:
@@ -180,9 +180,7 @@ def classify_task(files: list[str]) -> str:
         return "doc"
     if not src and not md:
         return "test"
-    if md:  # md 与任何代码（含测试）并存
-        return "mixed"
-    return "code"
+    return "mixed" if md else "code"
 
 
 # 工厂本地化配置（M4 + 拆分前置 ADR-009）：guard.py / 链脚本 / prompts 的
@@ -293,8 +291,10 @@ def dist_manifest_lines(up: str, sha: str) -> list[str]:
     版本旧，返回空（调用方全部按 local 报告）。local 是 {路径: 理由}。
     """
     out = subprocess.run(
-        ["git", "-C", up, "show", "%s:.factory/DISTRIBUTION.json" % sha],
-        capture_output=True, text=True)
+        ["git", "-C", up, "show", f"{sha}:.factory/DISTRIBUTION.json"],
+        capture_output=True,
+        text=True,
+    )
     if out.returncode != 0:
         print("警告: 上游无 DISTRIBUTION.json（版本旧），全部按 local 报告",
               file=sys.stderr)
@@ -306,12 +306,21 @@ def dist_manifest_lines(up: str, sha: str) -> list[str]:
         if entry.endswith("/"):
             # 目录项（如 tests/）递归展开为文件项
             r = subprocess.run(
-                ["git", "-C", up, "ls-tree", "-r", "--name-only",
-                 sha, ".factory/" + entry],
-                capture_output=True, text=True)
+                [
+                    "git",
+                    "-C",
+                    up,
+                    "ls-tree",
+                    "-r",
+                    "--name-only",
+                    sha,
+                    f".factory/{entry}",
+                ],
+                capture_output=True,
+                text=True,
+            )
             if not r.stdout.strip():
-                print("  [%s] %s: 目录在上游不存在（上游整目录已删？清单待退役甄别）"
-                      % (kind, entry), file=sys.stderr)
+                print(f"  [{kind}] {entry}: 目录在上游不存在（上游整目录已删？清单待退役甄别）", file=sys.stderr)
             for line in r.stdout.splitlines():
                 lines.append("%s\t%s" % (kind, line[len(".factory/"):]))
         else:
@@ -852,11 +861,7 @@ def dispatch_main(args: list[str]) -> int:
             print("提示: --watch 常驻（或 cron */30 调用单轮）")
         return rc
     finally:
-        # 先收尸再放锁（PR #53 审查④）：孤儿链在锁释放后仍跑，会与新
-        # dispatcher 并发；TERM/HUP → SystemExit 走到此，正常路径此处
-        # 已被 wait_all 收空，shutdown 为空操作。
-        stuck = cfg.pool.shutdown()
-        if stuck:
+        if stuck := cfg.pool.shutdown():
             print(f"  [warn] {len(stuck)} 条链未限期退出已 SIGKILL: {stuck}",
                   file=sys.stderr)
         release_dispatch_lock(lock_dir)
