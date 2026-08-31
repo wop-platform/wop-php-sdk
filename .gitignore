@@ -2,6 +2,7 @@
 .phpunit.cache/
 .phpunit.result.cache
 /coverage*/
+/.cache/
 composer.lock
 .idea/
 .DS_Store
