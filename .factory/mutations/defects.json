@@ -118,6 +118,33 @@
       "replace": "     * 严格解码：非法字符（含 `=`、`+`、`/`）（负例：仅措辞变更）与",
       "gate": "tests",
       "expect_block": false
+    },
+    {
+      "id": "D-01",
+      "description": "docstring 缺失：删除 EncryptHeader::parse 的 phpdoc（对外 public 方法 → 对外 70/71 <100%，docstring 门应拦截）",
+      "target": "src/EncryptHeader.php",
+      "find": "    /**\n     * null/空视为 L0；level 非法抛 WopException。\n     */\n    public static function parse(?string $header): self",
+      "replace": "    public static function parse(?string $header): self",
+      "gate": "docstring",
+      "expect_block": true
+    },
+    {
+      "id": "D-02",
+      "description": "docstring 缺失：删除 TransportResponse::header 的 phpdoc（对外 public 方法，docstring 门应拦截）",
+      "target": "src/Transport/TransportResponse.php",
+      "find": "    /** 大小写不敏感取头；缺席返回 null。 */\n    public function header(string $name): ?string",
+      "replace": "    public function header(string $name): ?string",
+      "gate": "docstring",
+      "expect_block": true
+    },
+    {
+      "id": "D-03",
+      "description": "docstring 缺失：删除 VerifyResult::ok 工厂方法的 phpdoc（对外 public static 方法，docstring 门应拦截）",
+      "target": "src/VerifyResult.php",
+      "find": "    /** 成功结果：ok=true + 明文（L2 解密后 / L0 原样）。 */\n    public static function ok(string $plaintext): self",
+      "replace": "    public static function ok(string $plaintext): self",
+      "gate": "docstring",
+      "expect_block": true
     }
   ]
 }
