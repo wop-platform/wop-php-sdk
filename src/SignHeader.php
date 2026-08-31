@@ -79,6 +79,7 @@ final class SignHeader
         return $sp === false ? $trimmed : \substr($trimmed, 0, $sp);
     }
 
+    /** expiredSeconds 数值化 + 范围校验 (0, 86400]；非法抛 WopException。 */
     private static function parseExpiredSeconds(string $raw): int
     {
         if (!\ctype_digit($raw)) {

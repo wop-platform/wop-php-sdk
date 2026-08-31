@@ -26,6 +26,7 @@ final class RsaOaep
     /** @var array<string, RSA\PublicKey> 无填充公钥缓存（确定性 wrap 用） */
     private static array $rawPublicCache = [];
 
+    /** 工具类禁实例化。 */
     private function __construct()
     {
     }
@@ -85,6 +86,7 @@ final class RsaOaep
         return \substr($t, 0, $length);
     }
 
+    /** 私钥解析（OAEP 双 SHA-256 + 进程内缓存）；失败包 WopException。 */
     private static function privateKey(string $material): RSA\PrivateKey
     {
         $cached = self::$privateCache[$material] ?? null;
@@ -102,6 +104,7 @@ final class RsaOaep
         return self::$privateCache[$material] = $key;
     }
 
+    /** 公钥解析为无填充模式（确定性 wrap 用）+ 缓存；失败包 WopException。 */
     private static function rawPublicKey(string $material): RSA\PublicKey
     {
         $cached = self::$rawPublicCache[$material] ?? null;

@@ -10,6 +10,7 @@ namespace Wop\Sdk;
  */
 final class EncryptedEnvelope
 {
+    /** 工具类禁实例化。 */
     private function __construct()
     {
     }

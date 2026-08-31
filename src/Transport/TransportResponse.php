@@ -19,11 +19,13 @@ final class TransportResponse
     ) {
     }
 
+    /** 2xx 视为成功。 */
     public function isSuccess(): bool
     {
         return $this->statusCode >= 200 && $this->statusCode < 300;
     }
 
+    /** 大小写不敏感取头；缺席返回 null。 */
     public function header(string $name): ?string
     {
         foreach ($this->headers as $key => $value) {

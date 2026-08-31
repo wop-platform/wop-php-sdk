@@ -18,6 +18,7 @@ final class RsaSigner
     /** @var array<string, RSA\PublicKey> */
     private static array $publicCache = [];
 
+    /** 工具类禁实例化。 */
     private function __construct()
     {
     }
@@ -44,6 +45,7 @@ final class RsaSigner
         }
     }
 
+    /** 私钥解析（PKCS1 v1.5 签名模式 + 进程内缓存）；失败包 WopException。 */
     private static function privateKey(string $material): RSA\PrivateKey
     {
         $cached = self::$privateCache[$material] ?? null;
@@ -58,6 +60,7 @@ final class RsaSigner
         return self::$privateCache[$material] = $key;
     }
 
+    /** 公钥解析（PKCS1 v1.5 验签模式 + 进程内缓存）；失败包 WopException。 */
     private static function publicKey(string $material): RSA\PublicKey
     {
         $cached = self::$publicCache[$material] ?? null;

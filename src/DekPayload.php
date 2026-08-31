@@ -28,6 +28,11 @@ final class DekPayload
 
     private const IV_BYTES = 12;
 
+    /**
+     * @param string $alg 报文对称算法（AES-256-GCM / SM4-GCM，§6.2）
+     * @param string $key 裸密钥字节（长度由 alg 决定：32 / 16）
+     * @param string $iv 12 字节 IV
+     */
     public function __construct(
         public readonly string $alg,
         public readonly string $key,
@@ -35,6 +40,7 @@ final class DekPayload
     ) {
     }
 
+    /** 线上编码：`alg$base64url(key)$base64url(iv)`。 */
     public function encode(): string
     {
         return $this->alg . '$' . Base64Url::encode($this->key) . '$' . Base64Url::encode($this->iv);

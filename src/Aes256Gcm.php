@@ -14,6 +14,7 @@ final class Aes256Gcm
     public const IV_BYTES = 12;
     private const TAG_BYTES = 16;
 
+    /** 工具类禁实例化。 */
     private function __construct()
     {
     }
@@ -49,6 +50,7 @@ final class Aes256Gcm
         return $plain === false ? null : $plain;
     }
 
+    /** 密钥长度预检（32 字节）；非法抛 WopException。 */
     private static function assertKey(string $key): void
     {
         if (\strlen($key) !== self::KEY_BYTES) {

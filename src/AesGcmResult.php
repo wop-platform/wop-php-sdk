@@ -9,6 +9,10 @@ namespace Wop\Sdk;
  */
 final class AesGcmResult
 {
+    /**
+     * @param string $cipherTag ciphertext||tag 尾拼密文（线上形态）
+     * @param string $iv 12 字节 IV（与密文同生同传）
+     */
     public function __construct(
         public readonly string $cipherTag,
         public readonly string $iv,

@@ -25,6 +25,7 @@ final class Suite
     private const KNOWN_KEY_ALGS = ['RSA3072', 'RSA4096', 'SM2'];
     private const KNOWN_DIGEST_ALGS = ['SHA256', 'SM3'];
 
+    /** 私有构造：仅经 parse() 自注册表产出（D13 单一注册表）。 */
     private function __construct(
         public readonly string $securityReq,
         public readonly string $keyAlgorithm,

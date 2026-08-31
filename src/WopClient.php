@@ -30,6 +30,7 @@ final class WopClient
 
     private const OAEP_SEED_BYTES = 32;
 
+    /** 以不可变配置装配客户端（securityReq 已在 WopConfig 构造期固化为 Suite）。 */
     public function __construct(private readonly WopConfig $config)
     {
     }
