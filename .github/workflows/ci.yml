@@ -67,3 +67,14 @@ jobs:
           name: coverage-${{ matrix.php }}
           path: coverage/html
           retention-days: 7
+
+  # 等价清单锚点漂移检测（wop-specs D7：清单行号随源码演进漂移须显性失败，
+  # 防止等价主张静默指向错误对象）。秒级，每 PR 必跑。
+  equivalent-anchors:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python3 scripts/check-equivalent-anchors.py

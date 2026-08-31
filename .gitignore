@@ -7,6 +7,10 @@ composer.lock
 .idea/
 .DS_Store
 
+# python
+.pytest_cache
+__pycache__
+
 # 工厂治理层入库（MISSION/.factory 适配层纳入 git 管理；hosting.env 平台配置随仓共享，
 # 令牌走 shell profile 不入库）。不入库：运行时产物与机器态
 .factory/artifacts/
