@@ -1,5 +1,9 @@
 # WOP PHP SDK
+
+[![Packagist](https://img.shields.io/packagist/v/wop-platform/wop-php-sdk)](https://packagist.org/packages/wop-platform/wop-php-sdk) [![PHP 8.1+](https://img.shields.io/packagist/php-v/wop-platform/wop-php-sdk)](https://packagist.org/packages/wop-platform/wop-php-sdk) [![Release](https://img.shields.io/github/v/release/wop-platform/wop-php-sdk)](https://github.com/wop-platform/wop-php-sdk/releases)
+[![CI](https://github.com/wop-platform/wop-php-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/wop-platform/wop-php-sdk/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/github/license/wop-platform/wop-php-sdk)](LICENSE)
 ![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/wop-platform/wop-php-sdk?utm_source=oss&utm_medium=github&utm_campaign=wop-platform%2Fwop-php-sdk&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
+
 
 Official merchant-side PHP client library for the WOP gateway: wraps the protocol core
 (structured signing / content digest / L2 digital envelope / verify-and-decrypt) so merchants
