@@ -15,12 +15,17 @@ final class EncryptHeader
 
     private const B64URL_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
 
+    /**
+     * @param string $level 加密级别（L0 明文 / L2 信封）
+     * @param string|null $dek L2 时的 DEK 载荷（base64url 包装），L0 为 null
+     */
     public function __construct(
         public readonly string $level,
         public readonly ?string $dek,
     ) {
     }
 
+    /** 是否为 L2 加密请求。 */
     public function isEncrypted(): bool
     {
         return \strcasecmp($this->level, self::LEVEL_L2) === 0;
@@ -50,6 +55,7 @@ final class EncryptHeader
         return new self(\strtoupper($level), $dek);
     }
 
+    /** level 合法性校验（仅 L0/L2，大小写不敏感）；非法抛 WopException。 */
     public static function validateLevel(string $level): void
     {
         if (\strcasecmp($level, self::LEVEL_L0) === 0 || \strcasecmp($level, self::LEVEL_L2) === 0) {
@@ -58,6 +64,7 @@ final class EncryptHeader
         throw new WopException('不支持的加密级别 level=' . $level . '，仅支持 L0/L2');
     }
 
+    /** 组装线上头：L0 裸 level；L2 追加 `;dek=<载荷>`。 */
     public static function build(string $level, ?string $dek): string
     {
         return $dek === null ? $level : $level . ';dek=' . $dek;

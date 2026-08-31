@@ -16,6 +16,7 @@ final class WopConfig
 {
     public readonly Suite $suite;
 
+    /** securityReq 构造期解析为 Suite 固化（非法套件即刻失败，D13）。 */
     public function __construct(
         public readonly string $appKey,
         string $securityReq,

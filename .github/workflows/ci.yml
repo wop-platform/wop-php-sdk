@@ -17,6 +17,11 @@ jobs:
         php: ['8.2', '8.3', '8.4', '8.5']
     steps:
       - uses: actions/checkout@v4
+      - name: Portability gate (reject machine-specific absolute paths)
+        run: bash .ci/portability-gate.sh
+
+      - name: PHPDoc gate (src API docstring coverage)
+        run: python3 scripts/docstring_gate.py
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -65,3 +70,14 @@ jobs:
           name: coverage-${{ matrix.php }}
           path: coverage/html
           retention-days: 7
+
+  # 等价清单锚点漂移检测（wop-specs D7：清单行号随源码演进漂移须显性失败，
+  # 防止等价主张静默指向错误对象）。秒级，每 PR 必跑。
+  equivalent-anchors:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python3 scripts/check-equivalent-anchors.py

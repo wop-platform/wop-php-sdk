@@ -12,10 +12,12 @@ final class ContentDigest
 {
     private const LABEL_SHA256 = 'sha-256';
 
+    /** 工具类禁实例化。 */
     private function __construct()
     {
     }
 
+    /** SHA-256 摘要 → 64 字符小写 hex。 */
     public static function sha256Hex(string $bytes): string
     {
         return \hash('sha256', $bytes);

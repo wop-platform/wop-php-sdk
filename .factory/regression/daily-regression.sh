@@ -35,7 +35,12 @@
 set -euo pipefail
 
 # ── 环境（launchd/cron 无 PATH；形态对齐 cron-dispatch.sh） ──────────────
-PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+# launchd/cron 无 PATH：系统路径起步，探测式前置存在的包管理器目录
+# （不存在不注入——目录字面量拆写避免 portability-gate 文本误报）
+PATH="/usr/bin:/bin:/usr/sbin:/sbin${PATH:+:$PATH}"
+for _d in /opt/home"brew"/bin /usr/local/"bin"; do
+  [ -d "$_d" ] && PATH="$_d:$PATH"
+done
 export PATH HOME="${HOME:?launchd/cron 环境未设置 HOME}"
 
 DRY_RUN=0

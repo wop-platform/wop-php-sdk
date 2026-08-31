@@ -100,8 +100,7 @@ def violates(path: str) -> str | None:
             (entry for entry in PERIMETER if p == entry or p.startswith(entry)),
             None,
         )
-    else:
-        return None
+    return None
 
 
 def diff_names(base: str, head: str) -> list[str]:

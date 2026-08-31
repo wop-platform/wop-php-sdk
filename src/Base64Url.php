@@ -12,10 +12,12 @@ final class Base64Url
 {
     private const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
 
+    /** 工具类禁实例化。 */
     private function __construct()
     {
     }
 
+    /** 编码：标准 base64 转 URL 字母表（`+`/`/` → `-`/`_`）并去 `=` 填充。 */
     public static function encode(string $bytes): string
     {
         return \rtrim(\strtr(\base64_encode($bytes), '+/', '-_'), '=');
@@ -50,6 +52,7 @@ final class Base64Url
         return \base64_decode(\strtr($text, '-_', '+/'), true);
     }
 
+    /** 单字符 → 6 位索引（尾随位预检用；调用前字符集已校验）。 */
     private static function decodeIndex(string $char): int
     {
         $o = \ord($char);

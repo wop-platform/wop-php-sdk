@@ -16,11 +16,13 @@ final class CurlTransport implements TransportInterface
 
     private const READ_CHUNK = 65536;
 
+    /** 空构造：句柄按请求创建，无跨请求可变状态。 */
     public function __construct()
     {
         // ext-curl 为 suggest 依赖（composer.json/README 注明），缺失时 curl_init 未定义会自然报错
     }
 
+    /** 执行传输（实现 TransportInterface）；传输失败/响应体超限抛 WopException。 */
     public function send(string $method, string $url, array $headers, string $body): TransportResponse
     {
         $handle = curl_init($url);

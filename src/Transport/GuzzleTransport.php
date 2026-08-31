@@ -19,12 +19,14 @@ final class GuzzleTransport implements TransportInterface
     private const READ_CHUNK = 65536;
 
     private readonly Client $client;
+    /** 注入自定义 Client；缺省 30s 超时、http_errors=false（状态码自判）。 */
     public function __construct(?Client $client = null)
     {
         // guzzlehttp/guzzle 为 suggest/peer 依赖，缺失时 autoload 自然报错（README 注明）
         $this->client = $client ?? new Client(['http_errors' => false, 'timeout' => 30]);
     }
 
+    /** 执行传输（实现 TransportInterface）；传输失败/响应体超限抛 WopException。 */
     public function send(string $method, string $url, array $headers, string $body): TransportResponse
     {
         try {
