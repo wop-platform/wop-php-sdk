@@ -17,6 +17,8 @@ final class TransportTest extends TestCase
 {
     private static string $baseUrl;
     private static ?object $serverProc = null;
+    /** @var string|null 本次类的唯一 router 路径（PID+随机后缀：并发套件互不共享，teardown 清理） */
+    private static ?string $routerPath = null;
 
     public static function setUpBeforeClass(): void
     {
@@ -24,7 +26,7 @@ final class TransportTest extends TestCase
         if (ini_get('memory_limit') !== '-1') {
             ini_set('memory_limit', '1G');
         }
-        $router = sys_get_temp_dir() . '/wop-sdk-echo-router.php';
+        $router = self::$routerPath = sys_get_temp_dir() . '/wop-sdk-echo-router-' . getmypid() . '-' . bin2hex(random_bytes(4)) . '.php';
         file_put_contents($router, <<<'PHP'
 <?php
 if (str_starts_with($_SERVER['REQUEST_URI'], '/huge')) {
@@ -86,6 +88,10 @@ PHP
             proc_terminate(self::$serverProc->handle);
             proc_close(self::$serverProc->handle);
             self::$serverProc = null;
+        }
+        if (self::$routerPath !== null) {
+            @unlink(self::$routerPath);
+            self::$routerPath = null;
         }
     }
 

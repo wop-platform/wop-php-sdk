@@ -107,4 +107,19 @@ php .ci/mutation-run.php                    # 全量变异（约 20 分钟）
 php .ci/gap-report.php                      # 行/分支缺口定位
 ```
 
-均未提交（工作区保留）。
+质量闭环与可移植性修复已入库（见 git log）；推送遵循仓库流程。
+
+## 8. 可移植性修复与 CI 探测（追加）
+
+审查发现并修复机器特定路径（其他机器不可访问）：
+
+| 位置 | 问题 | 修复 |
+|---|---|---|
+| `.ci/run-quality.sh` | `cd /Users/dreambt/...`、`PHP_BIN=/opt/homebrew/bin/php` 硬编码 | 脚本自身位置推导 `$(dirname "$0")/..`；php/composer 走 PATH，composer 缺失时 phar 缓存到仓内 `.cache/`（gitignore） |
+| `tests/TransportTest.php` | router 固定文件名共享于系统临时目录，并发套件互踩且不清理 | PID+随机后缀唯一化 + `tearDownAfterClass` unlink（实测 /tmp 残留 0） |
+
+保留项：CI workflow 中 `curl -o /tmp/... && cmp` 为 GitHub runner 标准临时目录用法（每次干净环境），`sys_get_temp_dir()` 为运行期 API，均不构成可移植性风险。
+
+CI 探测：`.ci/portability-gate.sh`（本地与 CI 同一脚本，`.github/workflows/ci.yml` checkout 后首步执行）——
+对 src/tests/features/.ci/behat.yml/phpunit.xml/composer.json/.github 扫描个人目录/包管理器前缀/Windows 盘符，
+命中即 fail。pattern 拼接构造避免自噬；过滤不依赖 `--exclude`（本机 RTK 代理 grep 对其不兼容，实测踩坑）。
