@@ -20,6 +20,9 @@ jobs:
       - name: Portability gate (reject machine-specific absolute paths)
         run: bash .ci/portability-gate.sh
 
+      - name: PHPDoc gate (src API docstring coverage)
+        run: python3 scripts/docstring_gate.py
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:

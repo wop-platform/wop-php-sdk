@@ -37,12 +37,14 @@ _GIT_ENV = {k: v for k, v in os.environ.items() if k not in _GIT_DISCOVERY_VARS}
 
 # 顶层类型声明：class/interface/trait/enum（含 abstract/final/readonly 修饰）
 CLASS_RE = re.compile(
-    r"^\s*(?:abstract\s+|final\s+|readonly\s+)*(class|interface|trait|enum)\s+(\w+)")
+    r"^\s*(?:abstract\s+|final\s+|readonly\s+)*(class|interface|trait|enum)\s+(\w+)",
+    re.IGNORECASE)  # PHP 关键字大小写不敏感（PUBLIC CLASS 等合法声明须可扫）
 # 方法声明：仅匹配行首修饰词前缀（闭包 `$f = function`、`=> static function`
 # 等带前缀形态不命中）；可见性缺省按 PHP 语义视为 public
 METHOD_RE = re.compile(
     r"^\s*((?:(?:abstract|final|public|protected|private|static|readonly)\s+)*"
-    r")function\s+&?\s*(\w+)\s*\(")
+    r")function\s+&?\s*(\w+)\s*\(",
+    re.IGNORECASE)  # PHP 关键字大小写不敏感（PUBLIC FUNCTION 等合法声明须可扫）
 
 INTERNAL_COVERAGE_MIN = 0.80
 
@@ -72,7 +74,7 @@ def scan_lines(rel_path: str, text: str) -> list[Symbol]:
     symbols: list[Symbol] = []
     for idx, line in enumerate(lines):
         if m := METHOD_RE.match(line):
-            modifiers, name = m.group(1), m.group(2)
+            modifiers, name = m.group(1).lower(), m.group(2)
             visibility = next(
                 (
                     mod

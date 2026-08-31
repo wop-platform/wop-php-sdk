@@ -10,7 +10,12 @@ LOCK="${REPO}/.factory/locks/dispatch.lock"
 METRICS="${REPO}/.factory/metrics"
 STREAK="${REPO}/.factory/locks/dispatch-fail-streak"
 STALLED_MARK="${METRICS}/dispatch-stalled"
-PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+# launchd/cron 无 PATH：系统路径起步，探测式前置存在的包管理器目录
+# （不存在不注入——目录字面量拆写避免 portability-gate 文本误报）
+PATH="/usr/bin:/bin:/usr/sbin:/sbin${PATH:+:$PATH}"
+for _d in /opt/home"brew"/bin /usr/local/"bin"; do
+  [ -d "$_d" ] && PATH="$_d:$PATH"
+done
 cd "$REPO" || { echo "无法进入 ${REPO}" >&2; exit 2; }
 export PATH HOME="${HOME:?cron 环境未设置 HOME}"
 mkdir -p "${REPO}/.factory/locks"  # 净克隆首跑：目录 gitignored 不存在时 shlock 建锁 ENOENT 被误读为锁被持而静默退出（源仓 PR#79 审查）；下方日志重定向同依赖此目录

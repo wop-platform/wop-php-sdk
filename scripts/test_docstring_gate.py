@@ -143,7 +143,7 @@ def _legacy_docblock():
 
 def test_legacy_first_docblock_behaviour_and_shadowing():
     legacy = _legacy_docblock()
-    assert legacy.__code__.co_firstlineno == 61  # 段行号已对齐原文件
+    assert legacy.__code__.co_firstlineno == 63  # 段行号已对齐原文件（IGNORECASE 注释 +2 行）
     # 旧版跳过空行后回看：紧邻空行不算间隔
     assert legacy(["/**", "", "decl"], 2) is True          # 空行回溯 + 命中 /**
     assert legacy(["/** doc */", "decl"], 1) is True        # 单行块直接命中
@@ -484,3 +484,68 @@ def test_main_unknown_argument_exits(monkeypatch, capsys):
         gate.main(["--nope"])
     assert excinfo.value.code == 2
     assert "unrecognized arguments" in capsys.readouterr().err
+
+
+def test_scan_mixed_case_keywords_ignored_case():
+    """PHP 关键字大小写不敏感：PUBLIC CLASS / PUBLIC FUNCTION 合法声明须可扫
+    （CodeRabbit PR #11）。"""
+    text = "\n".join([
+        "<?php",
+        "FINAL CLASS S {",
+        "    /** 公开。 */",
+        "    PUBLIC FUNCTION a() {}",
+        "    Protected function b() {}",
+        "    PRIVATE static function c() {}",
+        "}",
+    ])
+    syms = {s.name: s for s in gate.scan_lines("src/m.php", text)}
+    assert set(syms) == {"S", "a", "b", "c"}
+    assert syms["S"].kind == "external"
+    assert syms["a"].kind == "external" and syms["a"].has_doc is True
+    assert syms["b"].kind == "internal"   # Protected 归一后 internal
+    assert syms["c"].kind == "internal"   # PRIVATE static 归一后 internal
+
+
+def test_anchors_ledger_illegal_row_fails():
+    """CodeRabbit PR #11：台账格式非法行不得静默跳过（exit 1）。"""
+    import tempfile
+    from pathlib import Path
+    from unittest import mock
+
+    import importlib.util
+    _spec = importlib.util.spec_from_file_location(
+        "check_equivalent_anchors", Path(__file__).resolve().parent / "check-equivalent-anchors.py")
+    anc = importlib.util.module_from_spec(_spec)
+    _spec.loader.exec_module(anc)
+
+    bad = "完全不是表格行\n"
+    with tempfile.TemporaryDirectory() as td:
+        root = Path(td)
+        (root / "tests" / "mutation").mkdir(parents=True)
+        (root / "tests" / "mutation" / "EQUIVALENT-MUTANTS.md").write_text(bad, encoding="utf-8")
+        with mock.patch.object(anc, "LEDGER", root / "tests" / "mutation" / "EQUIVALENT-MUTANTS.md"):
+            assert anc.main() == 1
+
+
+def test_anchors_ledger_lineno_out_of_range_drifts():
+    """CodeRabbit PR #11：锚点行号越界（0 或超长）报 ANCHOR DRIFT 而非 IndexError。"""
+    import tempfile
+    from pathlib import Path
+    from unittest import mock
+
+    import importlib.util
+    _spec = importlib.util.spec_from_file_location(
+        "check_equivalent_anchors", Path(__file__).resolve().parent / "check-equivalent-anchors.py")
+    anc = importlib.util.module_from_spec(_spec)
+    _spec.loader.exec_module(anc)
+
+    src = Path(tempfile.mkdtemp())
+    (src / "src").mkdir()
+    (src / "src" / "A.php").write_text("<?php\n// 仅两行\n", encoding="utf-8")
+    ledger = src / "tests" / "mutation" / "EQUIVALENT-MUTANTS.md"
+    ledger.parent.mkdir(parents=True)
+    ledger.write_text(
+        "| 1 | `A.php:99` | logic | `{` | TODO |\n", encoding="utf-8")
+    with mock.patch.object(anc, "LEDGER", ledger), \
+         mock.patch.object(anc, "SRC", src / "src"):
+        assert anc.main() == 1

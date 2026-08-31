@@ -27,9 +27,27 @@ def main() -> int:
     drifted = []
     no_anchor = 0
     total = 0
+    bad_rows = []
     for line in LEDGER.read_text(encoding="utf-8").split("\n"):
+        if not line.strip():
+            continue
         m = ROW.match(line)
         if not m:
+            # 未解析行三分：注释（#/>）跳过；含 | 的表头/分隔线/无锚条目
+            # 计入待补锚；其余（含 | 但非表格形态）判格式非法
+            stripped = line.strip()
+            if not stripped or stripped.startswith(("#", ">", "<!--")):
+                continue
+            if "|" in line:
+                # 表头（含 #/位置/算子/锚/论证列名）与纯分隔线（---）跳过；
+                # 其余 | 行视为无锚遗留条目（计入待补锚）
+                if "位置" in line or re.match(r"^\|?[\s:|-]+\|?$", stripped):
+                    continue
+                no_anchor += 1
+                print(f"[anchors] 无锚列条目（计入待补锚）: {stripped[:80]}",
+                      file=sys.stderr)
+            else:
+                bad_rows.append(line)
             continue
         total += 1
         file, lineno, op, anchor, _proof = m.group(1), int(m.group(2)), m.group(3).strip(), m.group(4).strip(), m.group(5)
@@ -41,9 +59,17 @@ def main() -> int:
         if not path.exists():
             drifted.append(f"{file}:{lineno} 文件不存在（重命名/删除）")
             continue
-        actual = path.read_text(encoding="utf-8").split("\n")[lineno - 1].strip()
+        lines = path.read_text(encoding="utf-8").split("\n")
+        if not 1 <= lineno <= len(lines):
+            drifted.append(f"{file}:{lineno} 行号越界（源码 {len(lines)} 行）")
+            continue
+        actual = lines[lineno - 1].strip()
         if not actual.startswith(anchor):
             drifted.append(f"{file}:{lineno} 锚失配：清单={anchor!r} 实际={actual[:60]!r}")
+    if bad_rows:
+        for r in bad_rows:
+            print(f"ANCHOR DRIFT: 台账格式非法: {r[:80]}", file=sys.stderr)
+        return 1
     if drifted:
         for d in drifted:
             print(f"ANCHOR DRIFT: {d}", file=sys.stderr)

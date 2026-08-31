@@ -67,10 +67,10 @@ def evidence_suites(changed_files: list[str]) -> list[str]:
     suites = set()
     for f in changed_files:
         if m := re.match(r"(backend|frontend)/", f):
-            suites.add(m.group(1))
+            suites.add(m[1])
             continue
         if m := re.match(r"(skills/[^/]+)/", f):
-            suites.add(f"{m.group(1)}/scripts")
+            suites.add(f"{m[1]}/scripts")
     return sorted(suites)
 
 
@@ -411,7 +411,7 @@ def reject_receipt(triage: dict) -> str:
             continue                # 不让回执阶段崩掉整条链的评论
         m = re.match(r"^判据([abc])[:：]", r)
         if m and ("不通过" in r or "存疑" in r):
-            failed.add(m.group(1))
+            failed.add(m[1])
     lines += ["", "**重投指引**：不同意裁决可补充上下文后重开，下一轮 triage 全新评估。针对未通过判据："]
     lines += [f"- {REJECT_GUIDANCE[k]}" for k in sorted(failed)] or [
         "- 对照 MISSION.md「Triage 判据」逐条补足 issue 上下文。"

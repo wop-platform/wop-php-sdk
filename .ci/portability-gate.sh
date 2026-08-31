@@ -8,13 +8,13 @@
 set -e
 cd "$(dirname "$0")/.."
 
-patterns="/Use""rs/|/opt/home""brew|/usr/local/(bin|lib|php)|/hom""e/[a-z]|C:\\\\"
+patterns="/Use""rs/|/opt/home""brew|/usr/local/(bin|lib|php)|/hom""e/[^/[:space:]]|C:\\\\"
 
 hits=$(grep -rnE "$patterns" \
-  --include='*.php' --include='*.sh' --include='*.yml' --include='*.xml' \
-  --include='*.json' --include='*.feature' \
-  src tests features .ci behat.yml phpunit.xml composer.json .github 2>/dev/null \
-  | grep -v '/portability-gate\.sh:' || true)
+  --include='*.php' --include='*.py' --include='*.sh' --include='*.yml' \
+  --include='*.yaml' --include='*.xml' --include='*.json' --include='*.feature' \
+  src tests features scripts .factory .ci behat.yml phpunit.xml composer.json .github \
+  2>/dev/null | grep -v '/portability-gate\.sh:' || true)
 
 if [ -n "$hits" ]; then
   echo "::error::检出机器特定绝对路径（其他机器不可访问），请改为运行期解析："

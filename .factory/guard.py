@@ -61,7 +61,7 @@ def self_check() -> None:
     m = re.search(r"## 周界（PERIMETER）(.*?)(?=\n## |\Z)", text, re.S)
     if not m:
         raise RuntimeError("MISSION.md 缺少「## 周界（PERIMETER）」一节")
-    mission_paths = {p for p in re.findall(r"`([^`\n]+)`", m.group(1)) if p.strip()}
+    mission_paths = {p for p in re.findall(r"`([^`\n]+)`", m[1]) if p.strip()}
     guard_paths = set(PERIMETER)
     if mission_paths != guard_paths:
         raise RuntimeError(
