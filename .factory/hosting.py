@@ -802,11 +802,6 @@ class CodeupAdapter:
         if state != "all":
             out = [p for p in out if p["state"] == "open"]
         if label:
-            # marker-only 标签（无原生类标，仅标记评论承载）须并入过滤
-            #（CodeRabbit PR #11）；仅过滤路径付 _pr_labels 查询成本
-            for p in out:
-                if label not in p["labels"]:
-                    p["labels"] = self._pr_labels(p["number"])
             out = [p for p in out if label in p["labels"]]
         return out[:limit]
 
@@ -814,12 +809,10 @@ class CodeupAdapter:
         # 评论标记模型（#66，承载平台缺口 b）：remove = 置 resolved
         # （内容保留，轮次计数不减——对齐 GitHub label-add 事件语义）；
         # add = 发标记评论 + 类标 Link 平台原生补充（两载体并存）。
-        # 一次快照双用（CodeRabbit PR #11）：remove 找目标标记；add 幂等判重
-        unresolved = [m for m in self._marker_comments(p)
-                      if not m["resolved"] and m["content"].startswith(_CU_LABEL_ADD)]
         for name in remove:
-            hits = [m for m in unresolved
-                    if self._marker_label(m["content"]) == name]
+            hits = [m for m in self._marker_comments(p)
+                    if not m["resolved"] and m["content"].startswith(_CU_LABEL_ADD)
+                    and self._marker_label(m["content"]) == name]
             if not hits:
                 print(f"[hosting] remove {name}: 无未 resolved 标记（幂等跳过）",
                       file=sys.stderr)
@@ -828,10 +821,6 @@ class CodeupAdapter:
                           f"{self._base()}/changeRequests/{p}/comments/{m['id']}",
                           body={"resolved": True})
         for name in add:
-            if any(self._marker_label(m["content"]) == name for m in unresolved):
-                print(f"[hosting] add {name}: 未 resolved 标记已存在（幂等跳过）",
-                      file=sys.stderr)
-                continue
             self._req("POST", f"{self._base()}/changeRequests/{p}/comments",
                       body={"comment_type": "GLOBAL_COMMENT",
                             "content": f"{_CU_LABEL_ADD}{name}",
@@ -968,7 +957,8 @@ def _emit(obj):
     print(json.dumps(obj, ensure_ascii=False))
 
 
-def main(argv):
+def _build_parser():
+    """构造 CLI 参数解析器（子命令定义原样迁自 main）。"""
     p = argparse.ArgumentParser(prog="hosting.py", add_help=True,
                                  description="托管平台抽象层（ADR-008）")
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -1022,8 +1012,119 @@ def main(argv):
     pm.add_argument("p")
     pm.add_argument("--method", default="merge",
                     choices=["merge", "squash", "rebase"])
+    return p
 
-    args = p.parse_args(argv)
+
+def _cmd_label(ad, args):
+    """label 子命令分派（ensure / history）。"""
+    if args.label_cmd == "ensure":
+        _cmd_label_ensure(ad, args)
+    else:
+        _cmd_label_history(ad, args)
+
+
+def _cmd_label_ensure(ad, args):
+    sys.exit(0 if ad.label_ensure(args.name, args.color, args.desc) else 1)
+
+
+def _cmd_label_history(ad, args):
+    _emit(ad.label_history(args.pr))
+
+
+def _cmd_issue(ad, args):
+    """issue 子命令分派。"""
+    if args.issue_cmd == "view":
+        _cmd_issue_view(ad, args)
+    elif args.issue_cmd == "get-labels":
+        _cmd_issue_get_labels(ad, args)
+    elif args.issue_cmd == "list":
+        _cmd_issue_list(ad, args)
+    elif args.issue_cmd == "set-labels":
+        _cmd_issue_set_labels(ad, args)
+    elif args.issue_cmd == "comment":
+        _cmd_issue_comment(ad, args)
+    elif args.issue_cmd == "create":
+        _cmd_issue_create(ad, args)
+
+
+def _cmd_issue_view(ad, args):
+    _emit(ad.issue_view(args.n))
+
+
+def _cmd_issue_get_labels(ad, args):
+    _emit(ad.issue_labels(args.n))
+
+
+def _cmd_issue_list(ad, args):
+    _emit(ad.issue_list(state=args.state, label=args.label,
+                        limit=args.limit, comments=args.comments))
+
+
+def _cmd_issue_set_labels(ad, args):
+    ad.issue_set_labels(args.n, add=_csv(args.add), remove=_csv(args.remove))
+
+
+def _cmd_issue_comment(ad, args):
+    ad.issue_comment(args.n, _body(args), marker=args.marker)
+
+
+def _cmd_issue_create(ad, args):
+    _emit(ad.issue_create(args.title, _body(args),
+                          label=args.label, repo=args.repo))
+
+
+def _cmd_pr(ad, args):
+    """pr 子命令分派。"""
+    if args.pr_cmd == "view":
+        _cmd_pr_view(ad, args)
+    elif args.pr_cmd == "list":
+        _cmd_pr_list(ad, args)
+    elif args.pr_cmd == "set-labels":
+        _cmd_pr_set_labels(ad, args)
+    elif args.pr_cmd == "create":
+        _cmd_pr_create(ad, args)
+    elif args.pr_cmd == "comment":
+        _cmd_pr_comment(ad, args)
+    elif args.pr_cmd == "diff":
+        _cmd_pr_diff(ad, args)
+    elif args.pr_cmd == "merge":
+        _cmd_pr_merge(ad, args)
+
+
+def _cmd_pr_view(ad, args):
+    _emit(ad.pr_view(args.p, repo=args.repo))
+
+
+def _cmd_pr_list(ad, args):
+    _emit(ad.pr_list(state=args.state, label=args.label,
+                     limit=args.limit, repo=args.repo))
+
+
+def _cmd_pr_set_labels(ad, args):
+    ad.pr_set_labels(args.p, add=_csv(args.add), remove=_csv(args.remove))
+
+
+def _cmd_pr_create(ad, args):
+    _emit(ad.pr_create(args.head, args.title, _body(args),
+                       label=args.label, base=args.base, repo=args.repo))
+
+
+def _cmd_pr_comment(ad, args):
+    ad.pr_comment(args.p, _body(args))
+
+
+def _cmd_pr_diff(ad, args):
+    out = ad.pr_diff(args.p, name_only=args.name_only)
+    print(out if isinstance(out, str) else json.dumps(out))
+
+
+def _cmd_pr_merge(ad, args):
+    ad.pr_merge(args.p, method=args.method)
+
+
+def main(argv):
+    """CLI 入口：解析 → 取适配器 → 命令分派。"""
+    args = _build_parser().parse_args(argv)
     try:
         ad = current_adapter()
 
@@ -1031,44 +1132,11 @@ def main(argv):
             sys.exit(0 if ad.auth_ok() else 1)
 
         if args.cmd == "label":
-            if args.label_cmd == "ensure":
-                sys.exit(0 if ad.label_ensure(args.name, args.color, args.desc) else 1)
-            _emit(ad.label_history(args.pr))
-
+            _cmd_label(ad, args)
         elif args.cmd == "issue":
-            if args.issue_cmd == "view":
-                _emit(ad.issue_view(args.n))
-            elif args.issue_cmd == "get-labels":
-                _emit(ad.issue_labels(args.n))
-            elif args.issue_cmd == "list":
-                _emit(ad.issue_list(state=args.state, label=args.label,
-                                    limit=args.limit, comments=args.comments))
-            elif args.issue_cmd == "set-labels":
-                ad.issue_set_labels(args.n, add=_csv(args.add), remove=_csv(args.remove))
-            elif args.issue_cmd == "comment":
-                ad.issue_comment(args.n, _body(args), marker=args.marker)
-            elif args.issue_cmd == "create":
-                _emit(ad.issue_create(args.title, _body(args),
-                                      label=args.label, repo=args.repo))
-
+            _cmd_issue(ad, args)
         elif args.cmd == "pr":
-            if args.pr_cmd == "view":
-                _emit(ad.pr_view(args.p, repo=args.repo))
-            elif args.pr_cmd == "list":
-                _emit(ad.pr_list(state=args.state, label=args.label,
-                                 limit=args.limit, repo=args.repo))
-            elif args.pr_cmd == "set-labels":
-                ad.pr_set_labels(args.p, add=_csv(args.add), remove=_csv(args.remove))
-            elif args.pr_cmd == "create":
-                _emit(ad.pr_create(args.head, args.title, _body(args),
-                                   label=args.label, base=args.base, repo=args.repo))
-            elif args.pr_cmd == "comment":
-                ad.pr_comment(args.p, _body(args))
-            elif args.pr_cmd == "diff":
-                out = ad.pr_diff(args.p, name_only=args.name_only)
-                print(out if isinstance(out, str) else json.dumps(out))
-            elif args.pr_cmd == "merge":
-                ad.pr_merge(args.p, method=args.method)
+            _cmd_pr(ad, args)
     except HostingError as e:
         print(f"[hosting] {e}", file=sys.stderr)
         sys.exit(e.code)
