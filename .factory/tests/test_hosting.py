@@ -185,7 +185,7 @@ class TestCodeupShapes:
         ad = self._ad({("POST", "/close"): {"result": True}}, monkeypatch)
         ad.pr_close(7)
         m, p, body, _q = ad.seen[0]
-        assert (m, p) == ("POST", ad._base() + "/changeRequests/7/close")
+        assert (m, p) == ("POST", f"{ad._base()}/changeRequests/7/close")
         assert body == {}  # 空 body；PUT /changeRequests/7 假阳性形态禁用
 
     def test_pr_close_github_uses_gh(self, monkeypatch):
@@ -334,6 +334,41 @@ class TestCodeupMarkerModel:
         n = ad.pr_view(5)
         assert n["review"] == "changes_requested"  # 手势取严于 reviewer PASS
 
+    def test_pr_labels_marker_failure_degrades_best_effort(self, monkeypatch, capsys):
+        """Sourcery #11：评论端点失败降级空集——标签读失败不阻断 PR 详情
+        （尽力而为契约；写路径 pr_set_labels 仍显式失败）。"""
+        ad = self._ad(monkeypatch, {})
+        real_req = ad._req
+
+        def fake_req(method, path, body=None, query=None, _retry_rdc=True):
+            if method == "GET" and path.endswith("/labels"):
+                return [{"name": "factory:needs-fix"}]
+            if method == "POST" and path.endswith("/comments/list"):
+                raise hosting.HostingError("comments endpoint down")
+            return real_req(method, path, body, query, _retry_rdc)
+        ad._req = fake_req
+        assert ad._pr_labels(7) == ["factory:needs-fix"]  # 类标保留，标记载体降级
+        assert "降级空集" in capsys.readouterr().err
+
+    def test_pr_view_marker_failure_keeps_review(self, monkeypatch, capsys):
+        """手势载体失败：review 维持平台原生映射，pr_view 不抛、不误报。"""
+        ad = self._ad(monkeypatch, {})
+        real_req = ad._req
+
+        def fake_req(method, path, body=None, query=None, _retry_rdc=True):
+            if method == "GET" and path.endswith("/changeRequests/5"):
+                return {"result": {"localId": 5, "newVersionState": "TO_BE_MERGED",
+                                   "reviewers": [{"reviewOpinionStatus": "PASS"}]}}
+            if method == "GET" and path.endswith("/labels"):
+                return []
+            if method == "POST" and path.endswith("/comments/list"):
+                raise hosting.HostingError("comments endpoint down")
+            return real_req(method, path, body, query, _retry_rdc)
+        ad._req = fake_req
+        out = ad.pr_view(5)
+        assert out["labels"] == []
+        assert out["review"] != "changes_requested"  # 载体缺席不得误报打回
+        assert "降级空集" in capsys.readouterr().err
 
 
 class TestCodeupWorkItemFace:
@@ -362,14 +397,13 @@ class TestCodeupWorkItemFace:
                     return payload
             if path.endswith("/comments"):
                 return self.WI["_comments"]
-                if m == method and path.endswith(suf):
-                    return payload
             if path.endswith("/workitems/KFPT-18") or path.endswith("/workitems/wid1"):
                 return self.WI["result"]
             if path.endswith("/workitems:search"):
                 return {"result": [self.WI["result"], {"id": "wid2", "serialNumber": "KFPT-19",
                               "subject": "旧", "logicalStatus": "FINISHED", "description": ""}]}
             raise hosting.HostingError(f"mock 未路由: {method} {path}")
+
         ad._req = fake_req
         return ad
 
@@ -567,9 +601,11 @@ class TestCodeupEndpointFallback:
             pass
 
         import urllib.error as ue
-        monkeypatch.setattr(hosting.urllib.request, "urlopen",
-                            lambda req, timeout=None: (_ for _ in ()).throw(
-                                ue.URLError("tls dropped")))
+
+        def _drop_tls(req, timeout=None):
+            raise ue.URLError("tls dropped")  # 直白抛出（生成器 .throw 惯用法会被 simplify-generator 误改语义）
+
+        monkeypatch.setattr(hosting.urllib.request, "urlopen", _drop_tls)
         monkeypatch.setenv("YUNXIAO_ACCESS_TOKEN", "t")
         monkeypatch.setenv("CODEUP_ORG_ID", "org")
         monkeypatch.setenv("CODEUP_REPO_ID", "42")
