@@ -14,7 +14,7 @@
 
 | 项 | 要求 |
 |----|------|
-| PHP | ≥ 8.1（CI 矩阵：8.2 / 8.3 / 8.4 / 8.5） |
+| PHP | ≥ 8.2（CI 矩阵：8.2 / 8.3 / 8.4 / 8.5） |
 | Composer | 2.x |
 | 扩展 | `openssl`（L2 AES-256-GCM bulk 加解密）、`curl`（CurlTransport 默认适配器） |
 | 运行时密码库 | `phpseclib/phpseclib ^3.0`（**唯一** RSA 签名 / OAEP 路径） |
@@ -67,7 +67,7 @@ php .ci/coverage-gate.php
 ## 5. 编码规范
 
 - PHP 惯例：`declare(strict_types=1)`、PSR-4 自动加载（`Wop\Sdk\` → `src/`）、PSR-12 风格、
-  PHP ≥ 8.1 语法（构造器属性提升、readonly、枚举等按需使用）。
+  PHP ≥ 8.2 语法（构造器属性提升、readonly、枚举等按需使用）。
 - 功能面对齐（spec §1.3）：
   - **F1** 套件配置与解析：`securityReq` 三套件；跨族 / 非法值明确拒绝；
   - **F2** canonicalRequest：5 段 `\n` 拼接；header 值 Java-URLEncoder 语义（空格→`%20`）；
