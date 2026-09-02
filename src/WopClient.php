@@ -217,10 +217,10 @@ final class WopClient
             return VerifyResult::ok($body);
         }
 
-        // 4. DEK 解包：密文段 b64url 结构非法为协议类明确错误（密文带 '=' 等公开结构知识）；
-        //    解包失败与载荷结构畸形为解密类模糊（I7 保守默认，除 alg 跨族 D8 外）
+        // 4. DEK 解包：裸 L2 缺 dek 段与密文段 b64url 结构非法均为公开头结构知识
+        //    → 协议类明确（interop 裁决 0 号，n17）；解包失败与载荷结构畸形为解密类模糊（I7，除 alg 跨族 D8 外）
         if ($encryptHeader->dek === null) {
-            return VerifyResult::fail(self::REASON_DECRYPT_FAIL);
+            return VerifyResult::fail('x-wop-encrypt 为 L2 但缺少 dek 段');
         }
         try {
             Base64Url::decode($encryptHeader->dek);
