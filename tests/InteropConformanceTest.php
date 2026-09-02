@@ -22,8 +22,8 @@ final class InteropConformanceTest extends VectorCase
 {
     private const FIXTURE_PATH = __DIR__ . '/fixtures/interop-cases.json';
 
-    /** 真源 sha256（wop-specs/interop/v1/interop-cases.json，格式 wop-interop-1，29 条）。 */
-    private const FIXTURE_SHA256 = '3030e98fa6174f1ca905f35d7742ac9471141945dde66f29f01021d51a555f7a';
+    /** 真源 sha256（wop-specs/interop/v1/interop-cases.json，格式 wop-interop-1，30 条）。 */
+    private const FIXTURE_SHA256 = 'c920ca1a93ccb3899a659f59fed6ec4652cf9e1b3b58bbdac23c45ac3ed2353e';
 
     private const APP_KEY = 'app_interop_001';
     private const SM2_SUITE = 'WOP-SM2-SM3';
@@ -46,7 +46,8 @@ final class InteropConformanceTest extends VectorCase
         'n09-digest-missing', 'n10-digest-not-signed',
         'n11-suite-mismatch', 'n12-envelope-missing-field',
         'n13-dek-key-length', 'n14-missing-signed-header',
-        'n15-digest-without-body', 'n16-replay-cross-path',
+        'n15-digest-without-body', 'n17-encrypt-missing-dek',
+        'n16-replay-cross-path',
     ];
 
     /**
@@ -80,8 +81,8 @@ final class InteropConformanceTest extends VectorCase
         $f = self::fixture();
         $this->assertSame('wop-interop-1', $f['_meta']['format'], '样本集格式哨兵');
         $cases = $f['cases'];
-        $this->assertCount(29, $cases, '总条数哨兵：29');
-        $this->assertSame(29, $f['_meta']['caseCount'], 'caseCount 元数据哨兵');
+        $this->assertCount(30, $cases, '总条数哨兵：30');
+        $this->assertSame(30, $f['_meta']['caseCount'], 'caseCount 元数据哨兵');
 
         [$builds, $positives, $negatives] = [[], [], []];
         foreach ($cases as $case) {
@@ -94,7 +95,7 @@ final class InteropConformanceTest extends VectorCase
         }
         $this->assertSame(self::KNOWN_BUILD_IDS, $builds, 'build 条数/已知 id 哨兵（6 条）');
         $this->assertSame(self::KNOWN_POSITIVE_IDS, $positives, 'positive 条数/已知 id 哨兵（7 条）');
-        $this->assertSame(self::KNOWN_NEGATIVE_IDS, $negatives, 'negative 条数/已知 id 哨兵（16 条）');
+        $this->assertSame(self::KNOWN_NEGATIVE_IDS, $negatives, 'negative 条数/已知 id 哨兵（17 条）');
     }
 
     // ==================== build 方向 ====================
@@ -202,7 +203,7 @@ final class InteropConformanceTest extends VectorCase
             );
             $consumed++;
         }
-        $this->assertSame(12, $consumed, 'negative 消费条数哨兵：RSA 12 条（SM2 4 条显式拒绝）');
+        $this->assertSame(13, $consumed, 'negative 消费条数哨兵：RSA 13 条（SM2 4 条显式拒绝）');
     }
 
     /**
