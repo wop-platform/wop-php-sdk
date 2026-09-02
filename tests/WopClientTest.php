@@ -448,8 +448,8 @@ final class WopClientTest extends VectorCase
     }
 
 
-    /** I7：L2 头无 dek 段（解包输入缺失）→ 解密失败（模糊）。 */
-    public function testVerifyResponseL2WithoutDekFailsObfuscated(): void
+    /** interop 裁决 0 号（n17）：裸 L2 缺 dek 段为公开头结构知识 → 协议类明确，非解密类模糊。 */
+    public function testVerifyResponseL2WithoutDekFailsProtocolExplicit(): void
     {
         [$headers, $wireBody] = $this->platformResponse('{"a":1}', 'L2', 1774340000000, 'respnonce00000000000000000000a');
         // 替换为无 dek 的 L2 指令并重签（wire/digest 不变）
@@ -457,7 +457,7 @@ final class WopClientTest extends VectorCase
         $this->reSignResponse($headers, $wireBody);
         $result = $this->merchantClient->verifyResponse($headers, $wireBody, self::PATH);
         $this->assertFalse($result->ok);
-        $this->assertSame('解密失败', $result->reason);
+        $this->assertSame('x-wop-encrypt 为 L2 但缺少 dek 段', $result->reason);
     }
 
     /** I7：DEK 解包成功但载荷非 alg$key$iv → 解密失败（模糊）。 */
