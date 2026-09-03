@@ -15,7 +15,8 @@
     label_history = [{"op": "add"|"remove", "label": str}]
 - 原子性：issue/pr set-labels 的 add+remove 在支持单请求换标的平台
   （GitHub）合并为一次调用——半途断裂=双标签或裸奔（factory-lib.sh 语义）。
-- 平台选择：FACTORY_HOSTING=github（默认）|codeup。
+- 平台选择：FACTORY_HOSTING 显式设置优先；未设置按 origin remote 检测
+  （codeup.aliyun.com → codeup，github.com/无 remote → github 历史默认）。
 - 退出码：0 成功；1 平台操作失败；2 用法/配置/平台能力缺口（fail-closed，
   绝不静默降级——降级等于状态机半转移）。
 - 层级契约：本模块是**传输层**。issue 评论/标签副作用的唯一出口是
@@ -815,7 +816,10 @@ class CodeupAdapter:
 
     @staticmethod
     def _marker_label(content):
-        return content[len(_CU_LABEL_ADD):].splitlines()[0].strip()
+        # 平台开放输入：恰为前缀/前缀+空白时切片为空，splitlines()[0] 抛
+        # IndexError（CodeRabbit wop-skills#14）；空标记按无标记处理
+        rest = content[len(_CU_LABEL_ADD):].strip()
+        return rest.splitlines()[0].strip() if rest else ""
 
     def pr_view(self, p, repo=None):
         # 【live 2026-08-26】单体端点是仓库级（仓库级集合 404、单体正常）
@@ -923,10 +927,16 @@ class CodeupAdapter:
 
     def pr_create(self, head, title, body, label=None, base=None, repo=None):
         # 【文档推导】CreateMergeRequest（body 形态经文档核实）
+        if not base:
+            # targetBranch 必填且因仓而异（master/main 均有实仓）——猜默认
+            # 会静默落错基线，fail-closed 拒猜（web-tools#5 Sourcery）
+            raise HostingError(
+                "codeup pr create 需要 --base（目标分支因仓而异，勿猜默认）",
+                code=2)
         rid = self.repo_ref()
         payload = self._req("POST", f"{self._base()}/changeRequests", body={
             "title": title, "description": body,
-            "sourceBranch": head, "targetBranch": base or "master",
+            "sourceBranch": head, "targetBranch": base,
             "sourceProjectId": rid, "targetProjectId": rid})
         result = payload.get("result", payload)
         url = result.get("detailUrl") or result.get("webUrl") or ""
@@ -994,9 +1004,12 @@ class CodeupAdapter:
         # 评论标记承载（#66，平台缺口 c）：全部 add 标记 → 事件流。
         # resolved 不减计数（重派前 remove、再打回再 add，轮次单调递增
         # ——对齐 GitHub label-add 事件语义）；中立 schema 同 GitHub 侧。
-        return [{"op": "add", "label": self._marker_label(m["content"])}
-                for m in self._marker_comments(p)
-                if m["content"].startswith(_CU_LABEL_ADD)]
+        return [
+            {"op": "add", "label": label}
+            for m in self._marker_comments(p)
+            if m["content"].startswith(_CU_LABEL_ADD)
+            and (label := self._marker_label(m["content"]))
+        ]  # 前缀-only 评论空标记 → walrus 短路不产无效事件（#119）
 
 
 ADAPTERS = {"github": GitHubAdapter, "codeup": CodeupAdapter}
@@ -1296,7 +1309,9 @@ def main(argv):
     """CLI 入口：解析 → 取适配器 → 命令分派。"""
     args = _build_parser().parse_args(argv)
     try:
-        ad = current_adapter()
+        # --repo 目标仓驱动平台检测（java#29 Sourcery：按 cwd 检测在
+        # 跨仓 CLI 调用下会选错适配器）；未注册 --repo 的子命令回退 "."
+        ad = current_adapter(getattr(args, "repo", None) or ".")
 
         if args.cmd == "auth":
             sys.exit(0 if ad.auth_ok() else 1)
