@@ -22,11 +22,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # 显式语言面：php 主语言（autobuild 走 composer install）、
-        # python 覆盖 .factory/*.py、actions 覆盖 workflow 自身。
+        # 显式语言面：python 覆盖 .factory/*.py、actions 覆盖 workflow 自身。
+        # 不含 php：CodeQL 无 PHP extractor（default setup 语言集无 php 同因）。
         # 不含 js-ts：仓库无真实 js 源码（coverage/html/_js 为构建产物），
         # default setup 的 js-ts 分析为空转。
-        language: [php, python, actions]
+        language: [python, actions]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
