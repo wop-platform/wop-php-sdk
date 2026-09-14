@@ -6,7 +6,7 @@
 （结构化签名 / 内容摘要 / L2 数字信封 / 验签解密顺序）与可插拔 HTTP 传输适配器。
 
 所有功能面与工程约定对齐 [WOP 商户 SDK 统一规格 Spec v1.0-ratified]
-(https://github.com/wop-platform/gtsp-wop-gateway/blob/main/docs/wop-sdk-spec.md)
+(https://github.com/wop-platform/wop-specs/blob/main/docs/specs/wop-sdk-spec.md)
 （功能面 F1–F9、验收 A1–A7、工程约定 §4）。**协议语义冲突时以 spec 为准，不得以本仓既有实现为由顺延 spec 条款**；
 发现冲突请在 issue 中上报。
 
@@ -34,7 +34,7 @@ composer install --no-interaction --no-progress
 
 # 向量 fixture 完整性（与网关真源字节级比对；离线时退回本地副本并告警）
 curl -fsSL -o /tmp/crypto-vectors.json \
-  https://raw.githubusercontent.com/wop-platform/gtsp-wop-gateway/main/docs/crypto-vectors.json \
+  https://raw.githubusercontent.com/wop-platform/wop-specs/main/crypto/crypto-vectors.json \
   || cp tests/fixtures/crypto-vectors.json /tmp/crypto-vectors.json
 cmp tests/fixtures/crypto-vectors.json /tmp/crypto-vectors.json \
   || echo "fixture 与真源不一致（离线环境跳过远端比对）"
@@ -55,7 +55,7 @@ php .ci/coverage-gate.php
 ## 4. 黄金向量纪律
 
 `tests/fixtures/crypto-vectors.json` 是协议正确性的**唯一锚**（向量真源为网关仓
-`gtsp-wop-gateway/docs/crypto-vectors.json` 的全量副本）：
+`wop-specs/crypto/crypto-vectors.json` 的全量副本）：
 
 - **禁止手改** fixture。CI 在每次构建时将其与网关真源做字节级 `cmp` 比对。
 - 新增协议行为（新套件 / 新格式规则）：必须先在网关真源落地向量，再同步副本到本仓，
