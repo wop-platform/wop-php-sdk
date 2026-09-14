@@ -272,7 +272,7 @@ class TestCodeupShapes:
         org/group/<repo> 的中间层不是 namespace，旧 [1] 索引
         永不命中 conf 键；单段 path（无 namespace 层）fail-closed。"""
         conf = tmp_path / "spaces.conf"
-        conf.write_text("gtsp|SID-1\n", encoding="utf-8")
+        conf.write_text("group|SID-1\n", encoding="utf-8")
         monkeypatch.setenv("YUNXIAO_ACCESS_TOKEN", "t")
         monkeypatch.setenv("CODEUP_ORG_ID", "org")
         monkeypatch.setenv("CODEUP_REPO_ID", "42")
