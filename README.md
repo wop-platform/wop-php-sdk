@@ -5,6 +5,8 @@
 [![Coverage](https://img.shields.io/badge/coverage-100%25%20(line%2Bbranch)-brightgreen)](https://github.com/wop-platform/wop-php-sdk/actions/workflows/ci.yml) [![Gherkin](https://img.shields.io/badge/bdd-18%20scenarios-orange)](features/inbound_verification.feature) ![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/wop-platform/wop-php-sdk?utm_source=oss&utm_medium=github&utm_campaign=wop-platform%2Fwop-php-sdk&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
 
 
+> **WOP · 万联易达开放平台** 官方 PHP SDK —— 协议与黄金向量真源：[wop-specs](https://github.com/wop-platform/wop-specs)
+
 WOP 网关商户侧官方 PHP 客户端库：封装协议核心（结构化签名 / 内容摘要 / L2 数字信封 / 验签解密），
 商户无需理解 canonicalRequest、套件推导与线上字节格式即可安全对接。
 
@@ -115,6 +117,16 @@ vendor/bin/phpunit                  # 139 项断言全绿（含黄金向量套�
 计划中的国密支持（SM3withSM2 裸 r‖s 64B / SM4-GCM / SM2 C1C3C2）将以纯 PHP 实现交付，
 黄金向量 fixture 已全量就位（`tests/fixtures/crypto-vectors.json` 的 SM 段当前作为
 "必须拒"负测试消费），届时无需变更协议层。欢迎在 issue 中反馈需求优先级。
+
+## 🧩 WOP 生态导航 | Ecosystem
+
+| 类别 | 组件 |
+|------|------|
+| 协议与向量真源 | [wop-specs](https://github.com/wop-platform/wop-specs) —— crypto-strategy-spec · wop-sdk-spec · 黄金测试向量 |
+| 官方 SDK（六语言） | [Java](https://github.com/wop-platform/wop-java-sdk) · [Go](https://github.com/wop-platform/wop-go-sdk) · [Python](https://github.com/wop-platform/wop-python-sdk) · [PHP](https://github.com/wop-platform/wop-php-sdk) · [.NET](https://github.com/wop-platform/wop-dotnet-sdk) · [TypeScript](https://github.com/wop-platform/wop-typescript-sdk) |
+| 浏览器工作台 | [wop-web-tools](https://github.com/wop-platform/wop-web-tools) —— 密钥生成 · 报文联调 · 国密 · 六语言代码片段 |
+| Agent 技能包 | [wop-skills](https://github.com/wop-platform/wop-skills) —— 零代码调用 · 联调对拍 · 62 错误码排错 |
+| 平台服务（企业内部） | 统一接入网关 · 核心逻辑服务 · 回调服务 · 开发者门户 · 文档中心 |
 
 ## License
 
