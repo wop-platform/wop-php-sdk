@@ -279,9 +279,9 @@ class TestCodeupShapes:
         monkeypatch.setenv("FACTORY_SPACES_CONF", str(conf))
         monkeypatch.delenv("CODEUP_SPACE_ID", raising=False)
         ad = hosting.CodeupAdapter()
-        ad._remote = lambda: ("610b3c9d", "org/group/gateway")
+        ad._remote = lambda: ("000000000000000000000000", "group/team/gateway")
         assert ad._space_id() == "SID-1"
-        ad._remote = lambda: ("610b3c9d", "plain-repo")
+        ad._remote = lambda: ("000000000000000000000000", "plain-repo")
         with pytest.raises(hosting.HostingError) as e:
             ad._space_id()
         assert e.value.code == 2

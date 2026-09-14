@@ -253,10 +253,10 @@ class TestDispatchParsers:
 
         a = hosting_mod.CodeupAdapter(repo=".")
         cases = [
-            ("https://codeup.aliyun.com/6ab/group/x.git", ("6ab", "group/x")),
-            ("https://codeup.aliyun.com/6ab/group/x", ("6ab", "group/x")),
-            ("ssh://git@codeup.aliyun.com:22/6ab/group/x.git", ("6ab", "group/x")),
-            ("git@codeup.aliyun.com:6ab/group/x.git", ("6ab", "group/x")),
+            ("https://codeup.aliyun.com/000/group/x.git", ("000", "group/x")),
+            ("https://codeup.aliyun.com/000/group/x", ("000", "group/x")),
+            ("ssh://git@codeup.aliyun.com:22/000/group/x.git", ("000", "group/x")),
+            ("git@codeup.aliyun.com:000/group/x.git", ("000", "group/x")),
             ("https://codeup.aliyun.com/only-org", (None, None)),
         ]
         for url, want in cases:
@@ -278,10 +278,10 @@ class TestDispatchParsers:
                 lambda *args, **kw: SimpleNamespace(stdout=url + "\n", returncode=0))
             return hosting_mod._detect_hosting(".")
 
-        assert detect("https://codeup.aliyun.com/6ab/group/x.git") == "codeup"
-        assert detect("git@codeup.aliyun.com:6ab/group/x.git") == "codeup"
-        assert detect("https://codeup.aliyun.com.evil.com/6ab/x.git") == "github"
-        assert detect("https://evil.com/codeup.aliyun.com/6ab/x.git") == "github"
+        assert detect("https://codeup.aliyun.com/000/group/x.git") == "codeup"
+        assert detect("git@codeup.aliyun.com:000/group/x.git") == "codeup"
+        assert detect("https://codeup.aliyun.com.evil.com/000/x.git") == "github"
+        assert detect("https://evil.com/codeup.aliyun.com/000/x.git") == "github"
         assert detect("https://github.com/o/r.git") == "github"
         assert detect("") == "github"
 
