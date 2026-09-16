@@ -10,4 +10,9 @@ namespace Wop\Sdk;
  */
 class WopException extends \RuntimeException
 {
+    /** 配置类错误（sdk-spec §2.2 configuration）。 */
+    public static function configuration(string $message, ?\Throwable $previous = null): self
+    {
+        return new self($message, 0, $previous);
+    }
 }

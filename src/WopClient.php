@@ -4,6 +4,12 @@ declare(strict_types=1);
 
 namespace Wop\Sdk;
 
+use Wop\Sdk\Config\ConfigValidator;
+use Wop\Sdk\Config\WopSdkConfig;
+use Wop\Sdk\Config\WopConfigLoader;
+use Wop\Sdk\Transport\TransportFactory;
+use Wop\Sdk\Transport\TransportInterface;
+
 /**
  * WOP 商户客户端：协议核心入口。
  *
@@ -30,9 +36,69 @@ final class WopClient
 
     private const OAEP_SEED_BYTES = 32;
 
+    private static ?self $defaultClient = null;
+
     /** 以不可变配置装配客户端（securityReq 已在 WopConfig 构造期固化为 Suite）。 */
-    public function __construct(private readonly WopConfig $config)
+    public function __construct(
+        private readonly WopConfig $config,
+        private readonly ?TransportInterface $transport = null,
+        private readonly ?string $serverRoot = null,
+    ) {
+    }
+
+    /** 惰性加载默认客户端：loadDefault → 传输发现 → 构造（§5 K15）。 */
+    public static function defaultClient(): self
     {
+        if (self::$defaultClient !== null) {
+            return self::$defaultClient;
+        }
+        self::$defaultClient = self::fromConfig(WopConfigLoader::loadDefault());
+        return self::$defaultClient;
+    }
+
+    /** 显式配置构造（不进默认实例缓存，§5）。 */
+    public static function fromConfig(WopSdkConfig $sdkConfig): self
+    {
+        $transport = $sdkConfig->transport ?? TransportFactory::discover();
+        $protocolConfig = new WopConfig(
+            $sdkConfig->appKey,
+            $sdkConfig->suite,
+            $sdkConfig->merchantPrivateKey,
+            $sdkConfig->platformPublicKey,
+        );
+        return new self($protocolConfig, $transport, $sdkConfig->serverRoot);
+    }
+
+    /** 丢弃默认实例；轮换须先 {@see WopConfigLoader::clearCache()}（§5 K26）。 */
+    public static function resetDefault(): void
+    {
+        self::$defaultClient = null;
+    }
+
+    /**
+     * 一站式调用：buildRequest → send → 非 2xx 拦截 → verifyResponse（§2）。
+     */
+    public function execute(
+        string $method,
+        string $path,
+        ?string $body = null,
+        string $level = EncryptHeader::LEVEL_L0,
+    ): VerifyResult {
+        if ($this->transport === null || $this->serverRoot === null) {
+            throw WopException::configuration('未配置传输，无法 execute');
+        }
+        ConfigValidator::validateApiPath($path);
+        $draft = $this->buildRequest($method, $path, $body, $level);
+        $url = ConfigValidator::joinUrl($this->serverRoot, $path);
+        $headerLines = [];
+        foreach ($draft->headers as $name => $value) {
+            $headerLines[] = $name . ': ' . $value;
+        }
+        $response = $this->transport->send($draft->method, $url, $headerLines, $draft->wireBody);
+        if (!$response->isSuccess()) {
+            throw new WopGatewayResponseException($response->statusCode, $response->body);
+        }
+        return $this->verifyResponse($response->headers, $response->body, $draft->path, $draft->method);
     }
 
     /**
