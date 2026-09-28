@@ -15,10 +15,12 @@ final class ConfigJsonParser
 {
     private int $pos = 0;
 
+        /** 私有构造：经 parse() 进入（输入为剥 BOM 后的 JSON 串）。 */
     private function __construct(private readonly string $json)
     {
     }
 
+        /** 极简 JSON 解析入口（K8/K21：重复键、类型不符、越界即 configuration，§4.4）。 */
     public static function parse(string $json): WopSdkConfig
     {
         $trimmed = self::stripBom(trim($json));
@@ -28,11 +30,13 @@ final class ConfigJsonParser
         return (new self($trimmed))->parseRoot();
     }
 
+        /** 剥离 UTF-8 BOM（§4.3 容忍并剥离）。 */
     private static function stripBom(string $text): string
     {
         return str_starts_with($text, "\u{FEFF}") ? substr($text, 3) : $text;
     }
 
+        /** 根对象解析：仅一层嵌套（httpClient），未知字段忽略（§4.4）。 */
     private function parseRoot(): WopSdkConfig
     {
         $this->expect('{');
@@ -96,6 +100,7 @@ final class ConfigJsonParser
         return ConfigValidator::validateAndNormalize($raw);
     }
 
+        /** 解析 httpClient 对象（缺省 10000/30000/3，指针字段区分缺省与显式零值）。 */
     private function readHttpClient(): HttpClientSettings
     {
         $this->expect('{');
@@ -131,6 +136,7 @@ final class ConfigJsonParser
     }
 
     /** @return list<string> */
+        /** 读取字符串数组字段（backupServerRoots；非字符串元素即 configuration）。 */
     private function readStringArray(): array
     {
         $this->expect('[');
@@ -151,6 +157,7 @@ final class ConfigJsonParser
         $seen[$key] = true;
     }
 
+        /** 读取字符串字段（类型不符即 configuration，消息含字段名）。 */
     private function readString(): string
     {
         $this->skipWhitespace();
@@ -186,6 +193,7 @@ final class ConfigJsonParser
         throw $this->syntax('字符串未闭合');
     }
 
+        /** 读取字符串字面量（RFC 8259 完整转义集，含 \uXXXX 代理对）。 */
     private function readUnicode(): string
     {
         if ($this->pos + 4 > strlen($this->json)) {
@@ -199,6 +207,7 @@ final class ConfigJsonParser
         return mb_chr((int) hexdec($hex), 'UTF-8');
     }
 
+        /** 读取整数字段（long 域，越界即 configuration）。 */
     private function readLong(string $fieldName): int
     {
         $this->skipWhitespace();
@@ -223,6 +232,7 @@ final class ConfigJsonParser
         return $value;
     }
 
+        /** 读取整数字段（int 域，越界即 configuration）。 */
     private function readInt(string $fieldName): int
     {
         $value = $this->readLong($fieldName);
@@ -232,6 +242,7 @@ final class ConfigJsonParser
         return $value;
     }
 
+        /** 跳过未知字段的任意值（对象/数组/串/数/字面量）。 */
     private function skipValue(): void
     {
         $this->skipWhitespace();
@@ -254,6 +265,7 @@ final class ConfigJsonParser
         }
     }
 
+        /** 跳过对象值（一层嵌套上限：根内对象再嵌对象即 configuration）。 */
     private function skipObject(): void
     {
         $this->expect('{');
@@ -265,6 +277,7 @@ final class ConfigJsonParser
         }
     }
 
+        /** 跳过数组值。 */
     private function skipArray(): void
     {
         $this->expect('[');
@@ -274,6 +287,7 @@ final class ConfigJsonParser
         }
     }
 
+        /** 跳过 true/false/null 字面量。 */
     private function skipLiteral(): void
     {
         while ($this->pos < strlen($this->json) && ctype_alpha($this->json[$this->pos])) {
@@ -281,6 +295,7 @@ final class ConfigJsonParser
         }
     }
 
+        /** 消费期望字节，不符即 syntax 异常。 */
     private function expect(string $ch): void
     {
         $this->skipWhitespace();
@@ -290,6 +305,7 @@ final class ConfigJsonParser
         $this->pos++;
     }
 
+        /** 尝试消费字节：命中返回 true。 */
     private function tryConsume(string $ch): bool
     {
         $this->skipWhitespace();
@@ -300,6 +316,7 @@ final class ConfigJsonParser
         return false;
     }
 
+        /** 读取可选逗号（对象/数组元素分隔）。 */
     private function optionalComma(): void
     {
         $this->skipWhitespace();
@@ -308,6 +325,7 @@ final class ConfigJsonParser
         }
     }
 
+        /** 跳过空白（RFC 8259 四字符）。 */
     private function skipWhitespace(): void
     {
         while ($this->pos < strlen($this->json)) {
@@ -320,6 +338,7 @@ final class ConfigJsonParser
         }
     }
 
+        /** 构造统一语法异常（对外文案「配置文件 JSON 解析失败」）。 */
     private function syntax(string $detail): WopException
     {
         return WopException::configuration('配置文件 JSON 解析失败: ' . $detail);

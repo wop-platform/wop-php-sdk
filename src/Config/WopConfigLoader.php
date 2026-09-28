@@ -17,16 +17,19 @@ final class WopConfigLoader
     /** @var array<string, WopSdkConfig> */
     private static array $cache = [];
 
+        /** 私有构造：纯静态门。 */
     private function __construct()
     {
     }
 
+        /** 按 §4.2 自动发现并加载；同一位置缓存解析结果（K13 无自动失效）。 */
     public static function loadDefault(): WopSdkConfig
     {
         $discovery = self::discover();
         return self::loadCached($discovery['cacheKey'], $discovery['reader']);
     }
 
+        /** 显式位置：pkg:/classpath: 前缀走打包资源，其余一律文件系统路径（K14）。 */
     public static function load(string $location): WopSdkConfig
     {
         if (str_starts_with($location, self::CLASSPATH_PREFIX)) {
@@ -36,6 +39,7 @@ final class WopConfigLoader
         return self::loadPath($location);
     }
 
+        /** 显式文件系统路径加载。 */
     public static function loadPath(string $path): WopSdkConfig
     {
         $normalized = str_replace('\\', '/', realpath($path) ?: $path);
@@ -51,6 +55,7 @@ final class WopConfigLoader
         });
     }
 
+        /** 清除加载缓存（测试/配置轮换编排，K13）。 */
     public static function clearCache(): void
     {
         self::$cache = [];
@@ -127,6 +132,7 @@ final class WopConfigLoader
         ];
     }
 
+        /** 读打包资源（K6 兜底来源）。 */
     private static function readClasspath(string $resource): string
     {
         $path = self::packagedResourcePath($resource);
@@ -140,6 +146,7 @@ final class WopConfigLoader
         return $content;
     }
 
+        /** 识别打包资源前缀并归一化资源路径；非资源位置返回 null。 */
     private static function packagedResourcePath(string $resource): ?string
     {
         $root = dirname(__DIR__, 2);

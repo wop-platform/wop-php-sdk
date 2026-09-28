@@ -10,6 +10,7 @@ namespace Wop\Sdk;
  */
 final class Suite
 {
+    public const RSA2048 = 'WOP-RSA2048-SHA256';
     public const RSA3072 = 'WOP-RSA3072-SHA256';
     public const RSA4096 = 'WOP-RSA4096-SHA256';
 
@@ -17,12 +18,13 @@ final class Suite
 
     /** @var array<string, array{keyAlgorithm: string, keyLength: int, digestLabel: string, dekAlg: string}> */
     private const REGISTRY = [
+        'WOP-RSA2048-SHA256' => ['keyAlgorithm' => 'RSA', 'keyLength' => 2048, 'digestLabel' => 'sha-256', 'dekAlg' => 'AES-256-GCM'],
         'WOP-RSA3072-SHA256' => ['keyAlgorithm' => 'RSA', 'keyLength' => 3072, 'digestLabel' => 'sha-256', 'dekAlg' => 'AES-256-GCM'],
         'WOP-RSA4096-SHA256' => ['keyAlgorithm' => 'RSA', 'keyLength' => 4096, 'digestLabel' => 'sha-256', 'dekAlg' => 'AES-256-GCM'],
     ];
 
     /** 国际/国密合法密钥与摘要算法标识（支持类判定用，spec §2.2）。 */
-    private const KNOWN_KEY_ALGS = ['RSA3072', 'RSA4096', 'SM2'];
+    private const KNOWN_KEY_ALGS = ['RSA2048', 'RSA3072', 'RSA4096', 'SM2'];
     private const KNOWN_DIGEST_ALGS = ['SHA256', 'SM3'];
 
     /** 私有构造：仅经 parse() 自注册表产出（D13 单一注册表）。 */

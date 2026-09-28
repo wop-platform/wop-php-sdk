@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Wop\Sdk\Tests;
 
+use Wop\Sdk\RequestId;
 use Wop\Sdk\WopClient;
 use Wop\Sdk\WopConfig;
 use Wop\Sdk\WopException;
@@ -114,13 +115,21 @@ final class WopClientTest extends VectorCase
         $this->assertTrue($this->verifyDraftCanonical($draft), 'L2 签名同样覆盖密文载体摘要与加密头');
     }
 
-    /** spec:§2 确定性 — 同输入同输出（固定 nonce/timestamp 注入下 L0 幂等）。 */
+    /** spec:§2 确定性 — 同输入同输出（固定 nonce/timestamp/缺省 requestId 生成器注入下 L0 幂等）。 */
     public function testBuildRequestIsDeterministicForL0(): void
     {
-        $a = $this->merchantClient->buildRequest('POST', self::PATH, 'same-body', 'L0', 1774340000000, '0123456789abcdef0123456789abcdef');
-        $b = $this->merchantClient->buildRequest('POST', self::PATH, 'same-body', 'L0', 1774340000000, '0123456789abcdef0123456789abcdef');
+        // 附录 I/I3：缺省 requestId 属 CSPRNG 豁免项，注入固定生成器后全头可重放
+        $prev = RequestId::$generator;
+        RequestId::$generator = static fn (): string => 'fixedreq000000000000000000000001';
+        try {
+            $a = $this->merchantClient->buildRequest('POST', self::PATH, 'same-body', 'L0', 1774340000000, '0123456789abcdef0123456789abcdef');
+            $b = $this->merchantClient->buildRequest('POST', self::PATH, 'same-body', 'L0', 1774340000000, '0123456789abcdef0123456789abcdef');
+        } finally {
+            RequestId::$generator = $prev;
+        }
         $this->assertSame($a->headers, $b->headers);
         $this->assertSame($a->wireBody, $b->wireBody);
+        $this->assertSame('fixedreq000000000000000000000001', $a->header('x-wop-request-id'));
     }
 
     /** spec:F9 — 默认（不注入）时 CSPRNG nonce/毫秒时间戳自行生成且互不相同。 */

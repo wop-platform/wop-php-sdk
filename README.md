@@ -59,7 +59,7 @@ Guzzle 适配器直接接受数组——`GuzzleTransport::send()` 内部完成�
 | RSA 私钥（PKCS8） | PKCS#8 DER 的 Base64 单行，或等价 PEM（`-----BEGIN PRIVATE KEY-----` 包装） |
 
 - SDK 对 PEM / Base64 单行两种入参等价接受（内部 `phpseclib` 解析并缓存）；
-- 签名算法族：`WOP-RSA3072-SHA256` / `WOP-RSA4096-SHA256`（SHA256withRSA，PKCS#1 v1.5）；
+- 签名算法族：`WOP-RSA2048-SHA256` / `WOP-RSA3072-SHA256` / `WOP-RSA4096-SHA256`（SHA256withRSA，PKCS#1 v1.5）；
 - `SM2` 公钥（`04‖X‖Y` 65B）与 `d` 32B 标量属国密套件，本版不支持（见下方路线图）。
 
 ## L0 + L2 示例

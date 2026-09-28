@@ -13,6 +13,7 @@ final class HttpClientSettings
     public const DEFAULT_READ_TIMEOUT = 30_000;
     public const DEFAULT_MAX_RETRY_COUNT = 3;
 
+        /** 全局 HTTP 客户端参数（与 JSON httpClient 对象对应）。 */
     public function __construct(
         public readonly int $connectTimeout,
         public readonly int $readTimeout,

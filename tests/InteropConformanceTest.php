@@ -146,7 +146,11 @@ final class InteropConformanceTest extends VectorCase
                 }
                 $this->assertSame($want, $got, $case['id'] . ': 头 ' . $name . ' 不一致');
             }
-            $this->assertCount(count($expected['headers']), $draft->headers, $case['id'] . ': 头集合不一致');
+            // x-wop-request-id 是规格附录 I 的可选透传头（恒不入签、网关日志关联用），
+            // 不属于 interop 冻结的协议头合同（fixture sha256 钉死不可改），比对前剥离
+            $protocolHeaders = $draft->headers;
+            unset($protocolHeaders['x-wop-request-id']);
+            $this->assertCount(count($expected['headers']), $protocolHeaders, $case['id'] . ': 头集合不一致');
             $consumed++;
         }
         $this->assertSame(4, $consumed, 'build 消费条数哨兵：RSA 4 条（SM2 2 条显式拒绝）');

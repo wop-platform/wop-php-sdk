@@ -91,7 +91,7 @@ final class SuiteTest extends TestCase
     public static function unknownAlgorithmProvider(): array
     {
         return [
-            ['WOP-RSA2048-SHA256'],
+            ['WOP-RSA1024-SHA256'],
             ['WOP-RSA3072-SHA384'],
             ['WOP-DSA-SHA256'],
         ];
@@ -109,11 +109,24 @@ final class SuiteTest extends TestCase
             }
         }
         try {
-            Suite::parse('WOP-RSA2048-SHA256');
+            Suite::parse('WOP-RSA1024-SHA256');
             $this->fail('未知算法应拒绝');
         } catch (WopException $e) {
             $this->assertStringContainsString('不支持的算法组合: ', $e->getMessage());
             $this->assertStringNotContainsString('跨族', $e->getMessage(), '未知算法不得误报跨族');
         }
+    }
+
+    /** crypto-spec E1 扩展位：RSA2048 套件默认支持。 */
+    public function testRsa2048SuiteSupported(): void
+    {
+        $suite = Suite::parse(Suite::RSA2048);
+        self::assertSame('RSA', $suite->keyAlgorithm);
+        self::assertSame(2048, $suite->keyLength);
+        self::assertSame('sha-256', $suite->digestLabel);
+        self::assertSame('AES-256-GCM', $suite->dekAlg);
+        // 跨族仍拒绝
+        $this->expectException(WopException::class);
+        Suite::parse('WOP-RSA2048-SM3');
     }
 }

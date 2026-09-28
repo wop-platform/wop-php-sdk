@@ -11,10 +11,12 @@ use Wop\Sdk\WopException;
 /** §3.4 语义校验与字段归一化。 */
 final class ConfigValidator
 {
+        /** 私有构造：纯静态门。 */
     private function __construct()
     {
     }
 
+        /** §3.4 语义校验与字段归一化（trim、缺省值填充、serverRoot/backup 逐项校验）。 */
     public static function validateAndNormalize(WopSdkConfig $raw): WopSdkConfig
     {
         if ($raw->appKey === '' || trim($raw->appKey) === '') {
@@ -69,6 +71,7 @@ final class ConfigValidator
     }
 
     /** K20：HTTPS 绝对 URL，拒绝 query/fragment。 */
+        /** 网关地址校验（K20：HTTPS 绝对 URL，拒 query/fragment），返回 trim 值。 */
     public static function validateGatewayUrl(string $value, string $fieldName): string
     {
         $trimmed = trim($value);
@@ -97,6 +100,7 @@ final class ConfigValidator
     }
 
     /** §7.7 API path 语法校验。 */
+        /** §7.7 path 语法校验（/ 开头、拒 //、query/fragment、绝对 URL）。 */
     public static function validateApiPath(string $path): void
     {
         if ($path === '') {
@@ -117,6 +121,7 @@ final class ConfigValidator
     }
 
     /** §7.7 字符串拼接 serverRoot + path。 */
+        /** K23 字符串拼接（保留 context-path，不做 RFC 3986 相对解析）。 */
     public static function joinUrl(string $serverRoot, string $path): string
     {
         self::validateApiPath($path);
@@ -125,6 +130,7 @@ final class ConfigValidator
         return $root . '/' . $trimmedPath;
     }
 
+        /** 密钥格式/套件族交叉校验（§3.4：解析失败或跨族即 configuration）。 */
     private static function validateKeys(string $merchantPrivateKey, string $platformPublicKey, Suite $suite): void
     {
         unset($suite);

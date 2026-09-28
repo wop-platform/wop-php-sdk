@@ -64,35 +64,41 @@ final class WopSdkConfig
         private HttpClientSettings $httpClient;
         private ?TransportInterface $transport = null;
 
+                /** Builder 入口：全字段缺省，链式赋值后 build() 执行 §3.4 等价校验（K11）。 */
         public function __construct()
         {
             $this->httpClient = HttpClientSettings::defaults();
         }
 
+                /** 设置商户 appKey（x-wop-appkey）。 */
         public function appKey(string $appKey): self
         {
             $this->appKey = $appKey;
             return $this;
         }
 
+                /** 设置算法套件标识（securityReq）。 */
         public function suite(string $suite): self
         {
             $this->suite = $suite;
             return $this;
         }
 
+                /** 设置商户私钥材料（PKCS#8，PEM 或 Base64 单行）。 */
         public function merchantPrivateKey(string $merchantPrivateKey): self
         {
             $this->merchantPrivateKey = $merchantPrivateKey;
             return $this;
         }
 
+                /** 设置平台公钥材料（X.509 SPKI，PEM 或 Base64 单行）。 */
         public function platformPublicKey(string $platformPublicKey): self
         {
             $this->platformPublicKey = $platformPublicKey;
             return $this;
         }
 
+                /** 设置主网关根地址（HTTPS 绝对 URL，含 context-path）。 */
         public function serverRoot(string $serverRoot): self
         {
             $this->serverRoot = $serverRoot;
@@ -106,24 +112,28 @@ final class WopSdkConfig
             return $this;
         }
 
+                /** 设置出向签名有效窗口（秒，须为正整数）。 */
         public function expiredSeconds(int $expiredSeconds): self
         {
             $this->expiredSeconds = $expiredSeconds;
             return $this;
         }
 
+                /** 设置全局 HTTP 客户端参数（null → 缺省 10000/30000/3）。 */
         public function httpClient(?HttpClientSettings $httpClient): self
         {
             $this->httpClient = $httpClient ?? HttpClientSettings::defaults();
             return $this;
         }
 
+                /** 显式注入传输（缺省走传输发现，§7.2）。 */
         public function transport(?TransportInterface $transport): self
         {
             $this->transport = $transport;
             return $this;
         }
 
+                /** 产出不可变配置快照（校验在加载/构造路径执行，§3.4）。 */
         public function build(): WopSdkConfig
         {
             $raw = new WopSdkConfig(
