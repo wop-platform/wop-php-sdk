@@ -51,39 +51,46 @@ final class ConfigJsonParser
         $httpClient = null;
         /** @var array<string, true> */
         $seen = [];
-        while (!$this->tryConsume('}')) {
-            $key = $this->readString();
-            $this->requireDuplicateFree($seen, $key);
-            $this->expect(':');
-            switch ($key) {
-                case 'appKey':
-                    $appKey = $this->readString();
-                    break;
-                case 'suite':
-                    $suite = $this->readString();
-                    break;
-                case 'merchantPrivateKey':
-                    $merchantPrivateKey = $this->readString();
-                    break;
-                case 'platformPublicKey':
-                    $platformPublicKey = $this->readString();
-                    break;
-                case 'serverRoot':
-                    $serverRoot = $this->readString();
-                    break;
-                case 'backupServerRoots':
-                    $backupServerRoots = $this->readStringArray();
-                    break;
-                case 'expiredSeconds':
-                    $expiredSeconds = $this->readLong('expiredSeconds');
-                    break;
-                case 'httpClient':
-                    $httpClient = $this->readHttpClient();
-                    break;
-                default:
-                    $this->skipValue();
-            }
-            $this->optionalComma();
+        $this->skipWhitespace();
+        if (!$this->tryConsume('}')) {
+            do {
+                $key = $this->readString();
+                $this->requireDuplicateFree($seen, $key);
+                $this->expect(':');
+                switch ($key) {
+                    case 'appKey':
+                        $appKey = $this->readString();
+                        break;
+                    case 'suite':
+                        $suite = $this->readString();
+                        break;
+                    case 'merchantPrivateKey':
+                        $merchantPrivateKey = $this->readString();
+                        break;
+                    case 'platformPublicKey':
+                        $platformPublicKey = $this->readString();
+                        break;
+                    case 'serverRoot':
+                        $serverRoot = $this->readString();
+                        break;
+                    case 'backupServerRoots':
+                        $backupServerRoots = $this->readStringArray();
+                        break;
+                    case 'expiredSeconds':
+                        $expiredSeconds = $this->readLong('expiredSeconds');
+                        break;
+                    case 'httpClient':
+                        $httpClient = $this->readHttpClient();
+                        break;
+                    default:
+                        $this->skipValue();
+                }
+            } while ($this->memberSeparator('}'));
+        }
+        // 根对象闭合后只允许空白（Sourcery CR：尾随垃圾不得静默接受）
+        $this->skipWhitespace();
+        if ($this->pos < strlen($this->json)) {
+            throw WopException::configuration('配置文件 JSON 解析失败: 根对象后存在多余内容');
         }
 
         $expired = $expiredSeconds ?? WopClient::DEFAULT_EXPIRED_SECONDS;
@@ -109,24 +116,26 @@ final class ConfigJsonParser
         $maxRetry = null;
         /** @var array<string, true> */
         $seen = [];
-        while (!$this->tryConsume('}')) {
-            $key = $this->readString();
-            $this->requireDuplicateFree($seen, $key);
-            $this->expect(':');
-            switch ($key) {
-                case 'connectTimeout':
-                    $connect = $this->readInt('httpClient.connectTimeout');
-                    break;
-                case 'readTimeout':
-                    $read = $this->readInt('httpClient.readTimeout');
-                    break;
-                case 'maxRetryCount':
-                    $maxRetry = $this->readInt('httpClient.maxRetryCount');
-                    break;
-                default:
-                    $this->skipValue();
-            }
-            $this->optionalComma();
+        $this->skipWhitespace();
+        if (!$this->tryConsume('}')) {
+            do {
+                $key = $this->readString();
+                $this->requireDuplicateFree($seen, $key);
+                $this->expect(':');
+                switch ($key) {
+                    case 'connectTimeout':
+                        $connect = $this->readInt('httpClient.connectTimeout');
+                        break;
+                    case 'readTimeout':
+                        $read = $this->readInt('httpClient.readTimeout');
+                        break;
+                    case 'maxRetryCount':
+                        $maxRetry = $this->readInt('httpClient.maxRetryCount');
+                        break;
+                    default:
+                        $this->skipValue();
+                }
+            } while ($this->memberSeparator('}'));
         }
         return new HttpClientSettings(
             $connect ?? HttpClientSettings::DEFAULT_CONNECT_TIMEOUT,
@@ -141,9 +150,11 @@ final class ConfigJsonParser
     {
         $this->expect('[');
         $values = [];
-        while (!$this->tryConsume(']')) {
-            $values[] = $this->readString();
-            $this->optionalComma();
+        $this->skipWhitespace();
+        if (!$this->tryConsume(']')) {
+            do {
+                $values[] = $this->readString();
+            } while ($this->memberSeparator(']'));
         }
         return $values;
     }
@@ -269,11 +280,13 @@ final class ConfigJsonParser
     private function skipObject(): void
     {
         $this->expect('{');
-        while (!$this->tryConsume('}')) {
-            $this->readString();
-            $this->expect(':');
-            $this->skipValue();
-            $this->optionalComma();
+        $this->skipWhitespace();
+        if (!$this->tryConsume('}')) {
+            do {
+                $this->readString();
+                $this->expect(':');
+                $this->skipValue();
+            } while ($this->memberSeparator('}'));
         }
     }
 
@@ -281,9 +294,11 @@ final class ConfigJsonParser
     private function skipArray(): void
     {
         $this->expect('[');
-        while (!$this->tryConsume(']')) {
-            $this->skipValue();
-            $this->optionalComma();
+        $this->skipWhitespace();
+        if (!$this->tryConsume(']')) {
+            do {
+                $this->skipValue();
+            } while ($this->memberSeparator(']'));
         }
     }
 
@@ -317,12 +332,26 @@ final class ConfigJsonParser
     }
 
         /** 读取可选逗号（对象/数组元素分隔）。 */
-    private function optionalComma(): void
+    /**
+     * 成员分隔符严格判定（RFC 8259，Sourcery CR）：成员之间必须有逗号，且逗号后
+     * 不得紧跟闭合符（拒绝尾随逗号）。返回 true = 还有下一个成员；false = 容器闭合（已消费闭合符）。
+     */
+    private function memberSeparator(string $closing): bool
     {
         $this->skipWhitespace();
         if ($this->pos < strlen($this->json) && $this->json[$this->pos] === ',') {
             $this->pos++;
+            $this->skipWhitespace();
+            if ($this->pos < strlen($this->json) && $this->json[$this->pos] === $closing) {
+                throw WopException::configuration("配置文件 JSON 解析失败: 尾随逗号（'{$closing}' 前不得有逗号）");
+            }
+            return true;
         }
+        if ($this->pos < strlen($this->json) && $this->json[$this->pos] === $closing) {
+            $this->pos++;
+            return false;
+        }
+        throw WopException::configuration("配置文件 JSON 解析失败: 期望 ',' 或 '{$closing}'");
     }
 
         /** 跳过空白（RFC 8259 四字符）。 */

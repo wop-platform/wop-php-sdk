@@ -198,3 +198,41 @@ final class StubTransport implements TransportInterface
         return ($this->responder)();
     }
 }
+
+
+/** Sourcery CR（PR #27）回归：fromConfig 须透传非默认 expiredSeconds 出向签名。 */
+final class FromConfigExpiredSecondsTest extends VectorCase
+{
+    public function testConfiguredExpiredSecondsReachesSignHeader(): void
+    {
+        $keys = self::keys()['rsa3072'];
+        $config = WopSdkConfig::builder()
+            ->appKey('app_10012481831')
+            ->suite('WOP-RSA3072-SHA256')
+            ->merchantPrivateKey($keys['privatePkcs8B64'])
+            ->platformPublicKey($keys['publicSpkiB64'])
+            ->serverRoot('https://gw.example.com/gateway')
+            ->expiredSeconds(3600)
+            ->transport(new StubTransport(static fn (): TransportResponse => new TransportResponse(200, [], '')))
+            ->build();
+        $client = WopClient::fromConfig($config);
+        $draft = $client->buildRequest('GET', '/p', null);
+        self::assertStringContainsString(' v1/3600/', (string) $draft->header('x-wop-sign'));
+    }
+
+    public function testDefaultExpiredSecondsUnchanged(): void
+    {
+        $keys = self::keys()['rsa3072'];
+        $config = WopSdkConfig::builder()
+            ->appKey('app_10012481831')
+            ->suite('WOP-RSA3072-SHA256')
+            ->merchantPrivateKey($keys['privatePkcs8B64'])
+            ->platformPublicKey($keys['publicSpkiB64'])
+            ->serverRoot('https://gw.example.com/gateway')
+            ->transport(new StubTransport(static fn (): TransportResponse => new TransportResponse(200, [], '')))
+            ->build();
+        $client = WopClient::fromConfig($config);
+        $draft = $client->buildRequest('GET', '/p', null);
+        self::assertStringContainsString(' v1/1800/', (string) $draft->header('x-wop-sign'));
+    }
+}

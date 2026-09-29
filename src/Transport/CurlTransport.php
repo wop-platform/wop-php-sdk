@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Wop\Sdk\Transport;
 
+use Wop\Sdk\Config\HttpClientSettings;
 use Wop\Sdk\WopException;
 
 /**
@@ -16,10 +17,24 @@ final class CurlTransport implements TransportInterface
 
     private const READ_CHUNK = 65536;
 
-    /** 空构造：句柄按请求创建，无跨请求可变状态。 */
-    public function __construct()
+    /** 构造：句柄按请求创建，无跨请求可变状态；settings 为全局 httpClient 超时（缺省 10000/30000ms）。 */
+    public function __construct(private readonly ?HttpClientSettings $settings = null)
     {
         // ext-curl 为 suggest 依赖（composer.json/README 注明），缺失时 curl_init 未定义会自然报错
+    }
+
+    /** 连接超时（ms）：配置值 > 0 生效，否则 §3.3 缺省（Sourcery CR：配置超时须生效）。 */
+    private function connectTimeoutMs(): int
+    {
+        return ($this->settings !== null && $this->settings->connectTimeout > 0)
+            ? $this->settings->connectTimeout : 10_000;
+    }
+
+    /** 读超时（ms）：配置值 > 0 生效，否则 §3.3 缺省。 */
+    private function readTimeoutMs(): int
+    {
+        return ($this->settings !== null && $this->settings->readTimeout > 0)
+            ? $this->settings->readTimeout : 30_000;
     }
 
     /** 执行传输（实现 TransportInterface）；传输失败/响应体超限抛 WopException。 */
@@ -36,7 +51,8 @@ final class CurlTransport implements TransportInterface
             CURLOPT_CUSTOMREQUEST => \strtoupper($method),
             CURLOPT_HTTPHEADER => $headers,
             CURLOPT_POSTFIELDS => $body,
-            CURLOPT_TIMEOUT => 30,
+            CURLOPT_CONNECTTIMEOUT_MS => $this->connectTimeoutMs(),
+            CURLOPT_TIMEOUT_MS => $this->readTimeoutMs(),
             CURLOPT_BUFFERSIZE => self::READ_CHUNK,
             CURLOPT_HEADERFUNCTION => static function ($ch, string $line) use (&$rawHeader): int {
                 $rawHeader .= $line;

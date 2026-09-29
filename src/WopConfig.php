@@ -23,6 +23,7 @@ final class WopConfig
         public readonly string $privateKey,
         public readonly string $peerPublicKey,
         public readonly ?string $gatewayBaseUrl = null,
+        public readonly ?int $expiredSeconds = null,
     ) {
         $this->suite = Suite::parse($securityReq);
     }

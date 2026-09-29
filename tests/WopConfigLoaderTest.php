@@ -213,3 +213,43 @@ final class WopConfigLoaderTest extends VectorCase
         @rmdir($dir);
     }
 }
+
+
+/** Sourcery CR（PR #27）回归：解析器严格逗号语法。 */
+final class ConfigJsonParserStrictnessTest extends VectorCase
+{
+    public function testMissingCommaBetweenMembersRejected(): void
+    {
+        $this->expectException(\Wop\Sdk\WopException::class);
+        $this->expectExceptionMessage("期望 ',' 或 '}'");
+        \Wop\Sdk\Config\ConfigJsonParser::parse('{"appKey":"a" "suite":"WOP-RSA3072-SHA256"}');
+    }
+
+    public function testTrailingCommaRejected(): void
+    {
+        $this->expectException(\Wop\Sdk\WopException::class);
+        $this->expectExceptionMessage('尾随逗号');
+        \Wop\Sdk\Config\ConfigJsonParser::parse('{"appKey":"a",}');
+    }
+
+    public function testTrailingGarbageAfterRootRejected(): void
+    {
+        $this->expectException(\Wop\Sdk\WopException::class);
+        $this->expectExceptionMessage('根对象后存在多余内容');
+        $valid = <<<'JSON'
+{"appKey":"a","suite":"WOP-RSA3072-SHA256","merchantPrivateKey":"k","platformPublicKey":"p","serverRoot":"https://gw.example.com/gateway"}
+JSON;
+        \Wop\Sdk\Config\ConfigJsonParser::parse($valid . 'garbage');
+    }
+
+    public function testTrailingWhitespaceAfterRootAccepted(): void
+    {
+        $valid = <<<'JSON'
+{"appKey":"a","suite":"WOP-RSA3072-SHA256","merchantPrivateKey":"k","platformPublicKey":"p","serverRoot":"https://gw.example.com/gateway"}
+JSON;
+        $config = \Wop\Sdk\Config\ConfigJsonParser::parse($valid . "
+
+  ");
+        self::assertSame('a', $config->appKey); // 解析阶段通过（缺钥校验属后续语义层，此处不触发）
+    }
+}

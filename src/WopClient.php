@@ -66,12 +66,14 @@ final class WopClient
     /** 显式配置构造（不进默认实例缓存，§5）。 */
     public static function fromConfig(WopSdkConfig $sdkConfig): self
     {
-        $transport = $sdkConfig->transport ?? TransportFactory::discover();
+        // 传输设置（httpClient 超时）随配置装配；非默认 expiredSeconds 透传出向签名（Sourcery CR）
+        $transport = $sdkConfig->transport ?? TransportFactory::discover($sdkConfig->httpClient);
         $protocolConfig = new WopConfig(
             $sdkConfig->appKey,
             $sdkConfig->suite,
             $sdkConfig->merchantPrivateKey,
             $sdkConfig->platformPublicKey,
+            expiredSeconds: $sdkConfig->expiredSeconds,
         );
         return new self($protocolConfig, $transport, $sdkConfig->serverRoot);
     }
@@ -168,8 +170,9 @@ final class WopClient
             $headers[self::HEADER_CONTENT_DIGEST] = ContentDigest::build($wireBody, $this->config->suite);
         }
 
+        $expiredSeconds = $this->config->expiredSeconds ?? self::DEFAULT_EXPIRED_SECONDS;
         $canonical = CanonicalRequest::build(
-            'v1/' . self::DEFAULT_EXPIRED_SECONDS,
+            'v1/' . $expiredSeconds,
             $method,
             $path,
             '',
@@ -180,7 +183,7 @@ final class WopClient
         \sort($signedNames, SORT_STRING); // signedHeaders 段按名称排序（跨仓字节级一致）
         $headers[self::HEADER_SIGN] = SignHeader::build(
             $this->config->suite->securityReq,
-            self::DEFAULT_EXPIRED_SECONDS,
+            $expiredSeconds,
             $signedNames,
             $signature
         );
