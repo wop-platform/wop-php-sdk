@@ -4,6 +4,12 @@ declare(strict_types=1);
 
 namespace Wop\Sdk;
 
+use Wop\Sdk\Config\ConfigValidator;
+use Wop\Sdk\Config\WopSdkConfig;
+use Wop\Sdk\Config\WopConfigLoader;
+use Wop\Sdk\Transport\TransportFactory;
+use Wop\Sdk\Transport\TransportInterface;
+
 /**
  * WOP 商户客户端：协议核心入口。
  *
@@ -21,6 +27,7 @@ final class WopClient
     private const HEADER_SIGN = 'x-wop-sign';
     private const HEADER_ENCRYPT = 'x-wop-encrypt';
     private const HEADER_CONTENT_DIGEST = 'x-wop-content-digest';
+    private const HEADER_REQUEST_ID = 'x-wop-request-id';
 
     /** 稳定对外文案（interop canonical class 映射锚点，I7 模糊类）。 */
     public const REASON_SIGN_FAIL = '签名验证失败';
@@ -30,9 +37,78 @@ final class WopClient
 
     private const OAEP_SEED_BYTES = 32;
 
+    private static ?self $defaultClient = null;
+
+    /**
+     * 出向日志钩子（附录 I/I3 日志义务）：签名后以 info 级打印最终 x-wop-request-id 值
+     * （非敏感，豁免脱敏）。null → 缺省 error_log；测试/编排可整体替换。
+     */
+    public static ?\Closure $outboundLogger = null;
+
     /** 以不可变配置装配客户端（securityReq 已在 WopConfig 构造期固化为 Suite）。 */
-    public function __construct(private readonly WopConfig $config)
+    public function __construct(
+        private readonly WopConfig $config,
+        private readonly ?TransportInterface $transport = null,
+        private readonly ?string $serverRoot = null,
+    ) {
+    }
+
+    /** 惰性加载默认客户端：loadDefault → 传输发现 → 构造（§5 K15）。 */
+    public static function defaultClient(): self
     {
+        if (self::$defaultClient !== null) {
+            return self::$defaultClient;
+        }
+        self::$defaultClient = self::fromConfig(WopConfigLoader::loadDefault());
+        return self::$defaultClient;
+    }
+
+    /** 显式配置构造（不进默认实例缓存，§5）。 */
+    public static function fromConfig(WopSdkConfig $sdkConfig): self
+    {
+        // 传输设置（httpClient 超时）随配置装配；非默认 expiredSeconds 透传出向签名（Sourcery CR）
+        $transport = $sdkConfig->transport ?? TransportFactory::discover($sdkConfig->httpClient);
+        $protocolConfig = new WopConfig(
+            $sdkConfig->appKey,
+            $sdkConfig->suite,
+            $sdkConfig->merchantPrivateKey,
+            $sdkConfig->platformPublicKey,
+            expiredSeconds: $sdkConfig->expiredSeconds,
+        );
+        return new self($protocolConfig, $transport, $sdkConfig->serverRoot);
+    }
+
+    /** 丢弃默认实例；轮换须先 {@see WopConfigLoader::clearCache()}（§5 K26）。 */
+    public static function resetDefault(): void
+    {
+        self::$defaultClient = null;
+    }
+
+    /**
+     * 一站式调用：buildRequest → send → 非 2xx 拦截 → verifyResponse（§2）。
+     */
+    public function execute(
+        string $method,
+        string $path,
+        ?string $body = null,
+        string $level = EncryptHeader::LEVEL_L0,
+        ?string $requestId = null,
+    ): VerifyResult {
+        if ($this->transport === null || $this->serverRoot === null) {
+            throw WopException::configuration('未配置传输，无法 execute');
+        }
+        ConfigValidator::validateApiPath($path);
+        $draft = $this->buildRequest($method, $path, $body, $level, null, null, null, $requestId);
+        $url = ConfigValidator::joinUrl($this->serverRoot, $path);
+        $headerLines = [];
+        foreach ($draft->headers as $name => $value) {
+            $headerLines[] = $name . ': ' . $value;
+        }
+        $response = $this->transport->send($draft->method, $url, $headerLines, $draft->wireBody);
+        if (!$response->isSuccess()) {
+            throw new WopGatewayResponseException($response->statusCode, $response->body);
+        }
+        return $this->verifyResponse($response->headers, $response->body, $draft->path, $draft->method);
     }
 
     /**
@@ -45,6 +121,9 @@ final class WopClient
      * @param \Closure(int): string|null $random 确定性随机源（联调用；生产禁用——IV 复用即 I4 违规）。
      *        消费顺序合同（wop-specs/interop/v1）：[16B nonce 池（nonce 已注入时跳过）]
      *        [32B CEK][12B IV][32B OAEP seed]——跨仓 build 字节级复现依赖此序
+     * @param string|null $requestId   商户请求标识（附录 I：x-wop-request-id 透传头，恒不入签；
+     *        须为不含个人数据的不透明关联标识）。null/空白 → 缺省生成 UUID 去连字符（头恒存在），
+     *        显式传值 trim 后原值上行；控制字符（trim 前扫描）与超长（trim 后 UTF-8 字节 > 128）即拒
      */
     public function buildRequest(
         string $method,
@@ -54,8 +133,11 @@ final class WopClient
         ?int $timestampMs = null,
         ?string $nonce = null,
         ?\Closure $random = null,
+        ?string $requestId = null,
     ): RequestDraft {
         EncryptHeader::validateLevel($level);
+        // 附录 I/I2：requestId 构造即校验（fail-fast，不延迟到发送前）
+        $resolvedRequestId = RequestId::resolve($requestId);
         $isL2 = \strcasecmp($level, EncryptHeader::LEVEL_L2) === 0;
         $random ??= static fn (int $length): string => \random_bytes($length);
 
@@ -88,8 +170,9 @@ final class WopClient
             $headers[self::HEADER_CONTENT_DIGEST] = ContentDigest::build($wireBody, $this->config->suite);
         }
 
+        $expiredSeconds = $this->config->expiredSeconds ?? self::DEFAULT_EXPIRED_SECONDS;
         $canonical = CanonicalRequest::build(
-            'v1/' . self::DEFAULT_EXPIRED_SECONDS,
+            'v1/' . $expiredSeconds,
             $method,
             $path,
             '',
@@ -100,10 +183,21 @@ final class WopClient
         \sort($signedNames, SORT_STRING); // signedHeaders 段按名称排序（跨仓字节级一致）
         $headers[self::HEADER_SIGN] = SignHeader::build(
             $this->config->suite->securityReq,
-            self::DEFAULT_EXPIRED_SECONDS,
+            $expiredSeconds,
             $signedNames,
             $signature
         );
+        // requestId 透传头（附录 I）：在签名落盘**之后**写入，保证不在 signedHeaders 冻结清单中；
+        // 商户未传（含 trim 后为空）→ 缺省生成，最终头恒存在
+        $headers[self::HEADER_REQUEST_ID] = $resolvedRequestId ?? RequestId::generate();
+        // 附录 I/I3 日志义务：info 级打印最终透传头值，供网关 AccessLog 关联排查
+        $line = self::HEADER_REQUEST_ID . '=' . $headers[self::HEADER_REQUEST_ID] . ' ' . \strtoupper($method) . ' ' . $path;
+        if (self::$outboundLogger !== null) {
+            (self::$outboundLogger)($line);
+        } else {
+            // 缺省写 stderr（对齐 Java JUL/Go log 缺省行为；不污染 stdout 协议输出）
+            @\file_put_contents('php://stderr', $line . PHP_EOL);
+        }
         return new RequestDraft(\strtoupper($method), $path, $headers, $wireBody);
     }
 

@@ -35,15 +35,15 @@
 | 15 | `SignHeader.php:38` | logic | `if ($sp === false || $sp` | TODO: owner 复核论证 |
 | 16 | `SignHeader.php:38` | rel-lte | `if ($sp === false || $sp` | TODO: owner 复核论证 |
 | 17 | `SignHeader.php:43` | int-zero | `$seg = \explode('/', \tr` | TODO: owner 复核论证 |
-| 18 | `Suite.php:54` | bool-flip | `[, $keyAlg, $digestAlg] ` | TODO: owner 复核论证 |
-| 19 | `Suite.php:54` | bool-flip | `[, $keyAlg, $digestAlg] ` | TODO: owner 复核论证 |
-| 20 | `Transport/CurlTransport.php:17` | int-plus1 | `private const READ_CHUNK` | TODO: 传输层超时/缓冲常量族——owner 复核（配置面非协议核心，可论证非等价并补测试） |
-| 21 | `Transport/CurlTransport.php:17` | int-zero | `private const READ_CHUNK` | TODO: 传输层超时/缓冲常量族——owner 复核（配置面非协议核心，可论证非等价并补测试） |
-| 22 | `Transport/CurlTransport.php:37` | int-plus1 | `CURLOPT_HTTPHEADER => $h` | TODO: 传输层超时/缓冲常量族——owner 复核（配置面非协议核心，可论证非等价并补测试） |
-| 23 | `Transport/CurlTransport.php:37` | int-zero | `CURLOPT_HTTPHEADER => $h` | TODO: 传输层超时/缓冲常量族——owner 复核（配置面非协议核心，可论证非等价并补测试） |
-| 24 | `Transport/CurlTransport.php:47` | int-plus1 | `if ($received > self::MA` | TODO: 传输层超时/缓冲常量族——owner 复核（配置面非协议核心，可论证非等价并补测试） |
-| 25 | `Transport/CurlTransport.php:47` | int-zero | `if ($received > self::MA` | TODO: 传输层超时/缓冲常量族——owner 复核（配置面非协议核心，可论证非等价并补测试） |
-| 26 | `Transport/CurlTransport.php:75` | int-plus1 | `$pos = \strpos($line, ':` | TODO: 传输层超时/缓冲常量族——owner 复核（配置面非协议核心，可论证非等价并补测试） |
+| 18 | `Suite.php:56` | bool-flip | `[, $keyAlg, $digestAlg] ` | TODO: owner 复核论证 |
+| 19 | `Suite.php:56` | bool-flip | `[, $keyAlg, $digestAlg] ` | TODO: owner 复核论证 |
+| 20 | `Transport/CurlTransport.php:18` | int-plus1 | `private const READ_CHUNK` | TODO: 传输层超时/缓冲常量族——owner 复核（配置面非协议核心，可论证非等价并补测试） |
+| 21 | `Transport/CurlTransport.php:18` | int-zero | `private const READ_CHUNK` | TODO: 传输层超时/缓冲常量族——owner 复核（配置面非协议核心，可论证非等价并补测试） |
+| 22 | `Transport/CurlTransport.php:52` | int-plus1 | `CURLOPT_HTTPHEADER => $h` | TODO: 传输层超时/缓冲常量族——owner 复核（配置面非协议核心，可论证非等价并补测试） |
+| 23 | `Transport/CurlTransport.php:52` | int-zero | `CURLOPT_HTTPHEADER => $h` | TODO: 传输层超时/缓冲常量族——owner 复核（配置面非协议核心，可论证非等价并补测试） |
+| 24 | `Transport/CurlTransport.php:63` | int-plus1 | `if ($received > self::MA` | TODO: 传输层超时/缓冲常量族——owner 复核（配置面非协议核心，可论证非等价并补测试） |
+| 25 | `Transport/CurlTransport.php:63` | int-zero | `if ($received > self::MA` | TODO: 传输层超时/缓冲常量族——owner 复核（配置面非协议核心，可论证非等价并补测试） |
+| 26 | `Transport/CurlTransport.php:91` | int-plus1 | `$pos = \strpos($line, ':` | TODO: 传输层超时/缓冲常量族——owner 复核（配置面非协议核心，可论证非等价并补测试） |
 | 27 | `Transport/GuzzleTransport.php:19` | int-plus1 | `private const READ_CHUNK` | TODO: 传输层超时/缓冲常量族——owner 复核（配置面非协议核心，可论证非等价并补测试） |
 | 28 | `Transport/GuzzleTransport.php:25` | str-empty | `// guzzlehttp/guzzle 为 s` | 诊断文案族（见头部说明）；建议补断言击杀而非剔除 |
 | 29 | `Transport/GuzzleTransport.php:25` | int-plus1 | `// guzzlehttp/guzzle 为 s` | TODO: 传输层超时/缓冲常量族——owner 复核（配置面非协议核心，可论证非等价并补测试） |
@@ -52,9 +52,9 @@
 | 32 | `Transport/GuzzleTransport.php:34` | bool-flip | `'headers' => self::toAss` | TODO: 传输层超时/缓冲常量族——owner 复核（配置面非协议核心，可论证非等价并补测试） |
 | 33 | `Transport/GuzzleTransport.php:42` | str-empty | `$responseHeaders = [];` | 诊断文案族（见头部说明）；建议补断言击杀而非剔除 |
 | 34 | `Transport/GuzzleTransport.php:73` | int-plus1 | `$pos = \strpos($line, ':` | TODO: 传输层超时/缓冲常量族——owner 复核（配置面非协议核心，可论证非等价并补测试） |
-| 35 | `WopClient.php:149` | str-empty | `return VerifyResult::fai` | 诊断文案族（见头部说明）；建议补断言击杀而非剔除 |
-| 36 | `WopClient.php:149` | str-empty | `return VerifyResult::fai` | 诊断文案族（见头部说明）；建议补断言击杀而非剔除 |
-| 37 | `WopClient.php:161` | bool-flip | `}` | TODO: owner 复核论证 |
-| 38 | `WopClient.php:183` | str-empty | `return VerifyResult::fai` | 诊断文案族（见头部说明）；建议补断言击杀而非剔除 |
-| 39 | `WopClient.php:280` | str-empty | `if ($value === null) {` | 诊断文案族（见头部说明）；建议补断言击杀而非剔除 |
-| 40 | `WopClient.php:290` | int-plus1 | `{` | TODO: owner 复核论证 |
+| 35 | `WopClient.php:243` | str-empty | `return VerifyResult::fai` | 诊断文案族（见头部说明）；建议补断言击杀而非剔除 |
+| 36 | `WopClient.php:243` | str-empty | `return VerifyResult::fai` | 诊断文案族（见头部说明）；建议补断言击杀而非剔除 |
+| 37 | `WopClient.php:255` | bool-flip | `}` | TODO: owner 复核论证 |
+| 38 | `WopClient.php:277` | str-empty | `return VerifyResult::fai` | 诊断文案族（见头部说明）；建议补断言击杀而非剔除 |
+| 39 | `WopClient.php:374` | str-empty | `if ($value === null) {` | 诊断文案族（见头部说明）；建议补断言击杀而非剔除 |
+| 40 | `WopClient.php:384` | int-plus1 | `{` | TODO: owner 复核论证 |
