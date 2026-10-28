@@ -38,6 +38,7 @@ SDK 是**商户侧**官方客户端库（spec §1）：出向把签名/摘要/�
 | 2.3 | 签名覆盖 canonicalRequest | F2/F3 | 5 段 `\n`、Java-URLEncoder 语义（空格→%20、`*` 保留、`~`→%7E） | `CanonicalRequestTest::*`、向量 sign | 出向请求.feature:S1（间签验证） |
 | 2.4 | 同输入幂等 | §2 确定性 | 固定 nonce/timestamp 下 headers+wireBody 逐字节相同 | `testBuildRequestIsDeterministicForL0` | 出向请求.feature:S4 |
 | 2.5 | 随机字段防重放 | F9 | 缺省时 nonce=32 hex 互异、timestamp=13 位毫秒 | `testF9DefaultsAreRandom` | 出向请求.feature:S5 |
+| 2.6 | ISV 子商户身份入签 | ISV D-13 | 传 subMchId → `x-wop-sub-mch-id` 头存在且入签；不传/空白 → 头缺席，存量头与签名字节不变（AC-20） | `WopClientSubMchIdTest::*` | —（单元轨道；值校验与字节回归依赖固定随机量） |
 
 ### UC3 商户发起查询请求（GET 无 body）
 

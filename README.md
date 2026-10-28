@@ -82,6 +82,18 @@ L2 wire body 恒为 JSON 信封 `{"encrypted":"<base64url 密文>"}`（与网关
 $result = $client->verifyCallback($headers, $body, 'https://merchant.example.com/callback/notify');
 ```
 
+**ISV 子商户身份（D-13）**：代子商户调用业务 API 时，按请求传 `subMchId`（值 = 子商户 `plf_co_id`）：
+
+```php
+$draft = $client->buildRequest('POST', '/gateway/order/create', $body, 'L0',
+                               subMchId: 'PLF-SUB-001');
+// 或一站式调用：$client->execute('POST', '/gateway/order/create', $body, 'L0', subMchId: 'PLF-SUB-001');
+```
+
+SDK 自动写入 `x-wop-sub-mch-id` 并纳入 `x-wop-sign` 的 signedHeaders（首尾空白 trim 后发送；
+仅接受可打印 ASCII、无内部空白、≤128 字符）。该头仅在网关子商户灰度放行且应用为 ISV 应用
+（app_type=20）时生效；不传 = 应用自身身份，头缺席，行为与旧版逐字节一致。
+
 ## 向量自测（conformance）
 
 ```bash

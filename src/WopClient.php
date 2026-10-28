@@ -29,6 +29,9 @@ final class WopClient
     private const HEADER_CONTENT_DIGEST = 'x-wop-content-digest';
     private const HEADER_REQUEST_ID = 'x-wop-request-id';
 
+    /** 子商户身份头（ISV D-13）：值 = 子商户 plf_co_id，存在即必须纳入 signedHeaders；缺席 = 应用自身身份（AC-20）。 */
+    private const HEADER_SUB_MCH_ID = 'x-wop-sub-mch-id';
+
     /** 稳定对外文案（interop canonical class 映射锚点，I7 模糊类）。 */
     public const REASON_SIGN_FAIL = '签名验证失败';
     public const REASON_DIGEST_MISMATCH = '摘要不匹配';
@@ -93,12 +96,13 @@ final class WopClient
         ?string $body = null,
         string $level = EncryptHeader::LEVEL_L0,
         ?string $requestId = null,
+        ?string $subMchId = null,
     ): VerifyResult {
         if ($this->transport === null || $this->serverRoot === null) {
             throw WopException::configuration('未配置传输，无法 execute');
         }
         ConfigValidator::validateApiPath($path);
-        $draft = $this->buildRequest($method, $path, $body, $level, null, null, null, $requestId);
+        $draft = $this->buildRequest($method, $path, $body, $level, null, null, null, $requestId, $subMchId);
         $url = ConfigValidator::joinUrl($this->serverRoot, $path);
         $headerLines = [];
         foreach ($draft->headers as $name => $value) {
@@ -124,6 +128,9 @@ final class WopClient
      * @param string|null $requestId   商户请求标识（附录 I：x-wop-request-id 透传头，恒不入签；
      *        须为不含个人数据的不透明关联标识）。null/空白 → 缺省生成 UUID 去连字符（头恒存在），
      *        显式传值 trim 后原值上行；控制字符（trim 前扫描）与超长（trim 后 UTF-8 字节 > 128）即拒
+     * @param string|null $subMchId    ISV 子商户身份（D-13：x-wop-sub-mch-id，值 = 子商户 plf_co_id）。
+     *        签名前写入并自动纳入 signedHeaders；null/空白 = 应用自身身份（头缺席，AC-20 零回归）；
+     *        可打印 ASCII、无内部空白、trim 后 ≤128，违规构造即拒
      */
     public function buildRequest(
         string $method,
@@ -134,10 +141,13 @@ final class WopClient
         ?string $nonce = null,
         ?\Closure $random = null,
         ?string $requestId = null,
+        ?string $subMchId = null,
     ): RequestDraft {
         EncryptHeader::validateLevel($level);
         // 附录 I/I2：requestId 构造即校验（fail-fast，不延迟到发送前）
         $resolvedRequestId = RequestId::resolve($requestId);
+        // ISV D-13：子商户身份头构造即校验（fail-fast，与 requestId 同链）
+        $resolvedSubMchId = SubMchId::resolve($subMchId);
         $isL2 = \strcasecmp($level, EncryptHeader::LEVEL_L2) === 0;
         $random ??= static fn (int $length): string => \random_bytes($length);
 
@@ -146,6 +156,10 @@ final class WopClient
             self::HEADER_TIMESTAMP => (string) ($timestampMs ?? $this->currentMillis()),
             self::HEADER_NONCE => $nonce ?? \bin2hex($random(16)),
         ];
+        // 子商户身份头在签名前写入：signedHeaders 取当前头集合，自动入签（ISV D-13）
+        if ($resolvedSubMchId !== null) {
+            $headers[self::HEADER_SUB_MCH_ID] = $resolvedSubMchId;
+        }
 
         // L2：信封加密（CSPRNG DEK + IV），wire body = {"encrypted":"<base64url(ciphertext||tag)>"}
         // （线上信封契约与网关 CryptoFilter 一致，L2 线上体恒为 JSON）

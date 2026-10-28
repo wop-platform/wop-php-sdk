@@ -87,6 +87,21 @@ is the path of the callback URL.
 $result = $client->verifyCallback($headers, $body, 'https://merchant.example.com/callback/notify');
 ```
 
+**ISV sub-merchant identity (D-13)**: when calling business APIs on behalf of a sub-merchant,
+pass `subMchId` per request (value = the sub-merchant's `plf_co_id`):
+
+```php
+$draft = $client->buildRequest('POST', '/gateway/order/create', $body, 'L0',
+                               subMchId: 'PLF-SUB-001');
+// or via execute(): $client->execute('POST', '/gateway/order/create', $body, 'L0', subMchId: 'PLF-SUB-001');
+```
+
+The SDK writes `x-wop-sub-mch-id` and includes it in the `x-wop-sign` signedHeaders (leading/trailing
+whitespace trimmed; printable ASCII only, no internal whitespace, ≤128 chars). The header takes effect
+only when the gateway sub-merchant gray gate is open for the app and the app is an ISV app
+(app_type=20). Omitting it keeps the app's own identity: the header is absent and behavior is
+byte-identical to earlier versions.
+
 ## Vector Self-Test (conformance)
 
 ```bash
